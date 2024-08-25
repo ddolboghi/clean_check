@@ -9,13 +9,16 @@ export async function middleware(request: NextRequest) {
   const {
     data: { user },
   } = await createClient().auth.getUser();
+  console.log("유저 정보: ", user);
 
   const protectedRoutes = ["/today-list"];
 
   const isLoggedIn = user !== null;
 
-  if (protectedRoutes.includes(pathname) && !isLoggedIn) {
-    return NextResponse.redirect(new URL("/", request.url));
+  if (protectedRoutes.includes(pathname)) {
+    if (!isLoggedIn) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
   }
 
   return NextResponse.next();
