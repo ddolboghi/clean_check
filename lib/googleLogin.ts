@@ -9,11 +9,9 @@ export const googleLogin = async () => {
     provider: "google",
     options: {
       queryParams: { access_type: "offline", prompt: "consent" },
-      redirectTo: `${process.env.NEXT_PUBLIC_LOCALHOST}/auth/callback`,
+      redirectTo: `${process.env.NEXT_PUBLIC_LOCALHOST}/auth/callback?next=/today-list`,
     },
   });
-
-  await createClient().auth.getUser();
 
   if (error) {
     console.log("error:", error);
