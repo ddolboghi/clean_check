@@ -1,62 +1,48 @@
 "use server";
 
+import { FormattedTodo } from "@/components/AddCheckList";
 import { supabaseClient } from "@/lib/getSupabaseClient";
-import { createClient } from "@/utils/supabase/server";
 
-type CheckItem = {
-  id: number;
-  description: string;
+type Checks = { [key: number]: boolean };
+
+type CheckList = {
+  todoId: number;
+  checks: Checks;
 };
 
-type DailyCompletions = {
-  [key: number]: {
-    mon: boolean;
-    tue: boolean;
-    wed: boolean;
-    thu: boolean;
-    fri: boolean;
-    sat: boolean;
-    sun: boolean;
-  };
-};
+function createCheckList(todoList: FormattedTodo[]): CheckList[] {
+  return todoList.map((todo) => {
+    const checks: Checks = {};
+    todo.days.forEach((day) => {
+      checks[day] = false;
+    });
 
-export async function postWeeklyCheckList() {
-  const checkItems: CheckItem[] = [
-    { id: 1, description: "test1" },
-    { id: 2, description: "test2" },
-    { id: 3, description: "test3" },
-  ];
-  const dailyCompletions: DailyCompletions = {};
-
-  checkItems.forEach((item) => {
-    dailyCompletions[item.id] = {
-      mon: false,
-      tue: false,
-      wed: false,
-      thu: false,
-      fri: false,
-      sat: false,
-      sun: false,
+    return {
+      todoId: todo.todoId,
+      checks: checks,
     };
   });
+}
 
+export async function postWeeklyCheckList(
+  todoList: FormattedTodo[],
+  memberId: string
+) {
   const today = new Date();
   const startDate = today.toISOString().split("T")[0];
   today.setDate(today.getDate() + 7);
   const endDate = today.toISOString().split("T")[0]; // 'YYYY-MM-DD' 형식으로 변환
 
-  const {
-    data: { user },
-  } = await createClient().auth.getUser();
+  const checkList = createCheckList(todoList);
 
   try {
     const { data, error } = await supabaseClient.from("check_list").insert([
       {
         start_date: startDate,
         end_date: endDate,
-        check_items: checkItems,
-        daily_completions: dailyCompletions,
-        member_id: user && user.id,
+        todo_list: todoList,
+        check_list: checkList,
+        member_id: memberId,
       },
     ]);
 
