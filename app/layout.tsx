@@ -1,5 +1,13 @@
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
+import localFont from "next/font/local";
+
+const pretendard = localFont({
+  src: "../assets/fonts/PretendardVariable.woff2",
+  display: "swap",
+  weight: "45 920",
+  variable: "--font-pretendard",
+});
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -8,7 +16,7 @@ const defaultUrl = process.env.VERCEL_URL
 export const metadata = {
   metadataBase: new URL(defaultUrl),
   title: "스킨체크",
-  description: "AI 피부상담사와 만들어가는 루틴",
+  description: "작은 습관으로 지키는 나의 피부",
 };
 
 export default function RootLayout({
@@ -17,8 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko" className={GeistSans.className}>
-      <body className="bg-background text-foreground">{children}</body>
+    <html lang="ko" className={`${pretendard.variable}`}>
+      <body className={pretendard.className}>{children}</body>
     </html>
   );
 }
