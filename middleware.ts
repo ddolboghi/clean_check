@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
   } = await createClient().auth.getUser();
   console.log("유저 정보: ", user);
 
-  const protectedRoutes = ["/today-list"];
+  const protectedRoutes = ["/checklist"];
 
   const isLoggedIn = user !== null;
 
