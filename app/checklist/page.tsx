@@ -1,10 +1,35 @@
-import AddCheckList from "@/components/AddCheckList";
+import { getTodoListByDay } from "@/actions/todoList";
+import DayCheckList from "@/components/checklist/DayCheckList";
+import { getDayOfWeek } from "@/lib/dateTranslator";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
-export default async function TodayList() {
+export default async function page() {
+  const {
+    data: { user },
+  } = await createClient().auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+  const memberId = user.id;
+
+  const today = new Date().toString();
+  const todayOfWeek = getDayOfWeek(today);
+
+  const checkListOfDay = await getTodoListByDay(todayOfWeek, memberId);
+  const todayTopics = checkListOfDay
+    ? checkListOfDay.filteredTodos.map((todo) => todo.topic)
+    : [];
+
   return (
-    <main>
-      <h1>회원별 일주일치 체크리스트 저장하는 페이지</h1>
-      <AddCheckList />
-    </main>
+    <DayCheckList
+      checkListId={checkListOfDay?.checkListId}
+      todayOfWeek={todayOfWeek}
+      todoListOfDay={checkListOfDay?.filteredTodos}
+      completionsOfDay={checkListOfDay?.filteredCompletions}
+      memberId={memberId}
+      todayTopics={["전체", ...todayTopics]}
+    />
   );
 }
