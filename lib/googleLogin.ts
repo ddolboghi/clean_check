@@ -9,7 +9,7 @@ export const googleLogin = async () => {
     provider: "google",
     options: {
       queryParams: { access_type: "offline", prompt: "consent" },
-      redirectTo: `${process.env.NEXT_PUBLIC_HOST}/auth/callback?next=/today-list`,
+      redirectTo: `${process.env.NEXT_PUBLIC_HOST}/auth/callback?next=/checklist`,
     },
   });
 
