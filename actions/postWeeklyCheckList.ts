@@ -1,7 +1,7 @@
 "use server";
 
-import { FormattedTodo } from "@/components/AddCheckList";
 import { supabaseClient } from "@/lib/getSupabaseClient";
+import { Todo } from "@/utils/types";
 
 type Checks = { [key: number]: boolean };
 
@@ -10,7 +10,7 @@ type CheckList = {
   checks: Checks;
 };
 
-function createCheckList(todoList: FormattedTodo[]): CheckList[] {
+function createCheckList(todoList: Todo[]): CheckList[] {
   return todoList.map((todo) => {
     const checks: Checks = {};
     todo.days.forEach((day) => {
@@ -24,10 +24,7 @@ function createCheckList(todoList: FormattedTodo[]): CheckList[] {
   });
 }
 
-export async function postWeeklyCheckList(
-  todoList: FormattedTodo[],
-  memberId: string
-) {
+export async function postWeeklyCheckList(todoList: Todo[], memberId: string) {
   const today = new Date();
   const startDate = today.toISOString().split("T")[0];
   today.setDate(today.getDate() + 7);
