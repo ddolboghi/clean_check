@@ -2,13 +2,7 @@
 
 import { useState } from "react";
 import { postWeeklyCheckList } from "@/actions/postWeeklyCheckList";
-
-export type FormattedTodo = {
-  topic: string;
-  todoId: number;
-  todo: string;
-  days: number[];
-};
+import { Todo } from "@/utils/types";
 
 const TodoItem = ({
   todo,
@@ -16,7 +10,7 @@ const TodoItem = ({
   onDurationChange,
   onDelete,
 }: {
-  todo: FormattedTodo;
+  todo: Todo;
   onTodoChange: (todoId: number, value: string) => void;
   onDurationChange: (todoId: number, days: number[]) => void;
   onDelete: (todoId: number) => void;
@@ -78,7 +72,7 @@ export default function AddCheckList() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [todos, setTodos] = useState<FormattedTodo[]>([
+  const [todos, setTodos] = useState<Todo[]>([
     { topic: "", todoId: 1, todo: "", days: [] },
   ]);
   const [memberId, setMemberId] = useState<string>("");
