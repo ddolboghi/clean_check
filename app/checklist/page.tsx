@@ -1,5 +1,6 @@
 import { getTodoListByDay } from "@/actions/todoList";
 import DayCheckList from "@/components/checklist/DayCheckList";
+import SplashScreen from "@/components/SplashScreen";
 import { getDayOfWeek } from "@/lib/dateTranslator";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
@@ -23,13 +24,19 @@ export default async function page() {
     : [];
 
   return (
-    <DayCheckList
-      checkListId={checkListOfDay?.checkListId}
-      todayOfWeek={todayOfWeek}
-      todoListOfDay={checkListOfDay?.filteredTodos}
-      completionsOfDay={checkListOfDay?.filteredCompletions}
-      memberId={memberId}
-      todayTopics={["전체", ...todayTopics]}
-    />
+    <>
+      {checkListOfDay ? (
+        <DayCheckList
+          checkListId={checkListOfDay.checkListId}
+          todayOfWeek={todayOfWeek}
+          todoListOfDay={checkListOfDay.filteredTodos}
+          completionsOfDay={checkListOfDay.filteredCompletions}
+          memberId={memberId}
+          todayTopics={["전체", ...todayTopics]}
+        />
+      ) : (
+        <SplashScreen />
+      )}
+    </>
   );
 }
