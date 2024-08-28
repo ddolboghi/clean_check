@@ -26,7 +26,7 @@ export async function GET(request: Request) {
       //     return NextResponse.redirect(`${origin}${next}`);
       //   }
       // }
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_HOST}${next}`);
+      return NextResponse.redirect(`https://skin-check.vercel.app${next}`);
     }
   }
   console.log(origin, next);
