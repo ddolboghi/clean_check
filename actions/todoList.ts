@@ -14,7 +14,6 @@ interface SupabaseCheckList {
 
 export async function getTodoListByDate(date: Date | string, memberId: string) {
   try {
-    // 가장 최근의 created_at을 가진 레코드 가져오기
     const { data: recentData, error: recentError } = await supabaseClient
       .from("check_list")
       .select("*")
@@ -30,7 +29,6 @@ export async function getTodoListByDate(date: Date | string, memberId: string) {
     }
 
     const checkListId: number = recentData.id;
-    console.log("넘겨받은 date:", date.toString());
 
     const filteredTodos: Todo[] = recentData.todo_list.filter((todo) =>
       Object.keys(todo.days).includes(date.toString())
@@ -39,9 +37,10 @@ export async function getTodoListByDate(date: Date | string, memberId: string) {
     const startDate = recentData.start_date;
     const endDate = recentData.end_date;
 
+    console.log("[getTodoListByDate] Get todo_list by date success");
     return { checkListId, filteredTodos, startDate, endDate };
   } catch (error) {
-    console.error("Error getTodoListByDay:", error);
+    console.error("[getTodoListByDate] Error getTodoListByDay:", error);
     return null;
   }
 }
@@ -58,42 +57,67 @@ export async function updateDaysOfTodo(
 
     if (error) throw error;
 
-    console.log("Data updated successfully:", data);
+    console.log("[updateDaysOfTodo] Data updated successfully:", data);
     return data;
   } catch (error) {
-    console.error("Error updatedDaysOfTodo:", error);
+    console.error("[updateDaysOfTodo] Error updatedDaysOfTodo:", error);
     return null;
   }
 }
 
-export async function updateCheckListToDelay(
+export async function updateTodoDaysToDelay(
   checkListId: number,
-  memberId: string
+  memberId: string,
+  todayKey: string
 ) {
   try {
-    const { data: recentData, error: recentError } = await supabaseClient
+    const today = new Date(todayKey);
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const yesterdayKey = yesterday.toISOString().split("T")[0];
+
+    const { data: selectData, error: selectError } = await supabaseClient
       .from("check_list")
       .select("*")
       .eq("member_id", memberId)
       .eq("id", checkListId)
       .single<SupabaseCheckList>();
 
-    if (recentError) throw recentError;
+    if (selectError) throw selectError;
 
-    if (!recentData) {
-      return null;
-    }
+    console.log(
+      "[updateTodoDaysToDelay] Get check_list by checkListId and memberId success"
+    );
+    const newTodoList = selectData.todo_list.map((todo) => {
+      const newTodo = { ...todo, days: { ...todo.days } };
+      const days = newTodo.days;
 
-    const startDate = recentData.start_date;
-    const startDay = new Date(startDate).getDay();
+      if (days.hasOwnProperty(yesterdayKey) && days[yesterdayKey] === false) {
+        if (days.hasOwnProperty(todayKey)) {
+          delete days[yesterdayKey];
+        } else {
+          days[todayKey] = days[yesterdayKey];
+          delete days[yesterdayKey];
+        }
+      }
+      return newTodo;
+    });
 
-    const todoList = recentData.todo_list;
+    const { data: updateData, error: updateError } = await supabaseClient
+      .from("check_list")
+      .update({ todo_list: newTodoList })
+      .eq("member_id", memberId)
+      .eq("id", checkListId);
 
-    const todayOfWeek = new Date().getDay();
-    const yesterdayOfWeek = todayOfWeek - 1 < 0 ? 6 : todayOfWeek - 1;
-    console.log("yesterdayOfWeek:", yesterdayOfWeek);
+    if (updateError) throw updateError;
+
+    console.log("[updateTodoDaysToDelay]: Update delayed todo success");
+    return updateData;
   } catch (error) {
-    console.error("Error getTodoListByDay:", error);
+    console.error(
+      "[updateTodoDaysToDelay]: Error in updateTodoDaysToDelay:",
+      error
+    );
     return null;
   }
 }

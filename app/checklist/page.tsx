@@ -1,4 +1,4 @@
-import { getTodoListByDate, updateCheckListToDelay } from "@/actions/todoList";
+import { getTodoListByDate, updateTodoDaysToDelay } from "@/actions/todoList";
 import DayCheckList from "@/components/checklist/DayCheckList";
 import SplashScreen from "@/components/SplashScreen";
 import { getDayOfWeek } from "@/lib/dateTranslator";
@@ -24,7 +24,7 @@ export default async function page() {
     : [];
 
   if (checkListOfDay) {
-    await updateCheckListToDelay(checkListOfDay.checkListId, memberId);
+    await updateTodoDaysToDelay(checkListOfDay.checkListId, memberId, nowDate);
   }
 
   return (
