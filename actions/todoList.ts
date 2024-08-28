@@ -1,5 +1,6 @@
 "use server";
 
+import { getKSTPreviousDateString } from "@/lib/dateTranslator";
 import { supabaseClient } from "@/lib/getSupabaseClient";
 import { Todo } from "@/utils/types";
 
@@ -13,6 +14,7 @@ interface SupabaseCheckList {
 }
 
 export async function getTodoListByDate(date: Date | string, memberId: string) {
+  console.log("넘겨받은 date:", date);
   try {
     const { data: recentData, error: recentError } = await supabaseClient
       .from("check_list")
@@ -57,7 +59,7 @@ export async function updateDaysOfTodo(
 
     if (error) throw error;
 
-    console.log("[updateDaysOfTodo] Data updated successfully:", data);
+    console.log("[updateDaysOfTodo] Data updated successfully");
     return data;
   } catch (error) {
     console.error("[updateDaysOfTodo] Error updatedDaysOfTodo:", error);
@@ -71,10 +73,7 @@ export async function updateTodoDaysToDelay(
   todayKey: string
 ) {
   try {
-    const today = new Date(todayKey);
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-    const yesterdayKey = yesterday.toISOString().split("T")[0];
+    const yesterdayKey = getKSTPreviousDateString();
 
     const { data: selectData, error: selectError } = await supabaseClient
       .from("check_list")
