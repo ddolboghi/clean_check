@@ -27,20 +27,14 @@ export default async function page() {
   }
 
   return (
-    <>
-      {checkListOfDay ? (
-        <DayCheckList
-          checkListId={checkListOfDay.checkListId}
-          nowDate={nowDate}
-          todoListOfDay={checkListOfDay.filteredTodos}
-          memberId={memberId}
-          todayTopics={todayTopics}
-          startDate={checkListOfDay.startDate}
-          endDate={checkListOfDay.endDate}
-        />
-      ) : (
-        <SplashScreen />
-      )}
-    </>
+    <DayCheckList
+      checkListId={checkListOfDay?.checkListId}
+      nowDate={nowDate}
+      todoListOfDay={checkListOfDay?.filteredTodos}
+      memberId={memberId}
+      todayTopics={todayTopics}
+      startDate={checkListOfDay?.startDate}
+      endDate={checkListOfDay?.endDate}
+    />
   );
 }

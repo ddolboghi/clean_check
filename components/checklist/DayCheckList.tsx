@@ -12,13 +12,13 @@ import CompletionAllTodoPopUp from "../ui/CompletionAllTodoPopUp";
 import { excuteConfetti } from "@/lib/confettiCustom";
 
 type DayCheckList = {
-  checkListId: number | null | undefined;
+  checkListId: number | undefined;
   nowDate: string;
-  todoListOfDay: Todo[];
+  todoListOfDay: Todo[] | undefined;
   memberId: string;
   todayTopics: string[];
-  startDate: Date;
-  endDate: Date;
+  startDate: Date | undefined;
+  endDate: Date | undefined;
 };
 
 export default function DayCheckList({
@@ -30,8 +30,20 @@ export default function DayCheckList({
   startDate,
   endDate,
 }: DayCheckList) {
+  if (!checkListId || !todoListOfDay || !startDate || !endDate) {
+    return (
+      <div className="flex flex-col h-screen">
+        <CheckListHead />
+        <div className="flex flex-col justify-center text-center text-[20px]">
+          <p>아직 체크리스트가 없어요.</p>
+          <p>상담하고 체크리스트를 받아보세요!</p>
+        </div>
+      </div>
+    );
+  }
+
   const [clickedDate, setClickedDate] = useState<string>(nowDate);
-  const [todoList, setTodoList] = useState<Todo[]>(todoListOfDay);
+  const [todoList, setTodoList] = useState<Todo[] | undefined>(todoListOfDay);
   const [clickedTopic, setClickedTopic] = useState<string>("전체");
   const [topicList, setTopicList] = useState<string[]>(todayTopics);
   const [isCompletedAllTodo, setIsCompletedAllTodo] = useState<boolean>(false);
@@ -56,7 +68,7 @@ export default function DayCheckList({
   };
 
   const handleTodoClick = async (clickedTodo: Todo) => {
-    if (checkListId) {
+    if (checkListId && todoList) {
       const updatedTodo = todoList.map((todo) => {
         if (todo.todoId === clickedTodo.todoId) {
           const currentComplete = todo.days[clickedDate];
@@ -144,29 +156,30 @@ export default function DayCheckList({
         <div
           className={`px-6 mt-4 bg-white flex flex-col gap-5 overflow-y-scroll scrollbar-hide`}
         >
-          {todoList
-            .filter(
-              (btnTodo) =>
-                clickedTopic === "전체" || btnTodo.topic === clickedTopic
-            )
-            .map((btnTodo) => {
-              const isCompleted = btnTodo.days[clickedDate];
+          {todoList &&
+            todoList
+              .filter(
+                (btnTodo) =>
+                  clickedTopic === "전체" || btnTodo.topic === clickedTopic
+              )
+              .map((btnTodo) => {
+                const isCompleted = btnTodo.days[clickedDate];
 
-              return (
-                <button
-                  className={`flex justify-between items-center px-6 py-4 w-full rounded-3xl border-2 border-solid ${
-                    isCompleted
-                      ? "bg-white bg-opacity-80 border-zinc-100 text-[#B2B2B2]"
-                      : "bg-[#E1F5F1] border-[#E1F5F1] text-[#528A80]"
-                  }`}
-                  key={btnTodo.todoId}
-                  onClick={() => handleTodoClick(btnTodo)}
-                >
-                  <p>{btnTodo.todo}</p>
-                  {isCompleted ? <FillCheckBox /> : <EmptyCheckBox />}
-                </button>
-              );
-            })}
+                return (
+                  <button
+                    className={`flex justify-between items-center px-6 py-4 w-full rounded-3xl border-2 border-solid ${
+                      isCompleted
+                        ? "bg-white bg-opacity-80 border-zinc-100 text-[#B2B2B2]"
+                        : "bg-[#E1F5F1] border-[#E1F5F1] text-[#528A80]"
+                    }`}
+                    key={btnTodo.todoId}
+                    onClick={() => handleTodoClick(btnTodo)}
+                  >
+                    <p>{btnTodo.todo}</p>
+                    {isCompleted ? <FillCheckBox /> : <EmptyCheckBox />}
+                  </button>
+                );
+              })}
         </div>
       </div>
     </>
