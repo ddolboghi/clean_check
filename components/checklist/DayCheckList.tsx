@@ -32,13 +32,15 @@ export default function DayCheckList({
 }: DayCheckList) {
   if (!checkListId || !todoListOfDay || !startDate || !endDate) {
     return (
-      <div className="flex flex-col h-screen">
-        <CheckListHead />
-        <div className="flex flex-col justify-center text-center text-[20px]">
-          <p>아직 체크리스트가 없어요.</p>
+      <>
+        <div className="bg-[#24E6C1] flex justify-center pb-[55px]">
+          <CheckListHead />
+        </div>
+        <div className="h-screen translate-y-[20%] text-center text-[20px]">
+          <p>체크리스트가 없어요.😅</p>
           <p>상담하고 체크리스트를 받아보세요!</p>
         </div>
-      </div>
+      </>
     );
   }
 
