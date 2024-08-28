@@ -9,7 +9,7 @@ export async function middleware(request: NextRequest) {
   const {
     data: { user },
   } = await createClient().auth.getUser();
-  console.log("유저 정보 middleware: ", user);
+  // console.log("유저 정보 middleware: ", user);
 
   const protectedRoutes = ["/checklist"];
 
