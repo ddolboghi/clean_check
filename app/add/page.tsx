@@ -1,10 +1,12 @@
-import AddCheckList from "@/components/AddCheckList";
+import AddProxyPage from "@/components/AddProxyPage";
 
 export default async function TodayList() {
+  const adminPw = process.env.NEXT_PUBLIC_ADMIN_PASSWORD as string;
+
   return (
-    <main>
-      <h1>회원별 일주일치 체크리스트 저장하는 페이지</h1>
-      <AddCheckList />
+    <main className="text-center">
+      <h1>make cheklist</h1>
+      <AddProxyPage />
     </main>
   );
 }
