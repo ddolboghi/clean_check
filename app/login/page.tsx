@@ -16,12 +16,14 @@ export default async function Login() {
   return (
     <main className="pb-[76px] flex flex-col gap-[177px] justify-end items-center h-screen overflow-hidden">
       <div className="text-center">
-        <h1 className="font-semibold text-[40px] mb-6">환영합니다!</h1>
-        <p className="text-[#808080] text-[20px]">
+        <h1 className="font-semibold text-[40px] mb-6 opacity-0 translate-y-10 animate-fadeInUp">
+          환영합니다!
+        </h1>
+        <p className="text-[#808080] text-[20px] opacity-0 translate-y-10 animate-fadeIn delay-2000">
           스킨체크와 함께 피부를 지켜보세요.
         </p>
       </div>
-      <div>
+      <div className="opacity-0 animate-fadeIn delay-2000">
         <Image
           src={cleanFreeLogo}
           width={195}
@@ -29,7 +31,9 @@ export default async function Login() {
           alt="클린프리 로고"
         />
       </div>
-      <GoogleLoginButton />
+      <div className="opacity-0 animate-fadeIn delay-2000">
+        <GoogleLoginButton />
+      </div>
     </main>
   );
 }
