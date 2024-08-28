@@ -77,7 +77,6 @@ export default function DayCheckList({
 
       setTodoList(updatedTodo);
 
-      // 서버에 updateCompletionList 저장
       await updateDaysOfTodo(checkListId, updatedTodo);
     }
   };
@@ -91,77 +90,75 @@ export default function DayCheckList({
       {isCompletedAllTodo && (
         <CompletionAllTodoPopUp onClickHomeBtn={onClickHomeBtn} />
       )}
-      <div className="bg-[#24E6C1]">
+      <div className="flex flex-col h-screen">
         <CheckListHead />
-        <div className="px-6 rounded-t-[40px] bg-white">
-          <div>
-            {/* nav section */}
-            <nav className="flex justify-center pt-6 items-center text-base font-light tracking-tight text-center whitespace-nowrap text-neutral-400">
-              {Object.entries(week).map(([date, day]) => (
+        {/* nav section */}
+        <nav className="py-6 px-4 rounded-t-[40px] bg-white flex justify-center items-center text-base font-light tracking-tight text-center whitespace-nowrap text-[#B2B2B2]">
+          {Object.entries(week).map(([date, day]) => (
+            <button
+              key={date}
+              onClick={() => handleDayOfWeek(date)}
+              className={`self-stretch px-3 py-1.5 w-[53px] h-[53px] ${
+                clickedDate === date &&
+                "font-medium text-[#B2B2B2] bg-[#DFF4F0] rounded-[15px]"
+              }`}
+            >
+              <div>{day}</div>
+              <div className="text-xs">
+                {date.split("-")[2].replace(/^0/, "")}
+              </div>
+            </button>
+          ))}
+        </nav>
+
+        {/* topic section */}
+        <nav className="pb-4 px-6 bg-white flex justify-start flex-row space-x-2 overflow-x-auto">
+          {topicList.map((topic, topicIdx) => (
+            <button
+              key={topicIdx}
+              onClick={() => handleTopic(topic)}
+              className="text-sm tracking-tight leading-loose text-center whitespace-nowrap rounded-3xl scrollbar-hide"
+            >
+              <div
+                className={`px-5 rounded-3xl text-center ${
+                  topic === clickedTopic
+                    ? "bg-[#565656] text-white"
+                    : "bg-gray-200 bg-opacity-80 text-zinc-500"
+                }`}
+              >
+                {topic}
+              </div>
+            </button>
+          ))}
+        </nav>
+
+        {/* todo section */}
+        <div
+          className={`px-6 mt-4 bg-white flex flex-col gap-5 overflow-y-scroll scrollbar-hide`}
+        >
+          {todoList
+            .filter(
+              (btnTodo) =>
+                clickedTopic === "전체" || btnTodo.topic === clickedTopic
+            )
+            .map((btnTodo) => {
+              const isCompleted = btnTodo.days[clickedDate];
+
+              return (
                 <button
-                  key={date}
-                  onClick={() => handleDayOfWeek(date)}
-                  className={`self-stretch px-3 py-1.5 w-[53px] h-[53px] ${
-                    clickedDate === date &&
-                    "font-medium text-teal-800 bg-[#AEEFE2] rounded-[15px]"
+                  className={`flex justify-between items-center px-6 py-4 w-full rounded-3xl border-2 border-solid ${
+                    isCompleted
+                      ? "bg-white bg-opacity-80 border-zinc-100 text-[#B2B2B2]"
+                      : "bg-[#E1F5F1] border-[#E1F5F1] text-[#528A80]"
                   }`}
+                  key={btnTodo.todoId}
+                  onClick={() => handleTodoClick(btnTodo)}
                 >
-                  <div>{day}</div>
-                  <div className="text-xs">
-                    {date.split("-")[2].replace(/^0/, "")}
-                  </div>
+                  <p>{btnTodo.todo}</p>
+                  {isCompleted ? <FillCheckBox /> : <EmptyCheckBox />}
                 </button>
-              ))}
-            </nav>
-
-            {/* topic section */}
-            <nav className="flex justify-start flex-row py-4 space-x-2 overflow-x-auto">
-              {topicList.map((topic, topicIdx) => (
-                <button
-                  key={topicIdx}
-                  onClick={() => handleTopic(topic)}
-                  className="text-sm tracking-tight leading-loose text-center whitespace-nowrap rounded-3xl"
-                >
-                  <div
-                    className={`px-5 py-[2px] rounded-3xl text-center ${
-                      topic === clickedTopic
-                        ? "bg-[#565656] text-white"
-                        : "bg-gray-200 bg-opacity-80 text-zinc-500"
-                    }`}
-                  >
-                    {topic}
-                  </div>
-                </button>
-              ))}
-            </nav>
-          </div>
-
-          {/* todo section */}
-          <div className="flex flex-col gap-5">
-            {todoList
-              .filter(
-                (btnTodo) =>
-                  clickedTopic === "전체" || btnTodo.topic === clickedTopic
-              )
-              .map((btnTodo) => {
-                const isCompleted = btnTodo.days[clickedDate];
-
-                return (
-                  <button
-                    className={`flex justify-between items-center px-6 py-4 w-full rounded-3xl border-2 border-solid ${
-                      isCompleted
-                        ? "bg-white bg-opacity-80 border-zinc-100 text-[#B2B2B2]"
-                        : "bg-[#E1F5F1] border-[#E1F5F1] text-[#146556]"
-                    }`}
-                    key={btnTodo.todoId}
-                    onClick={() => handleTodoClick(btnTodo)}
-                  >
-                    <p>{btnTodo.todo}</p>
-                    {isCompleted ? <FillCheckBox /> : <EmptyCheckBox />}
-                  </button>
-                );
-              })}
-          </div>
+              );
+            })}
         </div>
       </div>
     </>
