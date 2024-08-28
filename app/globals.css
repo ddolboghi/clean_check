@@ -2,9 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  -ms-overflow-style: none;
-}
+/* styles/globals.css */
 ::-webkit-scrollbar {
-  display: hidden;
+  display: none; /* Chrome, Safari, Opera */
+}
+
+body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
