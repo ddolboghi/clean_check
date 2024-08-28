@@ -14,6 +14,23 @@ module.exports = {
           "background-hover": "hsl(var(--btn-background-hover))",
         },
       },
+      transitionDelay: {
+        "2000": "2000ms",
+      },
+      animation: {
+        fadeIn: "fadeIn 1s forwards",
+        fadeInUp: "fadeInUp 1s forwards",
+      },
+      keyframes: {
+        fadeIn: {
+          "0%": { opacity: 0 },
+          "100%": { opacity: 1 },
+        },
+        fadeInUp: {
+          "0%": { opacity: 0, transform: "translateY(200px)" },
+          "100%": { opacity: 1, transform: "translateY(0)" },
+        },
+      },
     },
   },
   plugins: [],
