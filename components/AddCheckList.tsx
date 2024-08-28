@@ -3,30 +3,37 @@
 import { useState } from "react";
 import { postWeeklyCheckList } from "@/actions/postWeeklyCheckList";
 import { Todo } from "@/utils/types";
+import { getDates } from "@/lib/dateTranslator";
 
 const TodoItem = ({
   todo,
   onTodoChange,
   onDurationChange,
   onDelete,
+  allDays,
 }: {
   todo: Todo;
   onTodoChange: (todoId: number, value: string) => void;
-  onDurationChange: (todoId: number, days: number[]) => void;
+  onDurationChange: (todoId: number, days: { [key: string]: boolean }) => void;
   onDelete: (todoId: number) => void;
+  allDays: string[];
 }) => {
-  const allDays = ["일", "월", "화", "수", "목", "금", "토"];
-  const isEveryDay = todo.days.length === 7;
+  const isEveryDay = Object.keys(todo.days).length === allDays.length;
 
   const handleDayChange = (day: string) => {
-    const dayIndex = allDays.indexOf(day);
-    let newDays: number[];
+    let newDays = { ...todo.days };
     if (day === "매일") {
-      newDays = isEveryDay ? [] : [0, 1, 2, 3, 4, 5, 6];
+      if (isEveryDay) {
+        newDays = {};
+      } else {
+        allDays.forEach((d) => (newDays[d] = false));
+      }
     } else {
-      newDays = todo.days.includes(dayIndex)
-        ? todo.days.filter((d) => d !== dayIndex)
-        : [...todo.days, dayIndex].sort((a, b) => a - b);
+      if (day in newDays) {
+        delete newDays[day];
+      } else {
+        newDays[day] = false;
+      }
     }
     onDurationChange(todo.todoId, newDays);
   };
@@ -45,11 +52,7 @@ const TodoItem = ({
           <div key={day} className="flex items-center mr-4">
             <input
               type="checkbox"
-              checked={
-                day === "매일"
-                  ? isEveryDay
-                  : todo.days.includes(allDays.indexOf(day))
-              }
+              checked={day === "매일" ? isEveryDay : day in todo.days}
               onChange={() => handleDayChange(day)}
               className="mr-2"
             />
@@ -73,9 +76,15 @@ export default function AddCheckList() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [todos, setTodos] = useState<Todo[]>([
-    { topic: "", todoId: 1, todo: "", days: [] },
+    { topic: "", todoId: 1, todo: "", days: {} },
   ]);
   const [memberId, setMemberId] = useState<string>("");
+
+  const today = new Date();
+  const startDate = today.toISOString().split("T")[0];
+  today.setDate(today.getDate() + 6);
+  const endDate = today.toISOString().split("T")[0];
+  const allDays = getDates(startDate, endDate);
 
   const handleButtonClick = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,7 +118,10 @@ export default function AddCheckList() {
     );
   };
 
-  const handleDurationChange = (todoId: number, days: number[]) => {
+  const handleDurationChange = (
+    todoId: number,
+    days: { [key: string]: boolean }
+  ) => {
     setTodos((todos) =>
       todos.map((todo) => (todo.todoId === todoId ? { ...todo, days } : todo))
     );
@@ -134,12 +146,11 @@ export default function AddCheckList() {
           topic: todos[todos.length - 1]?.topic || "",
           todoId: newTodoId,
           todo: "",
-          days: [],
+          days: {},
         },
       ];
     });
   };
-  console.log("check_items:", todos);
 
   return (
     <form
@@ -168,6 +179,7 @@ export default function AddCheckList() {
             onTodoChange={handleTodoChange}
             onDurationChange={handleDurationChange}
             onDelete={deleteTodo}
+            allDays={allDays}
           />
         </div>
       ))}
