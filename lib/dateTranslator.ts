@@ -17,3 +17,37 @@ export const getNumberOfDay = (day: string): number => {
   };
   return dayMap[day];
 };
+
+export const getDates = (
+  startDate: Date | string,
+  endDate: Date | string
+): string[] => {
+  const dates = [];
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
+    const formattedDate = date.toISOString().split("T")[0];
+    // const dayOfWeek = date.toLocaleDateString("ko-KR", { weekday: "short" });
+    dates.push(formattedDate);
+  }
+
+  return dates;
+};
+
+export const getDateAndDay = (
+  startDate: Date | string,
+  endDate: Date | string
+) => {
+  const dates: { [key: string]: string } = {};
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
+    const formattedDate = date.toISOString().split("T")[0];
+    const dayOfWeek = date.toLocaleDateString("ko-KR", { weekday: "short" });
+    dates[formattedDate] = dayOfWeek;
+  }
+
+  return dates;
+};
