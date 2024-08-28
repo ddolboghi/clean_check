@@ -2,13 +2,14 @@
 
 import { getTodoListByDate, updateDaysOfTodo } from "@/actions/todoList";
 import { Todo } from "@/utils/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FillCheckBox from "../icons/FillCheckBox";
 import { getDateAndDay } from "@/lib/dateTranslator";
 import EmptyCheckBox from "../icons/EmptyCheckBox";
 import CheckListHead from "../ui/CheckListHead";
 import { getUniqueTopic } from "@/lib/todoListlib";
 import CompletionAllTodoPopUp from "../ui/CompletionAllTodoPopUp";
+import { excuteConfetti } from "@/lib/confettiCustom";
 
 type DayCheckList = {
   checkListId: number | null | undefined;
@@ -84,6 +85,13 @@ export default function DayCheckList({
   const onClickHomeBtn = () => {
     setIsCompletedAllTodo(!isCompletedAllTodo);
   };
+
+  useEffect(() => {
+    if (isCompletedAllTodo) {
+      const startConfetti = excuteConfetti();
+      startConfetti();
+    }
+  }, [isCompletedAllTodo]);
 
   return (
     <>
