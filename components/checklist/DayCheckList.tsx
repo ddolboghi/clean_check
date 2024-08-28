@@ -32,7 +32,6 @@ export default function DayCheckList({
   const [todoList, setTodoList] = useState<Todo[]>(todoListOfDay);
   const [clickedTopic, setClickedTopic] = useState<string>("전체");
   const [topicList, setTopicList] = useState<string[]>(todayTopics);
-  const [isClickedTodo, setIsClickedTodo] = useState<boolean>(false);
   const week = getDateAndDay(startDate, endDate);
 
   const handleDayOfWeek = async (date: string) => {
@@ -53,7 +52,6 @@ export default function DayCheckList({
   };
 
   const handleTodoClick = async (clickedTodo: Todo) => {
-    setIsClickedTodo(!isClickedTodo);
     if (checkListId) {
       const updatedTodo = todoList.map((todo) => {
         if (todo.todoId === clickedTodo.todoId) {
