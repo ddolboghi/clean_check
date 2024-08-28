@@ -1,53 +1,49 @@
 "use client";
 
-import { getTodoListByDay, updateCompletionOfTodo } from "@/actions/todoList";
-import { week } from "@/data/date";
-import { Completion, Todo } from "@/utils/types";
+import { getTodoListByDate, updateDaysOfTodo } from "@/actions/todoList";
+import { Todo } from "@/utils/types";
 import { useState } from "react";
 import FillCheckBox from "../icons/FillCheckBox";
-import { getNumberOfDay } from "@/lib/dateTranslator";
+import { getDateAndDay, getNumberOfDay } from "@/lib/dateTranslator";
 import EmptyCheckBox from "../icons/EmptyCheckBox";
 import CheckListHead from "../ui/CheckListHead";
+import { getUniqueTopic } from "@/lib/todoListlib";
 
 type DayCheckList = {
   checkListId: number | null | undefined;
-  todayOfWeek: string;
-  todoListOfDay: Todo[] | null | undefined;
-  completionsOfDay: Completion[] | null | undefined;
+  nowDate: string;
+  todoListOfDay: Todo[];
   memberId: string;
   todayTopics: string[];
+  startDate: Date;
+  endDate: Date;
 };
 
 export default function DayCheckList({
   checkListId,
-  todayOfWeek,
+  nowDate,
   todoListOfDay,
-  completionsOfDay,
   memberId,
   todayTopics,
+  startDate,
+  endDate,
 }: DayCheckList) {
-  const [dayOfWeek, setDayOfWeek] = useState<string>(todayOfWeek);
-  const [todoList, setTodoList] = useState<Todo[] | null | undefined>(
-    todoListOfDay
-  );
+  const [clickedDate, setClickedDate] = useState<string>(nowDate);
+  const [todoList, setTodoList] = useState<Todo[]>(todoListOfDay);
   const [clickedTopic, setClickedTopic] = useState<string>("전체");
   const [topicList, setTopicList] = useState<string[]>(todayTopics);
-  const [completionList, setCompletionList] = useState<
-    Completion[] | null | undefined
-  >(completionsOfDay);
+  const [isClickedTodo, setIsClickedTodo] = useState<boolean>(false);
+  const week = getDateAndDay(startDate, endDate);
 
-  const handleDayOfWeek = async (day: string) => {
-    setDayOfWeek(day);
-    const newCheckListOfDay = await getTodoListByDay(day, memberId);
+  const handleDayOfWeek = async (date: string) => {
+    setClickedDate(date);
+    const newCheckListOfDay = await getTodoListByDate(date, memberId);
     if (newCheckListOfDay) {
       const newTodoListOfDay = newCheckListOfDay.filteredTodos;
       setTodoList(newTodoListOfDay);
 
-      const newCompletionListOfDay = newCheckListOfDay.filteredCompletions;
-      setCompletionList(newCompletionListOfDay);
-
-      const newTopicList = newTodoListOfDay.map((todo) => todo.topic);
-      setTopicList(["전체", ...newTopicList]);
+      const newTopicList = getUniqueTopic(newTodoListOfDay);
+      setTopicList(newTopicList);
     }
     setClickedTopic("전체");
   };
@@ -56,27 +52,27 @@ export default function DayCheckList({
     setClickedTopic(btnTopic);
   };
 
-  const handleTodoClick = async (todo: Todo) => {
-    const numberOfDay = getNumberOfDay(dayOfWeek);
-    if (checkListId && completionList) {
-      const updatedCompletionList = completionList.map((completion) => {
-        if (completion.todoId === todo.todoId) {
-          const currentComplete = completion.complete[numberOfDay];
+  const handleTodoClick = async (clickedTodo: Todo) => {
+    setIsClickedTodo(!isClickedTodo);
+    if (checkListId) {
+      const updatedTodo = todoList.map((todo) => {
+        if (todo.todoId === clickedTodo.todoId) {
+          const currentComplete = todo.days[clickedDate];
           return {
-            ...completion,
-            complete: {
-              ...completion.complete,
-              [numberOfDay]: !currentComplete,
+            ...todo,
+            days: {
+              ...todo.days,
+              [clickedDate]: !currentComplete,
             },
           };
         }
-        return completion;
+        return todo;
       });
 
-      setCompletionList(updatedCompletionList);
+      setTodoList(updatedTodo);
 
       // 서버에 updateCompletionList 저장
-      await updateCompletionOfTodo(checkListId, updatedCompletionList);
+      await updateDaysOfTodo(checkListId, updatedTodo);
     }
   };
 
@@ -87,37 +83,40 @@ export default function DayCheckList({
         <div>
           {/* nav section */}
           <nav className="flex justify-center pt-6 items-center text-base font-light tracking-tight text-center whitespace-nowrap text-neutral-400">
-            {week.map((day, dayIdx) => (
+            {Object.entries(week).map(([date, day]) => (
               <button
-                key={dayIdx}
-                onClick={() => handleDayOfWeek(day)}
+                key={date}
+                onClick={() => handleDayOfWeek(date)}
                 className={`self-stretch px-3 py-1.5 w-[53px] h-[53px] ${
-                  dayOfWeek === day &&
+                  clickedDate === date &&
                   "font-medium text-teal-800 bg-[#AEEFE2] rounded-[15px]"
                 }`}
               >
-                {day}
+                <div>{day}</div>
+                <div className="text-xs">
+                  {date.split("-")[2].replace(/^0/, "")}
+                </div>
               </button>
             ))}
           </nav>
 
           {/* topic section */}
-          <nav className="flex justify-start flex-row py-4 gap-2">
+          <nav className="flex justify-start flex-row py-4 space-x-2 overflow-x-auto">
             {topicList.map((topic, topicIdx) => (
               <button
                 key={topicIdx}
                 onClick={() => handleTopic(topic)}
-                className="text-sm tracking-tight leading-loose text-center whitespace-nowrap rounded-3xl max-w-[65px]"
+                className="text-sm tracking-tight leading-loose text-center whitespace-nowrap rounded-3xl"
               >
-                <span
-                  className={`px-5 py-2 rounded-3xl ${
+                <div
+                  className={`px-5 py-[2px] rounded-3xl text-center ${
                     topic === clickedTopic
                       ? "bg-[#565656] text-white"
                       : "bg-gray-200 bg-opacity-80 text-zinc-500"
                   }`}
                 >
                   {topic}
-                </span>
+                </div>
               </button>
             ))}
           </nav>
@@ -126,27 +125,24 @@ export default function DayCheckList({
         {/* todo section */}
         <div className="flex flex-col gap-5">
           {todoList
-            ?.filter(
-              (todo) => clickedTopic === "전체" || todo.topic === clickedTopic
+            .filter(
+              (btnTodo) =>
+                clickedTopic === "전체" || btnTodo.topic === clickedTopic
             )
-            .map((todo) => {
-              const isCompleted = completionList?.some(
-                (completion) =>
-                  completion.todoId === todo.todoId &&
-                  completion.complete[getNumberOfDay(dayOfWeek)]
-              );
+            .map((btnTodo) => {
+              const isCompleted = btnTodo.days[clickedDate];
 
               return (
                 <button
                   className={`flex justify-between items-center px-6 py-4 w-full rounded-3xl border-2 border-solid ${
                     isCompleted
                       ? "bg-white bg-opacity-80 border-zinc-100 text-[#B2B2B2]"
-                      : "bg-[#AEEFE2] border-[#AEEFE2] text-[#146556]"
+                      : "bg-[#E1F5F1] border-[#E1F5F1] text-[#146556]"
                   }`}
-                  key={todo.todoId}
-                  onClick={() => handleTodoClick(todo)}
+                  key={btnTodo.todoId}
+                  onClick={() => handleTodoClick(btnTodo)}
                 >
-                  <p>{todo.todo}</p>
+                  <p>{btnTodo.todo}</p>
                   {isCompleted ? <FillCheckBox /> : <EmptyCheckBox />}
                 </button>
               );

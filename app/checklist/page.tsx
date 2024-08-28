@@ -1,7 +1,8 @@
-import { getTodoListByDay } from "@/actions/todoList";
+import { getTodoListByDate, updateCheckListToDelay } from "@/actions/todoList";
 import DayCheckList from "@/components/checklist/DayCheckList";
 import SplashScreen from "@/components/SplashScreen";
 import { getDayOfWeek } from "@/lib/dateTranslator";
+import { getUniqueTopic } from "@/lib/todoListlib";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -15,24 +16,28 @@ export default async function page() {
   }
   const memberId = user.id;
 
-  const today = new Date().toString();
-  const todayOfWeek = getDayOfWeek(today);
+  const nowDate = new Date().toISOString().split("T")[0];
 
-  const checkListOfDay = await getTodoListByDay(todayOfWeek, memberId);
+  const checkListOfDay = await getTodoListByDate(nowDate, memberId);
   const todayTopics = checkListOfDay
-    ? checkListOfDay.filteredTodos.map((todo) => todo.topic)
+    ? getUniqueTopic(checkListOfDay.filteredTodos)
     : [];
+
+  if (checkListOfDay) {
+    await updateCheckListToDelay(checkListOfDay.checkListId, memberId);
+  }
 
   return (
     <>
       {checkListOfDay ? (
         <DayCheckList
           checkListId={checkListOfDay.checkListId}
-          todayOfWeek={todayOfWeek}
+          nowDate={nowDate}
           todoListOfDay={checkListOfDay.filteredTodos}
-          completionsOfDay={checkListOfDay.filteredCompletions}
           memberId={memberId}
-          todayTopics={["전체", ...todayTopics]}
+          todayTopics={todayTopics}
+          startDate={checkListOfDay.startDate}
+          endDate={checkListOfDay.endDate}
         />
       ) : (
         <SplashScreen />
