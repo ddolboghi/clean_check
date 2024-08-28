@@ -26,10 +26,9 @@ export async function GET(request: Request) {
       //     return NextResponse.redirect(`${origin}${next}`);
       //   }
       // }
-      return NextResponse.redirect(`https://skin-check.vercel.app${next}`);
+      return NextResponse.redirect(`${next}`);
     }
   }
-  console.log(origin, next);
 
   // return the user to an error page with instructions
   return NextResponse.redirect("/error");
