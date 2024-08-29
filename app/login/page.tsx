@@ -1,4 +1,3 @@
-import GoogleLoginButton from "@/components/GoogleLoginButton";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import cleanFreeLogo from "@/assets/cleanfreeLogo2.png";
@@ -34,7 +33,6 @@ export default async function Login() {
         />
       </div>
       <div className="opacity-0 animate-fadeIn delay-1500 flex flex-col gap-2">
-        <GoogleLoginButton />
         <KakaoLoginButton />
       </div>
     </main>
