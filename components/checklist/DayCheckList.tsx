@@ -54,8 +54,6 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
           startDate: checkListOfDay.startDate,
           endDate: checkListOfDay.endDate,
         });
-
-        setLoading(!loading);
       }
 
       if (checkListOfDay && checkListOfDay.delayedDate !== nowDate) {
@@ -66,6 +64,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         );
       }
     }
+    setLoading(!loading);
     fetchAndUpdateTodoList();
   }, []);
 
