@@ -15,7 +15,7 @@ export default async function Login() {
   }
 
   return (
-    <main className="pb-[76px] flex flex-col gap-[177px] justify-end items-center h-screen overflow-hidden">
+    <main className="py-[76px] flex flex-col gap-[100px] justify-center items-center h-screen overflow-hidden">
       <div className="text-center">
         <h1 className="font-semibold text-[40px] mb-6 opacity-0 translate-y-10 animate-fadeInUp">
           환영합니다!
