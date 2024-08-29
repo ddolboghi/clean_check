@@ -12,6 +12,9 @@ import CompletionAllTodoPopUp from "../ui/CompletionAllTodoPopUp";
 import { excuteConfetti } from "@/lib/confettiCustom";
 import Link from "next/link";
 import KakaoLogo from "../icons/KakaoLogo";
+import fillCheckBox from "@/assets/fillCheckbox.svg";
+import emptyCheckBox from "@/assets/emptyCheckBox.svg";
+import Image from "next/image";
 
 type DayCheckList = {
   checkListId: number | undefined;
@@ -128,13 +131,13 @@ export default function DayCheckList({
             <button
               key={date}
               onClick={() => handleDayOfWeek(date)}
-              className={`self-stretch px-3 py-1.5 w-[53px] h-[53px] ${
+              className={`self-stretch px-3 py-1.5 w-[53px] h-[63px] ${
                 clickedDate === date &&
-                "font-medium text-[#B2B2B2] bg-[#DFF4F0] rounded-[15px]"
+                "font-light text-[#B2B2B2] bg-[#DFF4F0] rounded-[15px]"
               }`}
             >
-              <div>{day}</div>
-              <div className="text-xs">
+              <div className="pb-1">{day}</div>
+              <div className="pb-0.5 text-xs">
                 {date.split("-")[2].replace(/^0/, "")}
               </div>
             </button>
@@ -142,7 +145,7 @@ export default function DayCheckList({
         </nav>
 
         {/* topic section */}
-        <nav className="pb-4 px-6 bg-white flex justify-start flex-row space-x-2 overflow-x-auto">
+        <nav className="min-h-7 px-6 mb-[24px] bg-white flex justify-start flex-row space-x-2 overflow-x-auto">
           {topicList.map((topic, topicIdx) => (
             <button
               key={topicIdx}
@@ -163,8 +166,8 @@ export default function DayCheckList({
         </nav>
 
         {/* todo section */}
-        <div
-          className={`px-6 mt-4 bg-white flex flex-col gap-5 overflow-y-scroll scrollbar-hide`}
+        <section
+          className={`px-6 bg-white flex flex-col gap-5 overflow-y-scroll scrollbar-hide`}
         >
           {todoList &&
             todoList
@@ -185,12 +188,26 @@ export default function DayCheckList({
                     key={btnTodo.todoId}
                     onClick={() => handleTodoClick(btnTodo)}
                   >
-                    <p>{btnTodo.todo}</p>
-                    {isCompleted ? <FillCheckBox /> : <EmptyCheckBox />}
+                    <p className="whitespace-normal mr-2">{btnTodo.todo}</p>
+                    {isCompleted ? (
+                      <Image
+                        src={fillCheckBox}
+                        width={18}
+                        height={18}
+                        alt="완료"
+                      />
+                    ) : (
+                      <Image
+                        src={emptyCheckBox}
+                        width={18}
+                        height={18}
+                        alt="미완료"
+                      />
+                    )}
                   </button>
                 );
               })}
-        </div>
+        </section>
       </div>
     </>
   );
