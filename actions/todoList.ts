@@ -11,6 +11,7 @@ interface SupabaseCheckList {
   end_date: Date;
   member_id: string;
   todo_list: Todo[];
+  delayed_date: string;
 }
 
 export async function getTodoListByDate(date: Date | string, memberId: string) {
@@ -38,9 +39,10 @@ export async function getTodoListByDate(date: Date | string, memberId: string) {
 
     const startDate = recentData.start_date;
     const endDate = recentData.end_date;
+    const delayedDate = recentData.delayed_date;
 
     console.log("[getTodoListByDate] Get todo_list by date success");
-    return { checkListId, filteredTodos, startDate, endDate };
+    return { checkListId, filteredTodos, startDate, endDate, delayedDate };
   } catch (error) {
     console.error("[getTodoListByDate] Error getTodoListByDay:", error);
     return null;
@@ -104,7 +106,7 @@ export async function updateTodoDaysToDelay(
 
     const { data: updateData, error: updateError } = await supabaseClient
       .from("check_list")
-      .update({ todo_list: newTodoList })
+      .update({ todo_list: newTodoList, delayed_date: todayKey })
       .eq("member_id", memberId)
       .eq("id", checkListId);
 

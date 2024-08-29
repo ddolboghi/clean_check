@@ -22,7 +22,7 @@ export default async function page() {
     ? getUniqueTopic(checkListOfDay.filteredTodos)
     : [];
 
-  if (checkListOfDay) {
+  if (checkListOfDay && checkListOfDay.delayedDate !== nowDate) {
     await updateTodoDaysToDelay(checkListOfDay.checkListId, memberId, nowDate);
   }
 
