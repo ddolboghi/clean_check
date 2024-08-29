@@ -2,7 +2,7 @@ import CleanFreeLogoWhite from "../icons/CleanFreeLogoWhite";
 
 export default function CheckListHead() {
   return (
-    <div className="bg-[#24E6C1] px-6 mb-[-55px] max-w-[430px] w-full">
+    <div className="bg-[#24E6C1] px-6 mb-[-55px]">
       <div className="mb-[53px] flex flex-row justify-between items-center">
         <div>
           <h1 className="pt-[76px] font-semibold text-[26px] pb-2 leading-tight">
