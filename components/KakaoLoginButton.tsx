@@ -5,7 +5,7 @@ import { kakaoLogin } from "@/lib/kakaoLogin";
 
 const KakaoLoginButton = () => {
   return (
-    <div className="w-[354px] h-[60px] rounded-full border-solid border-[#F1F1F1] border-2 flex items-center">
+    <div className="bg-[#FFED46] w-[300px] h-[60px] rounded-full flex items-center">
       <div className="ml-[55px]">
         <KakaoLogo />
       </div>

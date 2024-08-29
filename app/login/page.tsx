@@ -15,16 +15,15 @@ export default async function Login() {
   }
 
   return (
-    <main className="py-[76px] flex flex-col gap-[80px] justify-center items-center h-screen overflow-hidden">
-      <div className="text-center">
-        <h1 className="font-semibold text-[40px] mb-6 opacity-0 translate-y-10 animate-fadeInUp">
-          환영합니다!
-        </h1>
-        <p className="text-[#808080] text-[20px] opacity-0 translate-y-10 animate-fadeIn delay-1500">
-          스킨체크와 함께 피부를 지켜보세요.
-        </p>
-      </div>
-      <div className="opacity-0 animate-fadeIn delay-1500">
+    <main className="flex flex-col justify-center gap-10 items-center text-center h-screen overflow-hidden">
+      <h1 className="font-semibold text-[40px] opacity-0 animate-fadeInUp">
+        환영합니다!
+      </h1>
+      <p className="mt-[-20px] pb-10 text-[#808080] text-[20px] opacity-0 animate-fadeIn delay-1500">
+        스킨체크와 함께
+        <br /> 피부를 지켜보세요.
+      </p>
+      <div className="mb-[-20%] opacity-0 animate-fadeIn delay-1500">
         <Image
           src={cleanFreeLogo}
           width={195}
@@ -32,7 +31,7 @@ export default async function Login() {
           alt="클린프리 로고"
         />
       </div>
-      <div className="opacity-0 animate-fadeIn delay-1500 flex flex-col gap-2">
+      <div className="mt-[40%] opacity-0 animate-fadeIn delay-1500 flex flex-col gap-2">
         <KakaoLoginButton />
       </div>
     </main>
