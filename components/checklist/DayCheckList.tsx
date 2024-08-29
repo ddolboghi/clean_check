@@ -20,7 +20,7 @@ import SimpleSpinner from "../ui/SimpleSpinner";
 
 type DayCheckList = {
   nowDate: string;
-  memberId: string;
+  memberId: string | null;
 };
 
 type ExtraData = {
@@ -42,29 +42,33 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     endDate: new Date(),
   });
 
+  if (!memberId) setLoading(false);
+
   useEffect(() => {
     async function fetchAndUpdateTodoList() {
-      const checkListOfDay = await getTodoListByDate(nowDate, memberId);
-      if (checkListOfDay) {
-        setTodoList(checkListOfDay.filteredTodos);
-        const todayTopicList = getUniqueTopic(checkListOfDay.filteredTodos);
-        setTopicList(todayTopicList);
-        setExtraData({
-          checkListId: checkListOfDay.checkListId,
-          startDate: checkListOfDay.startDate,
-          endDate: checkListOfDay.endDate,
-        });
-      }
+      if (memberId) {
+        const checkListOfDay = await getTodoListByDate(nowDate, memberId);
+        if (checkListOfDay) {
+          setTodoList(checkListOfDay.filteredTodos);
+          const todayTopicList = getUniqueTopic(checkListOfDay.filteredTodos);
+          setTopicList(todayTopicList);
+          setExtraData({
+            checkListId: checkListOfDay.checkListId,
+            startDate: checkListOfDay.startDate,
+            endDate: checkListOfDay.endDate,
+          });
+        }
 
-      if (checkListOfDay && checkListOfDay.delayedDate !== nowDate) {
-        await updateTodoDaysToDelay(
-          checkListOfDay.checkListId,
-          memberId,
-          nowDate
-        );
+        if (checkListOfDay && checkListOfDay.delayedDate !== nowDate) {
+          await updateTodoDaysToDelay(
+            checkListOfDay.checkListId,
+            memberId,
+            nowDate
+          );
+        }
       }
     }
-    setLoading(!loading);
+    setLoading(false);
     fetchAndUpdateTodoList();
   }, []);
 
@@ -83,15 +87,17 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
 
   const handleDayOfWeek = async (date: string) => {
     setClickedDate(date);
-    const newCheckListOfDay = await getTodoListByDate(date, memberId);
-    if (newCheckListOfDay) {
-      const newTodoListOfDay = newCheckListOfDay.filteredTodos;
-      setTodoList(newTodoListOfDay);
+    if (memberId) {
+      const newCheckListOfDay = await getTodoListByDate(date, memberId);
+      if (newCheckListOfDay) {
+        const newTodoListOfDay = newCheckListOfDay.filteredTodos;
+        setTodoList(newTodoListOfDay);
 
-      const newTopicList = getUniqueTopic(newTodoListOfDay);
-      setTopicList(newTopicList);
+        const newTopicList = getUniqueTopic(newTodoListOfDay);
+        setTopicList(newTopicList);
+      }
+      setClickedTopic("전체");
     }
-    setClickedTopic("전체");
   };
 
   const handleTopic = (btnTopic: string) => {

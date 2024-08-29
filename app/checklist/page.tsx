@@ -1,8 +1,5 @@
-import { getTodoListByDate, updateTodoDaysToDelay } from "@/actions/todoList";
 import DayCheckList from "@/components/checklist/DayCheckList";
-import SplashScreen from "@/components/SplashScreen";
 import { getKSTDateString } from "@/lib/dateTranslator";
-import { getUniqueTopic } from "@/lib/todoListlib";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -14,7 +11,7 @@ export default async function page() {
   if (!user) {
     redirect("/login");
   }
-  const memberId = user.id;
+  const memberId = user ? user.id : null;
   const nowDate = getKSTDateString();
 
   return <DayCheckList nowDate={nowDate} memberId={memberId} />;
