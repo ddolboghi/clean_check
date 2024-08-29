@@ -17,24 +17,5 @@ export default async function page() {
   const memberId = user.id;
   const nowDate = getKSTDateString();
 
-  const checkListOfDay = await getTodoListByDate(nowDate, memberId);
-  const todayTopics = checkListOfDay
-    ? getUniqueTopic(checkListOfDay.filteredTodos)
-    : [];
-
-  if (checkListOfDay && checkListOfDay.delayedDate !== nowDate) {
-    await updateTodoDaysToDelay(checkListOfDay.checkListId, memberId, nowDate);
-  }
-
-  return (
-    <DayCheckList
-      checkListId={checkListOfDay?.checkListId}
-      nowDate={nowDate}
-      todoListOfDay={checkListOfDay?.filteredTodos}
-      memberId={memberId}
-      todayTopics={todayTopics}
-      startDate={checkListOfDay?.startDate}
-      endDate={checkListOfDay?.endDate}
-    />
-  );
+  return <DayCheckList nowDate={nowDate} memberId={memberId} />;
 }
