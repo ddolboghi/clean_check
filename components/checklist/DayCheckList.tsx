@@ -10,6 +10,8 @@ import CheckListHead from "../ui/CheckListHead";
 import { getUniqueTopic } from "@/lib/todoListlib";
 import CompletionAllTodoPopUp from "../ui/CompletionAllTodoPopUp";
 import { excuteConfetti } from "@/lib/confettiCustom";
+import Link from "next/link";
+import KakaoLogo from "../icons/KakaoLogo";
 
 type DayCheckList = {
   checkListId: number | undefined;
@@ -37,8 +39,14 @@ export default function DayCheckList({
           <CheckListHead />
         </div>
         <div className="h-screen translate-y-[20%] text-center text-[20px]">
-          <p>체크리스트가 없어요.😅</p>
-          <p>상담하고 체크리스트를 받아보세요!</p>
+          <p>체크리스트 생성 중이에요.</p>
+          <p>완성되면 알림을 보내드릴게요!</p>
+          <div className="mt-[10px] mx-auto rounded-3xl flex flex-row items-center justify-center gap-2 border-solid border-2 w-[250px]">
+            <KakaoLogo />
+            <Link href="http://pf.kakao.com/_xhpqxgG/chat">
+              카톡 채널에서 상담하기
+            </Link>
+          </div>
         </div>
       </>
     );
