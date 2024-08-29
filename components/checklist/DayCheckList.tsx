@@ -35,7 +35,7 @@ export default function DayCheckList({
   if (!checkListId || !todoListOfDay || !startDate || !endDate) {
     return (
       <>
-        <div className="bg-[#24E6C1] flex justify-center pb-[55px]">
+        <div className="bg-[#24E6C1] pb-[55px]">
           <CheckListHead />
         </div>
         <div className="h-screen translate-y-[20%] text-center text-[20px]">
