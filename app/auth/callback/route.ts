@@ -7,7 +7,6 @@ export async function GET(request: Request) {
   // https://supabase.com/docs/guides/auth/server-side/nextjs
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const redirectTo = searchParams.get("redirect_to")?.toString();
   // if "next" is in param, use it as the redirect URL
   const next = searchParams.get("next") ?? "/";
 
@@ -26,9 +25,8 @@ export async function GET(request: Request) {
         return NextResponse.redirect(`${origin}${next}`);
       }
     }
-    // return NextResponse.redirect(`https://skin-check.vercel.app${next}`);
   }
 
   // return the user to an error page with instructions
-  return NextResponse.redirect("/error");
+  return NextResponse.redirect(`${origin}/error`);
 }

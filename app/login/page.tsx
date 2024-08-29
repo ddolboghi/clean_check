@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import cleanFreeLogo from "@/assets/cleanfreeLogo2.png";
 import Image from "next/image";
 import "@/style/loginPageAnimation.css";
+import KakaoLoginButton from "@/components/KakaoLoginButton";
 
 export default async function Login() {
   const {
@@ -15,7 +16,7 @@ export default async function Login() {
   }
 
   return (
-    <main className="py-[76px] flex flex-col gap-[100px] justify-center items-center h-screen overflow-hidden">
+    <main className="py-[76px] flex flex-col gap-[80px] justify-center items-center h-screen overflow-hidden">
       <div className="text-center">
         <h1 className="font-semibold text-[40px] mb-6 opacity-0 translate-y-10 animate-fadeInUp">
           환영합니다!
@@ -32,8 +33,9 @@ export default async function Login() {
           alt="클린프리 로고"
         />
       </div>
-      <div className="opacity-0 animate-fadeIn delay-1500">
+      <div className="opacity-0 animate-fadeIn delay-1500 flex flex-col gap-2">
         <GoogleLoginButton />
+        <KakaoLoginButton />
       </div>
     </main>
   );
