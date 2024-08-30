@@ -20,7 +20,7 @@ import SimpleSpinner from "../ui/SimpleSpinner";
 
 type DayCheckList = {
   nowDate: string;
-  memberId: string | null;
+  memberId: string;
 };
 
 type ExtraData = {
@@ -42,34 +42,30 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     endDate: new Date(),
   });
 
-  if (!memberId) setLoading(false);
-
   useEffect(() => {
     async function fetchAndUpdateTodoList() {
-      if (memberId) {
-        const checkListOfDay = await getTodoListByDate(nowDate, memberId);
-        if (checkListOfDay) {
-          setTodoList(checkListOfDay.filteredTodos);
-          const todayTopicList = getUniqueTopic(checkListOfDay.filteredTodos);
-          setTopicList(todayTopicList);
-          setExtraData({
-            checkListId: checkListOfDay.checkListId,
-            startDate: checkListOfDay.startDate,
-            endDate: checkListOfDay.endDate,
-          });
-        }
+      const checkListOfDay = await getTodoListByDate(nowDate, memberId);
+      if (checkListOfDay) {
+        setTodoList(checkListOfDay.filteredTodos);
+        const todayTopicList = getUniqueTopic(checkListOfDay.filteredTodos);
+        setTopicList(todayTopicList);
+        setExtraData({
+          checkListId: checkListOfDay.checkListId,
+          startDate: checkListOfDay.startDate,
+          endDate: checkListOfDay.endDate,
+        });
+      }
 
-        if (checkListOfDay && checkListOfDay.delayedDate !== nowDate) {
-          await updateTodoDaysToDelay(
-            checkListOfDay.checkListId,
-            memberId,
-            nowDate
-          );
-        }
+      if (checkListOfDay && checkListOfDay.delayedDate !== nowDate) {
+        await updateTodoDaysToDelay(
+          checkListOfDay.checkListId,
+          memberId,
+          nowDate
+        );
       }
     }
-    setLoading(false);
     fetchAndUpdateTodoList();
+    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -78,10 +74,6 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
       startConfetti();
     }
   }, [isCompletedAllTodo]);
-
-  if (loading) {
-    return <SimpleSpinner />;
-  }
 
   const week = getDateAndDay(extraData.startDate, extraData.endDate);
 
@@ -124,9 +116,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         (todo) => todo.days[clickedDate] === true
       );
       setIsCompletedAllTodo(isCompleteAll);
-
       setTodoList(updatedTodo);
-
       await updateDaysOfTodo(extraData.checkListId, updatedTodo);
     }
   };
@@ -134,14 +124,18 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
   const onClickHomeBtn = () => {
     setIsCompletedAllTodo(!isCompletedAllTodo);
   };
-
+  console.log("체크리스트 컴포넌트의 loading", loading);
   return (
     <>
       {isCompletedAllTodo && (
         <CompletionAllTodoPopUp onClickHomeBtn={onClickHomeBtn} />
       )}
       {!todoList ? (
-        <NothingCheckList />
+        loading ? (
+          <SimpleSpinner />
+        ) : (
+          <NothingCheckList />
+        )
       ) : (
         <div className="flex flex-col h-screen">
           <CheckListHead />
@@ -209,21 +203,12 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
                       onClick={() => handleTodoClick(btnTodo)}
                     >
                       <p className="whitespace-normal mr-2">{btnTodo.todo}</p>
-                      {isCompleted ? (
-                        <Image
-                          src={fillCheckBox}
-                          width={18}
-                          height={18}
-                          alt="완료"
-                        />
-                      ) : (
-                        <Image
-                          src={emptyCheckBox}
-                          width={18}
-                          height={18}
-                          alt="미완료"
-                        />
-                      )}
+                      <Image
+                        src={isCompleted ? fillCheckBox : emptyCheckBox}
+                        width={18}
+                        height={18}
+                        alt={isCompleted ? "완료" : "미완료"}
+                      />
                     </button>
                   );
                 })}

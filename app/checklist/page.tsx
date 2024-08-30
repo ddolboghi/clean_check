@@ -11,7 +11,8 @@ export default async function page() {
   if (!user) {
     redirect("/login");
   }
-  const memberId = user ? user.id : null;
+  const memberId = user.id;
+
   const nowDate = getKSTDateString();
 
   return <DayCheckList nowDate={nowDate} memberId={memberId} />;

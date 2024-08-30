@@ -29,7 +29,6 @@ export const kakaoLogin = async () => {
     redirect("/error");
   }
 
-  console.log(data);
   if (data.url) {
     redirect(data.url);
   }
