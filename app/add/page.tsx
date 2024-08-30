@@ -6,6 +6,7 @@ export default async function TodayList() {
   return (
     <main className="text-center">
       <h1>make cheklist</h1>
+      <hr />
       <AddProxyPage />
     </main>
   );

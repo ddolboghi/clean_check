@@ -43,10 +43,11 @@ export default function AddProxyPage() {
       {isAuthorized ? (
         <div>
           {profiles?.map((profile) => (
-            <ul className="border-black border-2">
+            <ul key={profile.id} className="border-zinc-500 border-b-2">
               <li>회원 ID: {profile.id}</li>
-              <li>{profile.email}</li>
-              <li>{profile.full_name}</li>
+              <li>
+                {profile.full_name}, {profile.email}
+              </li>
             </ul>
           ))}
 
