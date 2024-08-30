@@ -30,6 +30,7 @@ type ExtraData = {
 };
 
 export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
+  const [loading, setLoading] = useState<boolean>(true);
   const [clickedDate, setClickedDate] = useState<string>(nowDate);
   const [todoList, setTodoList] = useState<Todo[] | null>(null);
   const [clickedTopic, setClickedTopic] = useState<string>("전체");
@@ -44,6 +45,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
   useEffect(() => {
     async function fetchAndUpdateTodoList() {
       try {
+        setLoading(true);
         const checkListOfDay = await getTodoListByDate(nowDate, memberId);
 
         if (checkListOfDay) {
@@ -66,11 +68,13 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         }
       } catch (err) {
         console.error("Error fetching todo list:");
+      } finally {
+        setLoading(false);
       }
     }
 
     fetchAndUpdateTodoList();
-  }, []);
+  }, [nowDate, memberId]);
 
   useEffect(() => {
     if (isCompletedAllTodo) {
@@ -129,6 +133,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     setIsCompletedAllTodo(!isCompletedAllTodo);
   };
 
+  if (loading) return <SimpleSpinner />;
   if (!todoList) return <NothingCheckList />;
 
   return (
