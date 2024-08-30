@@ -45,6 +45,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
   useEffect(() => {
     async function fetchAndUpdateTodoList() {
       const checkListOfDay = await getTodoListByDate(nowDate, memberId);
+      if (!checkListOfDay) setLoading(false);
       if (checkListOfDay) {
         setTodoList(checkListOfDay.filteredTodos);
         const todayTopicList = getUniqueTopic(checkListOfDay.filteredTodos);
