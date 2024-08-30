@@ -30,7 +30,6 @@ export const getDates = (
 
   for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
     const formattedDate = date.toISOString().split("T")[0];
-    // const dayOfWeek = date.toLocaleDateString("ko-KR", { weekday: "short" });
     dates.push(formattedDate);
   }
 
@@ -52,4 +51,24 @@ export const getDateAndDay = (
   }
 
   return dates;
+};
+
+export type Days = {
+  [key: string]: boolean;
+};
+
+export const getDaysFromDayGap = (dayGap: number) => {
+  const startDate = getKSTDateString();
+  const start = new Date(startDate);
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+
+  const days: Days = {};
+
+  for (let date = start; date <= end; date.setDate(date.getDate() + dayGap)) {
+    const formattedDate = date.toISOString().split("T")[0];
+    days[formattedDate] = false;
+  }
+
+  return days;
 };
