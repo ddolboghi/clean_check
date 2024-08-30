@@ -25,10 +25,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko" className={`${pretendard.variable}`}>
-      <head>
-        <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-        <script>eruda.init();</script>
-      </head>
       <body className={pretendard.className}>{children}</body>
     </html>
   );
