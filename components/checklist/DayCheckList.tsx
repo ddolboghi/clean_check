@@ -198,7 +198,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
 
                 return (
                   <button
-                    className={`flex justify-between items-center px-6 py-4 w-full rounded-3xl border-2 border-solid ${
+                    className={`flex justify-between px-6 py-4 w-full rounded-3xl border-2 border-solid ${
                       isCompleted
                         ? "bg-white bg-opacity-80 border-zinc-100 text-[#B2B2B2]"
                         : "bg-[#E1F5F1] border-[#E1F5F1] text-[#528A80]"
@@ -206,7 +206,9 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
                     key={btnTodo.todoId}
                     onClick={() => handleTodoClick(btnTodo)}
                   >
-                    <p className="whitespace-normal mr-2">{btnTodo.todo}</p>
+                    <p className="whitespace-normal mr-2 text-left">
+                      {btnTodo.todo}
+                    </p>
                     <Image
                       src={isCompleted ? fillCheckBox : emptyCheckBox}
                       width={18}
