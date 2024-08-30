@@ -133,8 +133,8 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     setIsCompletedAllTodo(!isCompletedAllTodo);
   };
 
-  if (loading) return <SimpleSpinner />;
-  if (!todoList) return <NothingCheckList />;
+  if (loading && !todoList) return <SimpleSpinner />;
+  if (!loading && !todoList) return <NothingCheckList />;
 
   return (
     <>
