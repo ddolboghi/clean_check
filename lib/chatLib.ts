@@ -1,6 +1,14 @@
 import { Message } from "@/components/chat/Chatbot";
-import { NUMBER_OF_MAX_QUESTION } from "@/utils/constant";
 
 export const getIsOverQuestion = (chat: Message[]) => {
-  return chat.filter((c) => c.role !== "user").length > NUMBER_OF_MAX_QUESTION;
+  const numberOfMaxQuestion = Number(
+    process.env.NEXT_PUBLIC_NUMBER_OF_MAX_QUESTION as string
+  );
+  return (
+    chat.filter((c) => c.role === "assistant").length > numberOfMaxQuestion
+  );
+};
+
+export const getNumberOfBotQuestions = (chat: Message[]) => {
+  return chat.filter((c) => c.role !== "user").length;
 };

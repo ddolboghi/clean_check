@@ -29,7 +29,6 @@ export async function chatCompletion(chatMessages: Message[]) {
     ];
 
     const isOverConversations = getIsOverQuestion(chat);
-    console.log("isOverConversations: ", isOverConversations);
     if (isOverConversations) {
       return {
         role: "assistant",
@@ -203,7 +202,9 @@ export async function saveTodolist(todoList: Todo[]) {
     if (error) throw error;
 
     console.log("[saveChecklist] Data inserted successfully: ", data);
+    return true;
   } catch (error) {
     console.error("[saveChecklist] Error inserting data:", error);
+    return false;
   }
 }

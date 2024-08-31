@@ -6,10 +6,11 @@ import UserMessage from "./UserMessage";
 import ChatInput from "./ChatInput";
 import { chatCompletion, createTodoList, saveTodolist } from "@/actions/chat";
 import { getIsOverQuestion } from "@/lib/chatLib";
+import { useRouter } from "next/navigation";
 
 export type Message = {
   content: string;
-  role: "user" | "assistant" | "system";
+  role: "user" | "assistant" | "system" | "final";
 };
 
 export default function Chatbot() {
@@ -19,7 +20,9 @@ export default function Chatbot() {
     { role: "assistant", content: "피부고민을 말해보세요." },
   ]);
   const [disableChatInput, setDisableChatInput] = useState<boolean>(false);
-  const [lastResponse, setLastResponse] = useState<Message>();
+  const [generatingCheckList, setGeneratingCheckList] =
+    useState<boolean>(false);
+  const route = useRouter();
 
   const handleSendMessage = async (e: FormEvent) => {
     e.preventDefault();
@@ -41,22 +44,27 @@ export default function Chatbot() {
       const res = await chatCompletion(newChatMessages);
 
       const isOverQuestion = getIsOverQuestion(newChatMessages);
+      console.log(isOverQuestion);
       if (!isOverQuestion) {
         setMessages((prevMessages) => [...prevMessages, res]);
       } else {
+        setGeneratingCheckList(true);
         setDisableChatInput(true);
-        setLastResponse(res);
-
-        // 로딩 컴포넌트 띄우기
         const todoList = await createTodoList(messages);
 
         if (!todoList) {
           throw new Error("Fail to create todo list.");
         }
 
-        await saveTodolist(todoList);
+        const isSaved = await saveTodolist(todoList);
 
-        //checklist 페이지로 이동하기
+        if (isSaved) {
+          route.push("/checklist");
+        } else {
+          alert(
+            "체크리스트 생성 중 문제가 발생했어요. 상담 페이지로 돌아갈게요."
+          );
+        }
       }
     } catch (error) {
       console.log("API Error", error);
@@ -66,25 +74,28 @@ export default function Chatbot() {
   };
 
   return (
-    <div>
+    <>
+      {/* 체크리스트 생성 모달로 띄워야 렌더링되면서 함수가 실행된다. */}
+      {generatingCheckList && <div>체크리스트 생성중</div>}
       <div>
-        {messages &&
-          messages.map((m, i) => {
-            return m.role === "assistant" ? (
-              <BotMessage {...m} key={i} />
-            ) : (
-              <UserMessage {...m} key={i} />
-            );
-          })}
-        {disableChatInput && lastResponse && <BotMessage {...lastResponse} />}
-        {loading && <div>로딩 중...</div>}
+        <div>
+          {messages &&
+            messages.map((m, i) => {
+              return m.role === "assistant" ? (
+                <BotMessage {...m} key={i} />
+              ) : (
+                <UserMessage {...m} key={i} />
+              );
+            })}
+          {loading && <div>로딩 중...</div>}
+        </div>
+        <ChatInput
+          userMessage={userMessage}
+          setUserMessage={setUserMessage}
+          handleSendMessage={handleSendMessage}
+          disableChatInput={disableChatInput}
+        />
       </div>
-      <ChatInput
-        userMessage={userMessage}
-        setUserMessage={setUserMessage}
-        handleSendMessage={handleSendMessage}
-        disableChatInput={disableChatInput}
-      />
-    </div>
+    </>
   );
 }
