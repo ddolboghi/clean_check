@@ -1,3 +1,4 @@
+import { getHaveCheckList } from "@/actions/userActions";
 import DayCheckList from "@/components/checklist/DayCheckList";
 import { getKSTDateString } from "@/lib/dateTranslator";
 import { createClient } from "@/utils/supabase/server";
@@ -12,6 +13,11 @@ export default async function page() {
     redirect("/login");
   }
   const memberId = user.id;
+
+  const haveCheckList = await getHaveCheckList();
+  if (!haveCheckList) {
+    redirect("/chat");
+  }
 
   const nowDate = getKSTDateString();
 
