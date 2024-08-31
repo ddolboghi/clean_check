@@ -15,8 +15,8 @@ import { excuteConfetti } from "@/lib/confettiCustom";
 import fillCheckBox from "@/assets/fillCheckbox.svg";
 import emptyCheckBox from "@/assets/emptyCheckBox.svg";
 import Image from "next/image";
-import NothingCheckList from "./NothingCheckList";
 import SimpleSpinner from "../ui/SimpleSpinner";
+import { useRouter } from "next/navigation";
 
 type DayCheckList = {
   nowDate: string;
@@ -41,6 +41,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     startDate: new Date(),
     endDate: new Date(),
   });
+  const route = useRouter();
 
   useEffect(() => {
     async function fetchAndUpdateTodoList() {
@@ -134,7 +135,9 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
   };
 
   if (loading) return <SimpleSpinner />;
-  if (!todoList) return <NothingCheckList />;
+  if (!todoList) {
+    route.push("/chat");
+  }
 
   return (
     <>
