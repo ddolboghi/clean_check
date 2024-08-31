@@ -4,6 +4,7 @@ import { supabaseClient } from "@/lib/getSupabaseClient";
 import { createClient } from "@/utils/supabase/server";
 import { SupabaseCheckList } from "./todoList";
 import { getIsBeforeToday } from "@/lib/dateTranslator";
+import { SupabaseProfile } from "./profile";
 
 type UserAction = {
   memberId: string;
@@ -45,6 +46,59 @@ export async function getHaveCheckList() {
     return false;
   } catch (error) {
     console.error("Error inserting data:", error);
+    return null;
+  }
+}
+
+interface SupabaseUserAction {
+  id: number;
+  created_at: string;
+  member_id: string;
+  today_done: boolean;
+}
+
+export async function updateTodayDone(memberId: string) {
+  try {
+    const { data: profilesData, error: profilesError } = await supabaseClient
+      .from("profiles")
+      .select("*")
+      .eq("id", memberId)
+      .single<SupabaseProfile>();
+
+    if (profilesError || !profilesData) throw profilesError;
+
+    const { data: userActionData, error: userActionError } =
+      await supabaseClient
+        .from("user_action")
+        .select("*")
+        .eq("member_id", memberId)
+        .single<SupabaseUserAction>();
+
+    if (!userActionData || userActionError) {
+      const { data: insertData, error: insertError } = await supabaseClient
+        .from("user_action")
+        .insert([
+          {
+            member_id: memberId,
+            today_done: true,
+            member_name: profilesData.full_name,
+          },
+        ]);
+
+      if (insertError) throw insertError;
+    }
+
+    const { data: updateData, error: updateError } = await supabaseClient
+      .from("user_action")
+      .update({ today_done: true })
+      .eq("member_id", memberId);
+
+    if (updateError) throw updateError;
+
+    console.log("[updateTodayDone] Get user_action success");
+    return userActionData;
+  } catch (error) {
+    console.error("[updateTodayDone] Error update user_action:", error);
     return null;
   }
 }
