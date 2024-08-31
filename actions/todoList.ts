@@ -4,7 +4,7 @@ import { getKSTPreviousDateString } from "@/lib/dateTranslator";
 import { supabaseClient } from "@/lib/getSupabaseClient";
 import { Todo } from "@/utils/types";
 
-interface SupabaseCheckList {
+export interface SupabaseCheckList {
   id: number;
   created_at: string;
   start_date: Date;
