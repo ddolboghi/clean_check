@@ -7,6 +7,7 @@ import ChatInput from "./ChatInput";
 import { chatCompletion, createTodoList, saveTodolist } from "@/actions/chat";
 import { getIsOverQuestion } from "@/lib/chatLib";
 import { useRouter } from "next/navigation";
+import GeneratingCheckList from "./GeneratingCheckList";
 
 export type Message = {
   content: string;
@@ -59,7 +60,10 @@ export default function Chatbot() {
         const isSaved = await saveTodolist(todoList);
 
         if (isSaved) {
-          route.push("/checklist");
+          setGeneratingCheckList(!isSaved);
+          setTimeout(() => {
+            route.push("/checklist");
+          }, 1000);
         } else {
           alert(
             "체크리스트 생성 중 문제가 발생했어요. 상담 페이지로 돌아갈게요."
@@ -76,7 +80,9 @@ export default function Chatbot() {
   return (
     <>
       {/* 체크리스트 생성 모달로 띄워야 렌더링되면서 함수가 실행된다. */}
-      {generatingCheckList && <div>체크리스트 생성중</div>}
+      {!generatingCheckList && (
+        <GeneratingCheckList isGenerateCheckList={generatingCheckList} />
+      )}
       <div>
         <div>
           {messages &&
