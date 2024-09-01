@@ -62,73 +62,6 @@ export async function chatCompletion(chatMessages: Message[]) {
   }
 }
 
-async function createCheckListByGPT(chatMessages: Message[]) {
-  const checkListPrompt = process.env.NEXT_PUBLIC_CHEKLIST_PROMPT as string;
-  const chat = [{ role: "system", content: checkListPrompt }, ...chatMessages];
-
-  try {
-    const completion = await openAI.chat.completions.create({
-      messages: chat as OpenAI.ChatCompletionMessageParam[],
-      model: "gpt-4o-mini",
-    });
-
-    if (!completion) {
-      throw new Error("Fail to generate Checklist");
-    }
-
-    const checklistMessage = completion.choices[0].message?.content;
-
-    if (!checklistMessage) {
-      throw new Error("No checklist");
-    }
-
-    return checklistMessage;
-  } catch (error) {
-    console.error("[getCheckListByGPT] Error: ", error);
-    return null;
-  }
-}
-
-const todoSchema = z.object({
-  dayNum: z.number(),
-  todoId: z.number(),
-  todo: z.string(),
-  topic: z.string(),
-});
-
-const checkList = z.object({ checkList: z.array(todoSchema) });
-
-async function parseGPTJson(checklistMessage: string) {
-  const jsonParsingPrompt = process.env
-    .NEXT_PUBLIC_JSON_PARSING_PROMPT as string;
-
-  try {
-    const completion = await openAI.beta.chat.completions.parse({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: jsonParsingPrompt },
-        { role: "user", content: checklistMessage },
-      ],
-      response_format: zodResponseFormat(checkList, "checkList"),
-    });
-
-    if (!completion) {
-      throw new Error("Invalid response from OPENAI API!");
-    }
-
-    const jsonResponse = completion.choices[0].message.parsed;
-
-    if (!jsonResponse || !jsonResponse.checkList) {
-      throw new Error("No message from OPENAI API");
-    }
-
-    return jsonResponse.checkList;
-  } catch (error) {
-    console.log("[parseGPTJson] Error: ", error);
-    return null;
-  }
-}
-
 type ParsedCheckList =
   | {
       todoId: number;
@@ -156,7 +89,12 @@ export async function createTodoList(chatMessages: Message[]) {
       }
     );
 
-    console.log("gptCheckListMessageResponse: ", gptCheckListMessageResponse);
+    if (!gptCheckListMessageResponse.ok) {
+      throw new Error(
+        `gptCheckListMessageResponse status: ${gptCheckListMessageResponse.status}`
+      );
+    }
+
     const gptCheckListMessageData = await gptCheckListMessageResponse.json();
     let checklistMessage = null;
     if (gptCheckListMessageResponse.ok) {
@@ -181,7 +119,11 @@ export async function createTodoList(chatMessages: Message[]) {
       }
     );
 
-    console.log("parseCheckListResponse: ", parseCheckListResponse);
+    if (!parseCheckListResponse.ok)
+      throw new Error(
+        `parseCheckListResponse status: ${parseCheckListResponse.status}`
+      );
+
     const parseCheckListData = await parseCheckListResponse.json();
     let parsedTodoList: ParsedCheckList = null;
     if (parseCheckListResponse.ok) {
@@ -192,7 +134,7 @@ export async function createTodoList(chatMessages: Message[]) {
 
     if (!parsedTodoList) {
       console.log("Error parsedTodoList: ", parsedTodoList);
-      throw new Error("Error in parseGPTJson");
+      throw new Error(`Error in parseGPTJson: ${parseCheckListResponse}`);
     }
 
     const todoList: Todo[] = [];
