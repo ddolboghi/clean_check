@@ -9,9 +9,5 @@ export default async function page() {
     redirect("/checklist");
   }
 
-  return (
-    <main>
-      <Chatbot />
-    </main>
-  );
+  return <Chatbot />;
 }

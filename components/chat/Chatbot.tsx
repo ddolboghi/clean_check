@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import BotMessage from "./BotMessage";
 import UserMessage from "./UserMessage";
 import ChatInput from "./ChatInput";
@@ -91,8 +91,19 @@ export default function Chatbot() {
     setCloseResetPopup(!closeResetPopup);
   };
 
+  //스크롤 자동 이동
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   return (
-    <>
+    <main>
       {/* 체크리스트 생성 모달로 띄워야 렌더링되면서 함수가 실행된다. */}
       {generatingCheckList && (
         <GeneratingCheckList isGenerateCheckList={generatingCheckList} />
@@ -107,8 +118,8 @@ export default function Chatbot() {
         routeBack={() => route.back()}
         handleResetPopup={handleResetPopup}
       />
-      <section className="px-7">
-        <div className="flex flex-col gap-4">
+      <section className="px-7 py-[110px]">
+        <div className="flex flex-col gap-4 overflow-y-auto flex-grow">
           {messages &&
             messages.map((m, i) => {
               return m.role === "assistant" ? (
@@ -118,6 +129,7 @@ export default function Chatbot() {
               );
             })}
           {loading && <ChatLoading />}
+          <div ref={messagesEndRef} />
         </div>
         <ChatInput
           userMessage={userMessage}
@@ -126,6 +138,6 @@ export default function Chatbot() {
           disableChatInput={disableChatInput}
         />
       </section>
-    </>
+    </main>
   );
 }

@@ -12,7 +12,7 @@ export default function ChatHeader({
   handleResetPopup,
 }: ChatHeaderProps) {
   return (
-    <header className="px-4 mt-[60px] mb-4 flex flex-row justify-between items-center">
+    <header className="fixed bg-white w-full px-4 pt-[60px] mb-4 flex flex-row justify-between items-center">
       <button
         onClick={() => routeBack()}
         className="w-[30px] h-[30px] flex justify-center items-center"
