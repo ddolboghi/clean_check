@@ -6,12 +6,6 @@ import { SupabaseCheckList } from "./todoList";
 import { getIsBeforeToday } from "@/lib/dateTranslator";
 import { SupabaseProfile } from "./profile";
 
-type UserAction = {
-  memberId: string;
-  haveCheckList: boolean;
-  todayDone: boolean;
-};
-
 export async function getHaveCheckList() {
   try {
     const {
