@@ -1,5 +1,6 @@
 import "./globals.css";
 import localFont from "next/font/local";
+import Head from "next/head";
 
 const pretendard = localFont({
   src: "../assets/fonts/PretendardVariable.woff2",
@@ -25,6 +26,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko" className={`${pretendard.variable}`}>
+      <Head>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
+        />
+      </Head>
       <body className={pretendard.className}>{children}</body>
     </html>
   );
