@@ -21,7 +21,11 @@ export default function Chatbot() {
   const [userMessage, setUserMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "안녕하세요, 스킨체크입니다." },
+    {
+      role: "assistant",
+      content:
+        "안녕하세요. 상담을 시작할게요.😊 먼저, 피부에 어떤 문제가 있는지 구체적으로 말씀해 주실 수 있을까요? 예를 들어, 발진, 여드름, 건조함, 가려움증 등 어떤 증상이 있는지 알려주세요.🧐",
+    },
   ]);
   const [disableChatInput, setDisableChatInput] = useState<boolean>(false);
   const [generatingCheckList, setGeneratingCheckList] =
@@ -55,26 +59,59 @@ export default function Chatbot() {
       } else {
         setGeneratingCheckList(true);
         setDisableChatInput(true);
-        const todoList = await createTodoList(messages);
+
+        const createResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/create-todolist`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ chatMessages: newChatMessages }),
+          }
+        );
+
+        const createData = await createResponse.json();
+        let todoList = null;
+        if (createResponse.ok) {
+          todoList = createData.todoList;
+        } else {
+          throw createData.error;
+        }
 
         if (!todoList) {
           throw new Error("Fail to create todo list.");
         }
 
-        const isSaved = await saveTodolist(todoList);
+        const saveResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/save-todolist`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ todoList }),
+          }
+        );
+
+        const saveData = await saveResponse.json();
+        let isSaved = null;
+        if (saveResponse.ok) {
+          isSaved = saveData;
+        } else {
+          throw saveData.error;
+        }
 
         if (isSaved) {
           setGeneratingCheckList(!isSaved);
-          setTimeout(() => {
-            route.push("/checklist");
-          }, 1000);
+          route.push("/checklist");
         } else {
-          alert(
-            "체크리스트 생성 중 문제가 발생했어요. 상담 페이지로 돌아갈게요."
-          );
+          throw new Error("Fail to save todo list.");
         }
       }
     } catch (error) {
+      alert("체크리스트 생성 중 문제가 발생했어요. 상담 페이지로 돌아갈게요.");
+      route.refresh();
       console.log("API Error", error);
     } finally {
       setLoading(false);

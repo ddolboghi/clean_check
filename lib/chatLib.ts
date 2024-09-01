@@ -4,7 +4,6 @@ export const getIsOverQuestion = (chat: Message[]) => {
   const numberOfMaxQuestion = Number(
     process.env.NEXT_PUBLIC_NUMBER_OF_MAX_QUESTION as string
   );
-  console.log(numberOfMaxQuestion);
   return (
     chat.filter((c) => c.role === "assistant").length > numberOfMaxQuestion
   );

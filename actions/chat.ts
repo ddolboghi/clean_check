@@ -11,7 +11,7 @@ import { supabaseClient } from "@/lib/getSupabaseClient";
 import { createClient } from "@/utils/supabase/server";
 
 const openAI = new OpenAI({
-  apiKey: process.env.NEXT_PUBLIC_OPENAI_AIP_KEY,
+  apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
 });
 
 /**
@@ -136,12 +136,14 @@ async function parseGPTJson(checklistMessage: string) {
  */
 export async function createTodoList(chatMessages: Message[]) {
   try {
+    //edge function으로 바꾸기
     const checklistMessage = await createCheckListByGPT(chatMessages);
 
     if (!checklistMessage) {
       throw new Error("Error in getCheckListByGPT");
     }
 
+    //edge function으로 바꾸기
     const checklistWithNumberDays = await parseGPTJson(checklistMessage);
 
     if (!checklistWithNumberDays) {
@@ -207,4 +209,14 @@ export async function saveTodolist(todoList: Todo[]) {
     console.error("[saveChecklist] Error inserting data:", error);
     return false;
   }
+}
+
+/**
+ * 오늘 상담 기록을 저장한다.
+ * @param messages - typeof Message[]. 'assistant'와 'user' role인 message만 추출한다.
+ */
+export async function saveChat(messages: Message[]) {
+  //member_id: user.id
+  //chat_history<jsonb>: messages
+  //
 }
