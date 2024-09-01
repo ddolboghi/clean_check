@@ -108,7 +108,7 @@ export default function Chatbot() {
         routeBack={() => route.back()}
         handleResetPopup={handleResetPopup}
       />
-      <section>
+      <section className="px-4">
         <div>
           {messages &&
             messages.map((m, i) => {
