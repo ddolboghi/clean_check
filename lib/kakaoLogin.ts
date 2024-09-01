@@ -13,6 +13,7 @@ export const kakaoLogin = async () => {
     url = url.startsWith("http") ? url : `https://${url}`;
     // Make sure to include a trailing `/`.
     url = url.endsWith("/") ? url : `${url}/`;
+    console.log("로그인할때 url: ", url);
     return url;
   };
 
@@ -20,7 +21,7 @@ export const kakaoLogin = async () => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "kakao",
     options: {
-      redirectTo: `${getURL()}/auth/callback?next=/checklist`,
+      redirectTo: `${getURL()}auth/callback?next=/checklist`,
     },
   });
 
