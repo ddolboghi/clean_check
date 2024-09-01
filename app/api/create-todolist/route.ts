@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
       }
     );
 
+    console.log(gptCheckListMessageResponse);
     const gptCheckListMessageData = await gptCheckListMessageResponse.json();
     let checklistMessage = null;
     if (gptCheckListMessageResponse.ok) {
