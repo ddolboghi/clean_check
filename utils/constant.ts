@@ -1,1 +1,1 @@
-export const NUMBER_OF_MAX_QUESTION = 10;
+export const MAX_LENGTH_INPUT_MESSAGE = 500;
