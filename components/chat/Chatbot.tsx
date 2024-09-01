@@ -87,6 +87,7 @@ export default function Chatbot() {
           generateTodoListMessageStart: true,
         });
 
+        /**-------------------------------------*/
         const gptTodoListMessageResponse = await fetch(
           `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/create-checklist-by-gpt`,
           {
@@ -234,7 +235,7 @@ export default function Chatbot() {
   return (
     <main>
       {/* 체크리스트 생성 모달로 띄워야 렌더링되면서 함수가 실행된다. */}
-      {generatingCheckList && (
+      {generatingCheckList.generateParsedTodoListStart && (
         <GeneratingCheckList isGenerateCheckList={generatingCheckList} />
       )}
       {!closeResetPopup && (
