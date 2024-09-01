@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 import GeneratingCheckList from "./GeneratingCheckList";
 import ResetChatPopUp from "../ui/ResetChatPopUp";
 import RestartIcon from "../icons/restartIcon";
+import BackIcon from "../icons/BackIcon";
+import ChatHeader from "./ChatHeader";
 
 export type Message = {
   content: string;
@@ -102,11 +104,10 @@ export default function Chatbot() {
           handleResetChat={() => handleResetChat()}
         />
       )}
-      <section>
-        <button onClick={() => handleResetPopup()}>
-          <RestartIcon />
-        </button>
-      </section>
+      <ChatHeader
+        routeBack={() => route.back()}
+        handleResetPopup={handleResetPopup}
+      />
       <section>
         <div>
           {messages &&
