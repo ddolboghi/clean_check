@@ -36,6 +36,8 @@ export const updateSession = async (request: NextRequest) => {
     // https://supabase.com/docs/guides/auth/server-side/nextjs
     await supabase.auth.getUser();
 
+    console.log("supabase middleware operating");
+    console.log("supabase middleware response:", response);
     return response;
   } catch (e) {
     // If you are here, a Supabase client could not be created!
