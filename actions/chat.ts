@@ -152,10 +152,11 @@ export async function createTodoList(chatMessages: Message[]) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ chatMessages }),
+        body: JSON.stringify({ chatMessages: chatMessages }),
       }
     );
 
+    console.log("gptCheckListMessageResponse: ", gptCheckListMessageResponse);
     const gptCheckListMessageData = await gptCheckListMessageResponse.json();
     let checklistMessage = null;
     if (gptCheckListMessageResponse.ok) {
@@ -165,6 +166,7 @@ export async function createTodoList(chatMessages: Message[]) {
     }
 
     if (!checklistMessage) {
+      console.log("Error checklistMessage: ", checklistMessage);
       throw new Error("checklistMessage is empty.");
     }
 
@@ -175,10 +177,11 @@ export async function createTodoList(chatMessages: Message[]) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ checklistMessage }),
+        body: JSON.stringify({ checklistMessage: checklistMessage }),
       }
     );
 
+    console.log("parseCheckListResponse: ", parseCheckListResponse);
     const parseCheckListData = await parseCheckListResponse.json();
     let parsedTodoList: ParsedCheckList = null;
     if (parseCheckListResponse.ok) {
@@ -188,6 +191,7 @@ export async function createTodoList(chatMessages: Message[]) {
     }
 
     if (!parsedTodoList) {
+      console.log("Error parsedTodoList: ", parsedTodoList);
       throw new Error("Error in parseGPTJson");
     }
 
