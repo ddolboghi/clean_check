@@ -13,12 +13,6 @@ export const kakaoLogin = async () => {
     url = url.startsWith("http") ? url : `https://${url}`;
     // Make sure to include a trailing `/`.
     url = url.endsWith("/") ? url : `${url}/`;
-    console.log("로그인할때 url: ", url);
-    console.log("NEXT_PUBLIC_SITE_URL: ", process?.env?.NEXT_PUBLIC_SITE_URL);
-    console.log(
-      "NEXT_PUBLIC_VERCEL_URL: ",
-      process?.env?.NEXT_PUBLIC_VERCEL_URL
-    );
     return url;
   };
 
