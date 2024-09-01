@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import BotMessage from "./BotMessage";
 import UserMessage from "./UserMessage";
 import ChatInput from "./ChatInput";
-import { chatCompletion, createTodoList, saveTodolist } from "@/actions/chat";
+import { chatCompletion, createTodoList } from "@/actions/chat";
 import { getIsOverQuestion } from "@/lib/chatLib";
 import { useRouter } from "next/navigation";
 import GeneratingCheckList from "./GeneratingCheckList";
@@ -60,24 +60,7 @@ export default function Chatbot() {
         setGeneratingCheckList(true);
         setDisableChatInput(true);
 
-        const createResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/create-todolist`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ chatMessages: newChatMessages }),
-          }
-        );
-
-        const createData = await createResponse.json();
-        let todoList = null;
-        if (createResponse.ok) {
-          todoList = createData.todoList;
-        } else {
-          throw createData.error;
-        }
+        const todoList = await createTodoList(newChatMessages);
 
         if (!todoList) {
           throw new Error("Fail to create todo list.");
@@ -142,7 +125,7 @@ export default function Chatbot() {
   return (
     <main>
       {/* 체크리스트 생성 모달로 띄워야 렌더링되면서 함수가 실행된다. */}
-      {generatingCheckList && (
+      {!generatingCheckList && (
         <GeneratingCheckList isGenerateCheckList={generatingCheckList} />
       )}
       {!closeResetPopup && (

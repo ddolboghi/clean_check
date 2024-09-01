@@ -10,7 +10,6 @@ export const runtime = "edge";
 export async function POST(req: NextRequest) {
   try {
     const { chatMessages } = await req.json();
-    console.log("[create-checklist-by-gpt] chatMessages: ", chatMessages);
     const checkListPrompt = process.env.NEXT_PUBLIC_CHEKLIST_PROMPT as string;
     const chat = [
       { role: "system", content: checkListPrompt },
@@ -32,7 +31,7 @@ export async function POST(req: NextRequest) {
       throw new Error("No checklist");
     }
 
-    console.log("checklistMessage: ", checklistMessage);
+    console.log("[createCheckListByGPT] checklistMessage create success.");
     return NextResponse.json({ checklistMessage });
   } catch (error) {
     console.error("[createCheckListByGPT] Error: ", error);

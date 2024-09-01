@@ -129,6 +129,15 @@ async function parseGPTJson(checklistMessage: string) {
   }
 }
 
+type ParsedCheckList =
+  | {
+      todoId: number;
+      topic: string;
+      todo: string;
+      dayNum: number;
+    }[]
+  | null;
+
 /**
  * Create a todo list message and parse it into JSON.
  * @param chatMessages
@@ -136,33 +145,65 @@ async function parseGPTJson(checklistMessage: string) {
  */
 export async function createTodoList(chatMessages: Message[]) {
   try {
-    //edge function으로 바꾸기
-    const checklistMessage = await createCheckListByGPT(chatMessages);
+    const gptCheckListMessageResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/create-checklist-by-gpt`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ chatMessages }),
+      }
+    );
 
-    if (!checklistMessage) {
-      throw new Error("Error in getCheckListByGPT");
+    const gptCheckListMessageData = await gptCheckListMessageResponse.json();
+    let checklistMessage = null;
+    if (gptCheckListMessageResponse.ok) {
+      checklistMessage = gptCheckListMessageData.checklistMessage;
+    } else {
+      throw gptCheckListMessageData.error;
     }
 
-    //edge function으로 바꾸기
-    const checklistWithNumberDays = await parseGPTJson(checklistMessage);
+    if (!checklistMessage) {
+      throw new Error("checklistMessage is empty.");
+    }
 
-    if (!checklistWithNumberDays) {
+    const parseCheckListResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/parse-gpt-checklist`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ checklistMessage }),
+      }
+    );
+
+    const parseCheckListData = await parseCheckListResponse.json();
+    let parsedTodoList: ParsedCheckList = null;
+    if (parseCheckListResponse.ok) {
+      parsedTodoList = parseCheckListData.parsedCheckList;
+    } else {
+      throw parseCheckListData.error;
+    }
+
+    if (!parsedTodoList) {
       throw new Error("Error in parseGPTJson");
     }
 
-    const checklist: Todo[] = [];
+    const todoList: Todo[] = [];
 
-    checklistWithNumberDays.forEach((checkEle) => {
+    parsedTodoList.forEach((parsedTodo) => {
       const todoEle: Todo = {
-        todoId: checkEle.todoId,
-        topic: checkEle.topic,
-        todo: checkEle.todo,
-        days: getDaysFromDayGap(checkEle.dayNum),
+        todoId: parsedTodo.todoId,
+        topic: parsedTodo.topic,
+        todo: parsedTodo.todo,
+        days: getDaysFromDayGap(parsedTodo.dayNum),
       };
-      checklist.push(todoEle);
+      todoList.push(todoEle);
     });
 
-    return checklist;
+    return todoList;
   } catch (error) {
     console.error("[saveChecklist] Error: ", error);
     return null;
