@@ -74,13 +74,16 @@ export async function updateTodayDone(memberId: string) {
         .eq("member_id", memberId)
         .single<SupabaseUserAction>();
 
+    const utcDate = new Date();
+    const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
+
     if (!userActionData || userActionError) {
       const { data: insertData, error: insertError } = await supabaseClient
         .from("user_action")
         .insert([
           {
             member_id: memberId,
-            today_done: true,
+            recent_done_time: kstDate,
             member_name: profilesData.full_name,
           },
         ]);
@@ -90,12 +93,12 @@ export async function updateTodayDone(memberId: string) {
 
     const { data: updateData, error: updateError } = await supabaseClient
       .from("user_action")
-      .update({ today_done: true })
+      .update({ recent_done_time: kstDate })
       .eq("member_id", memberId);
 
     if (updateError) throw updateError;
 
-    console.log("[updateTodayDone] Get user_action success");
+    console.log("[updateTodayDone] Update user_action success");
     return userActionData;
   } catch (error) {
     console.error("[updateTodayDone] Error update user_action:", error);
