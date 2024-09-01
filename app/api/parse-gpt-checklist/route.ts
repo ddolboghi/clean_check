@@ -19,14 +19,7 @@ const todoSchema = z.object({
 
 const checkList = z.object({ checkList: z.array(todoSchema) });
 
-export default async function handler(req: NextRequest) {
-  if (req.method !== "POST") {
-    return new NextResponse(JSON.stringify({ error: "Method not allowed" }), {
-      status: 405,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
+export async function POST(req: NextRequest) {
   try {
     const { checklistMessage } = await req.json();
     const jsonParsingPrompt = process.env
