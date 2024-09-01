@@ -1,6 +1,6 @@
 import React from "react";
 import BackIcon from "../icons/BackIcon";
-import RestartIcon from "../icons/restartIcon";
+import RestartIcon from "../icons/RestartIcon";
 
 type ChatHeaderProps = {
   routeBack: () => void;
