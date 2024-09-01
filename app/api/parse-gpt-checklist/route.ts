@@ -3,7 +3,7 @@ import OpenAI from "openai";
 import { zodResponseFormat } from "openai/helpers/zod";
 import { z } from "zod";
 
-export const maxDuration = 60;
+export const maxDuration = 30;
 export const dynamic = "force-dynamic";
 
 const openAI = new OpenAI({
