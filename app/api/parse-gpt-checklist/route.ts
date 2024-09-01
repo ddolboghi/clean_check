@@ -3,11 +3,12 @@ import OpenAI from "openai";
 import { zodResponseFormat } from "openai/helpers/zod";
 import { z } from "zod";
 
+export const runtime = "edge";
+export const dynamic = "force-dynamic";
+
 const openAI = new OpenAI({
   apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
 });
-
-export const runtime = "edge";
 
 const todoSchema = z.object({
   dayNum: z.number(),
@@ -18,7 +19,14 @@ const todoSchema = z.object({
 
 const checkList = z.object({ checkList: z.array(todoSchema) });
 
-export async function POST(req: NextRequest) {
+export default async function handler(req: NextRequest) {
+  if (req.method !== "POST") {
+    return new NextResponse(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   try {
     const { checklistMessage } = await req.json();
     const jsonParsingPrompt = process.env
