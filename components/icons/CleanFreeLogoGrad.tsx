@@ -1,10 +1,16 @@
 import React from "react";
 
-export default function CleanFreeLogoGrad() {
+export default function CleanFreeLogoGrad({
+  width,
+  height,
+}: {
+  width?: string;
+  height?: string;
+}) {
   return (
     <svg
-      width="43"
-      height="43"
+      width={width ? width : "43"}
+      height={height ? height : "43"}
       viewBox="0 0 43 43"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

@@ -9,9 +9,8 @@ import { getIsOverQuestion } from "@/lib/chatLib";
 import { useRouter } from "next/navigation";
 import GeneratingCheckList from "./GeneratingCheckList";
 import ResetChatPopUp from "../ui/ResetChatPopUp";
-import RestartIcon from "../icons/restartIcon";
-import BackIcon from "../icons/BackIcon";
 import ChatHeader from "./ChatHeader";
+import ChatLoading from "../ui/ChatLoading";
 
 export type Message = {
   content: string;
@@ -22,7 +21,7 @@ export default function Chatbot() {
   const [userMessage, setUserMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "피부고민을 말해보세요." },
+    { role: "assistant", content: "안녕하세요, 스킨체크입니다." },
   ]);
   const [disableChatInput, setDisableChatInput] = useState<boolean>(false);
   const [generatingCheckList, setGeneratingCheckList] =
@@ -108,8 +107,8 @@ export default function Chatbot() {
         routeBack={() => route.back()}
         handleResetPopup={handleResetPopup}
       />
-      <section className="px-4">
-        <div>
+      <section className="px-7">
+        <div className="flex flex-col gap-4">
           {messages &&
             messages.map((m, i) => {
               return m.role === "assistant" ? (
@@ -118,7 +117,7 @@ export default function Chatbot() {
                 <UserMessage {...m} key={i} />
               );
             })}
-          {loading && <div>로딩 중...</div>}
+          {!loading && <ChatLoading />}
         </div>
         <ChatInput
           userMessage={userMessage}

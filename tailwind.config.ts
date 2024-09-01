@@ -14,7 +14,29 @@ module.exports = {
           "background-hover": "hsl(var(--btn-background-hover))",
         },
       },
+      keyframes: {
+        wave: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-5px)" },
+        },
+      },
+      animation: {
+        wave: "wave 1s ease-in-out infinite",
+      },
     },
   },
-  plugins: [],
+  variants: {
+    extend: {
+      animation: ["responsive", "motion-safe", "motion-reduce"],
+    },
+  },
+  plugins: [
+    function ({ addUtilities, theme, variants }: any) {
+      const animationDelayUtilities = {
+        ".animation-delay-200": { animationDelay: "200ms" },
+        ".animation-delay-400": { animationDelay: "400ms" },
+      };
+      addUtilities(animationDelayUtilities, variants("animationDelay"));
+    },
+  ],
 };
