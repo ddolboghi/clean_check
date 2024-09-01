@@ -2,10 +2,8 @@
 
 import { Message } from "@/components/chat/Chatbot";
 import OpenAI from "openai";
-import { number, z } from "zod";
-import { zodResponseFormat } from "openai/helpers/zod";
 import { getIsOverQuestion } from "@/lib/chatLib";
-import { getDaysFromDayGap, getKSTDateString } from "@/lib/dateTranslator";
+import { getKSTDateString } from "@/lib/dateTranslator";
 import { Todo } from "@/utils/types";
 import { supabaseClient } from "@/lib/getSupabaseClient";
 import { createClient } from "@/utils/supabase/server";
@@ -59,101 +57,6 @@ export async function chatCompletion(chatMessages: Message[]) {
       role: "assistant",
       content: "문제가 발생했어요. 나중에 다시 시도해 주세요.",
     } as Message;
-  }
-}
-
-type ParsedCheckList =
-  | {
-      todoId: number;
-      topic: string;
-      todo: string;
-      dayNum: number;
-    }[]
-  | null;
-
-/**
- * Create a todo list message and parse it into JSON.
- * @param chatMessages
- * @returns
- */
-export async function createTodoList(chatMessages: Message[]) {
-  try {
-    const gptCheckListMessageResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/create-checklist-by-gpt`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ chatMessages: chatMessages }),
-      }
-    );
-
-    if (!gptCheckListMessageResponse.ok) {
-      throw new Error(
-        `gptCheckListMessageResponse status: ${gptCheckListMessageResponse.status}`
-      );
-    }
-
-    const gptCheckListMessageData = await gptCheckListMessageResponse.json();
-    let checklistMessage = null;
-    if (gptCheckListMessageResponse.ok) {
-      checklistMessage = gptCheckListMessageData.checklistMessage;
-    } else {
-      throw gptCheckListMessageData.error;
-    }
-
-    if (!checklistMessage) {
-      console.log("Error checklistMessage: ", checklistMessage);
-      throw new Error("checklistMessage is empty.");
-    }
-
-    const parseCheckListResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/parse-gpt-checklist`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ checklistMessage: checklistMessage }),
-      }
-    );
-
-    if (!parseCheckListResponse.ok)
-      throw new Error(
-        `parseCheckListResponse status: ${parseCheckListResponse.status}`
-      );
-
-    const parseCheckListData = await parseCheckListResponse.json();
-    let parsedTodoList: ParsedCheckList = null;
-    if (parseCheckListResponse.ok) {
-      parsedTodoList = parseCheckListData.parsedCheckList;
-    } else {
-      throw parseCheckListData.error;
-    }
-
-    if (!parsedTodoList) {
-      console.log("Error parsedTodoList: ", parsedTodoList);
-      throw new Error(`Error in parseGPTJson: ${parseCheckListResponse}`);
-    }
-
-    const todoList: Todo[] = [];
-
-    parsedTodoList.forEach((parsedTodo) => {
-      const todoEle: Todo = {
-        todoId: parsedTodo.todoId,
-        topic: parsedTodo.topic,
-        todo: parsedTodo.todo,
-        days: getDaysFromDayGap(parsedTodo.dayNum),
-      };
-      todoList.push(todoEle);
-    });
-
-    console.log("[createTodolist] Create todo_list success.");
-    return todoList;
-  } catch (error) {
-    console.error("[createTodolist] Error: ", error);
-    return null;
   }
 }
 
