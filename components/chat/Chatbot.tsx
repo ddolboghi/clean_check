@@ -8,6 +8,8 @@ import { chatCompletion, createTodoList, saveTodolist } from "@/actions/chat";
 import { getIsOverQuestion } from "@/lib/chatLib";
 import { useRouter } from "next/navigation";
 import GeneratingCheckList from "./GeneratingCheckList";
+import ResetChatPopUp from "../ui/ResetChatPopUp";
+import RestartIcon from "../icons/restartIcon";
 
 export type Message = {
   content: string;
@@ -23,6 +25,7 @@ export default function Chatbot() {
   const [disableChatInput, setDisableChatInput] = useState<boolean>(false);
   const [generatingCheckList, setGeneratingCheckList] =
     useState<boolean>(false);
+  const [closeResetPopup, setCloseResetPopup] = useState<boolean>(true);
   const route = useRouter();
 
   const handleSendMessage = async (e: FormEvent) => {
@@ -77,13 +80,34 @@ export default function Chatbot() {
     }
   };
 
+  const handleResetPopup = () => {
+    setCloseResetPopup(!closeResetPopup);
+  };
+
+  const handleResetChat = () => {
+    const resetMessages = messages.slice(0, 1);
+    setMessages(resetMessages);
+    setCloseResetPopup(!closeResetPopup);
+  };
+
   return (
     <>
       {/* 체크리스트 생성 모달로 띄워야 렌더링되면서 함수가 실행된다. */}
-      {!generatingCheckList && (
+      {generatingCheckList && (
         <GeneratingCheckList isGenerateCheckList={generatingCheckList} />
       )}
-      <div>
+      {!closeResetPopup && (
+        <ResetChatPopUp
+          handleResetPopup={() => handleResetPopup()}
+          handleResetChat={() => handleResetChat()}
+        />
+      )}
+      <section>
+        <button onClick={() => handleResetPopup()}>
+          <RestartIcon />
+        </button>
+      </section>
+      <section>
         <div>
           {messages &&
             messages.map((m, i) => {
@@ -101,7 +125,7 @@ export default function Chatbot() {
           handleSendMessage={handleSendMessage}
           disableChatInput={disableChatInput}
         />
-      </div>
+      </section>
     </>
   );
 }
