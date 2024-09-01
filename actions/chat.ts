@@ -203,9 +203,10 @@ export async function createTodoList(chatMessages: Message[]) {
       todoList.push(todoEle);
     });
 
+    console.log("[createTodolist] Create todo_list success.");
     return todoList;
   } catch (error) {
-    console.error("[saveChecklist] Error: ", error);
+    console.error("[createTodolist] Error: ", error);
     return null;
   }
 }
