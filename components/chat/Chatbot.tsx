@@ -117,7 +117,7 @@ export default function Chatbot() {
                 <UserMessage {...m} key={i} />
               );
             })}
-          {!loading && <ChatLoading />}
+          {loading && <ChatLoading />}
         </div>
         <ChatInput
           userMessage={userMessage}
