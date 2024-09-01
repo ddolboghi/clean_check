@@ -16,6 +16,7 @@ export const runtime = "edge";
 export async function POST(request: NextRequest) {
   try {
     const { chatMessages } = await request.json();
+    console.log("[create-todolist] chatMessages: ", chatMessages);
 
     //gpt에 상담내역 주고 체크리스트 만들기
     const gptCheckListMessageResponse = await fetch(
