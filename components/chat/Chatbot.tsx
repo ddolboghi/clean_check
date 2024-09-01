@@ -236,7 +236,7 @@ export default function Chatbot() {
     <main>
       {/* 체크리스트 생성 모달로 띄워야 렌더링되면서 함수가 실행된다. */}
       {generatingCheckList.generateParsedTodoListStart && (
-        <GeneratingCheckList isGenerateCheckList={generatingCheckList} />
+        <GeneratingCheckList generateCheckList={generatingCheckList} />
       )}
       {!closeResetPopup && (
         <ResetChatPopUp

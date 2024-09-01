@@ -1,12 +1,12 @@
 import { GeneratingCheckListType } from "./Chatbot";
 
 export default function GeneratingCheckList({
-  isGenerateCheckList,
+  generateCheckList,
 }: {
-  isGenerateCheckList: GeneratingCheckListType;
+  generateCheckList: GeneratingCheckListType;
 }) {
-  console.log(isGenerateCheckList);
-  //isGenerateCheckList에 따라 progress 조정하기
+  console.log(generateCheckList);
+  //generateCheckList 필드에 따라 progress 조정하기
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white text-center">
