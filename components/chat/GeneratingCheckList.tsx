@@ -1,7 +1,9 @@
+import { GeneratingCheckListType } from "./Chatbot";
+
 export default function GeneratingCheckList({
   isGenerateCheckList,
 }: {
-  isGenerateCheckList: boolean;
+  isGenerateCheckList: GeneratingCheckListType;
 }) {
   console.log(isGenerateCheckList);
   //isGenerateCheckList에 따라 progress 조정하기
