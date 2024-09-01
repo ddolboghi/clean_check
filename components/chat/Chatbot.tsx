@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import BotMessage from "./BotMessage";
 import UserMessage from "./UserMessage";
 import ChatInput from "./ChatInput";
-import { chatCompletion, createTodoList } from "@/actions/chat";
+import { chatCompletion, createTodoList, saveTodolist } from "@/actions/chat";
 import { getIsOverQuestion } from "@/lib/chatLib";
 import { useRouter } from "next/navigation";
 import GeneratingCheckList from "./GeneratingCheckList";
@@ -66,24 +66,7 @@ export default function Chatbot() {
           throw new Error("Fail to create todo list.");
         }
 
-        const saveResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/save-todolist`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ todoList }),
-          }
-        );
-
-        const saveData = await saveResponse.json();
-        let isSaved = null;
-        if (saveResponse.ok) {
-          isSaved = saveData;
-        } else {
-          throw saveData.error;
-        }
+        const isSaved = await saveTodolist(todoList);
 
         if (isSaved) {
           setGeneratingCheckList(!isSaved);
