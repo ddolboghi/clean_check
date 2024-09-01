@@ -78,7 +78,9 @@ export default function Chatbot() {
     } catch (error) {
       alert("체크리스트 생성 중 문제가 발생했어요. 상담 페이지로 돌아갈게요.");
       setGeneratingCheckList(false);
-      route.refresh();
+      setDisableChatInput(false);
+      const resetMessages = messages.slice(0, 1);
+      setMessages(resetMessages);
       console.log("API Error", error);
     } finally {
       setLoading(false);
