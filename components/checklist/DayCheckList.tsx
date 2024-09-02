@@ -115,7 +115,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
       setIsCompletedAllTodo(isCompleteAll);
       setTodoList(updatedTodo);
       await updateDaysOfTodo(extraData.checkListId, updatedTodo);
-      await updateTodayDone(memberId);
+      // await updateTodayDone(memberId);
     }
   };
 
