@@ -76,7 +76,7 @@ export default function AddCheckList() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [todos, setTodos] = useState<Todo[]>([
-    { topic: "", todoId: 1, todo: "", days: {} },
+    { timeOrder: 1, todoId: 1, todo: "", days: {} },
   ]);
   const [memberId, setMemberId] = useState<string>("");
 
@@ -143,7 +143,7 @@ export default function AddCheckList() {
       return [
         ...todos,
         {
-          topic: todos[todos.length - 1]?.topic || "",
+          timeOrder: todos[todos.length - 1]?.timeOrder || 1,
           todoId: newTodoId,
           todo: "",
           days: {},
@@ -168,9 +168,11 @@ export default function AddCheckList() {
           key={todo.todoId}
           className="mb-6 border border-gray-300 rounded p-2"
         >
-          <label className="block font-semibold">피부 주제</label>
+          <label className="block font-semibold">
+            아침(1)/오전(2)/오후(3)/저녁(4)/공통(5)
+          </label>
           <input
-            value={todo.topic}
+            value={todo.timeOrder}
             onChange={(e) => handleTopicChange(todo.todoId, e.target.value)}
             className="border border-gray-300 rounded p-2 w-full mb-2"
           />

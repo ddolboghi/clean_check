@@ -1,5 +1,5 @@
 export type Todo = {
-  topic: string;
+  timeOrder: number;
   todoId: number;
   todo: string;
   days: { [key: string]: boolean };

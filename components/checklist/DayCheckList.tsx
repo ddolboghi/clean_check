@@ -9,7 +9,6 @@ import { Todo } from "@/utils/types";
 import { useEffect, useState } from "react";
 import { getDateAndDay } from "@/lib/dateTranslator";
 import CheckListHead from "../ui/CheckListHead";
-import { getUniqueTopic } from "@/lib/todoListlib";
 import CompletionAllTodoPopUp from "../ui/CompletionAllTodoPopUp";
 import { excuteConfetti } from "@/lib/confettiCustom";
 import fillCheckBox from "@/assets/fillCheckbox.svg";
@@ -34,8 +33,6 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
   const [loading, setLoading] = useState<boolean>(true);
   const [clickedDate, setClickedDate] = useState<string>(nowDate);
   const [todoList, setTodoList] = useState<Todo[] | null>(null);
-  const [clickedTopic, setClickedTopic] = useState<string>("전체");
-  const [topicList, setTopicList] = useState<string[]>([]);
   const [isCompletedAllTodo, setIsCompletedAllTodo] = useState<boolean>(false);
   const [extraData, setExtraData] = useState<ExtraData>({
     checkListId: 0,
@@ -52,8 +49,6 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
 
         if (checkListOfDay) {
           setTodoList(checkListOfDay.filteredTodos);
-          const todayTopicList = getUniqueTopic(checkListOfDay.filteredTodos);
-          setTopicList(todayTopicList);
           setExtraData({
             checkListId: checkListOfDay.checkListId,
             startDate: checkListOfDay.startDate,
@@ -94,16 +89,8 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
       if (newCheckListOfDay) {
         const newTodoListOfDay = newCheckListOfDay.filteredTodos;
         setTodoList(newTodoListOfDay);
-
-        const newTopicList = getUniqueTopic(newTodoListOfDay);
-        setTopicList(newTopicList);
       }
-      setClickedTopic("전체");
     }
-  };
-
-  const handleTopic = (btnTopic: string) => {
-    setClickedTopic(btnTopic);
   };
 
   const handleTodoClick = async (clickedTodo: Todo) => {
@@ -167,62 +154,36 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
           ))}
         </nav>
 
-        {/* topic section */}
-        <nav className="min-h-7 px-6 mb-[24px] bg-white flex justify-start flex-row space-x-2 overflow-x-auto">
-          {topicList.map((topic, topicIdx) => (
-            <button
-              key={topicIdx}
-              onClick={() => handleTopic(topic)}
-              className="text-sm tracking-tight leading-loose text-center whitespace-nowrap rounded-3xl scrollbar-hide"
-            >
-              <div
-                className={`px-5 rounded-3xl text-center ${
-                  topic === clickedTopic
-                    ? "bg-[#565656] text-white"
-                    : "bg-gray-200 bg-opacity-80 text-zinc-500"
-                }`}
-              >
-                {topic}
-              </div>
-            </button>
-          ))}
-        </nav>
-
         {/* todo section */}
         <section
           className={`px-6 bg-white flex flex-col gap-5 overflow-y-scroll scrollbar-hide`}
         >
           {todoList &&
-            todoList
-              .filter(
-                (btnTodo) =>
-                  clickedTopic === "전체" || btnTodo.topic === clickedTopic
-              )
-              .map((btnTodo) => {
-                const isCompleted = btnTodo.days[clickedDate];
+            todoList.map((btnTodo) => {
+              const isCompleted = btnTodo.days[clickedDate];
 
-                return (
-                  <button
-                    className={`flex justify-between px-6 py-4 w-full rounded-3xl border-2 border-solid ${
-                      isCompleted
-                        ? "bg-white bg-opacity-80 border-zinc-100 text-[#B2B2B2]"
-                        : "bg-[#E1F5F1] border-[#E1F5F1] text-[#528A80]"
-                    }`}
-                    key={btnTodo.todoId}
-                    onClick={() => handleTodoClick(btnTodo)}
-                  >
-                    <p className="whitespace-normal mr-2 text-left">
-                      {btnTodo.todo}
-                    </p>
-                    <Image
-                      src={isCompleted ? fillCheckBox : emptyCheckBox}
-                      width={18}
-                      height={18}
-                      alt={isCompleted ? "완료" : "미완료"}
-                    />
-                  </button>
-                );
-              })}
+              return (
+                <button
+                  className={`flex justify-between px-6 py-4 w-full rounded-3xl border-2 border-solid ${
+                    isCompleted
+                      ? "bg-white bg-opacity-80 border-zinc-100 text-[#B2B2B2]"
+                      : "bg-[#E1F5F1] border-[#E1F5F1] text-[#528A80]"
+                  }`}
+                  key={btnTodo.todoId}
+                  onClick={() => handleTodoClick(btnTodo)}
+                >
+                  <p className="whitespace-normal mr-2 text-left">
+                    {btnTodo.todo}
+                  </p>
+                  <Image
+                    src={isCompleted ? fillCheckBox : emptyCheckBox}
+                    width={18}
+                    height={18}
+                    alt={isCompleted ? "완료" : "미완료"}
+                  />
+                </button>
+              );
+            })}
         </section>
       </div>
     </>
