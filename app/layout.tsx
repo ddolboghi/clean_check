@@ -1,3 +1,4 @@
+import { Viewport } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
 
@@ -16,8 +17,12 @@ export const metadata = {
   metadataBase: new URL(defaultUrl),
   title: "스킨체크",
   description: "작은 습관으로 지키는 나의 피부",
-  viewport:
-    "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: 0,
+  },
 };
 
 export default function RootLayout({
