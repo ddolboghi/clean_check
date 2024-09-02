@@ -14,8 +14,9 @@ export default async function page() {
     redirect("/login");
   }
   const memberId = user.id;
-  const haveCheckList = await getHaveCheckList();
   const nowDate = getKSTDateString();
+  const haveCheckList = await getHaveCheckList();
+
   return (
     <main>
       {haveCheckList ? (

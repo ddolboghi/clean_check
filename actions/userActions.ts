@@ -48,7 +48,7 @@ interface SupabaseUserAction {
   id: number;
   created_at: string;
   member_id: string;
-  today_done: boolean;
+  recent_done_times: Date[];
 }
 
 export async function updateTodayDone(memberId: string) {
@@ -77,7 +77,7 @@ export async function updateTodayDone(memberId: string) {
         .insert([
           {
             member_id: memberId,
-            recent_done_time: kstDate,
+            recent_done_time: [kstDate],
             member_name: profilesData.full_name,
           },
         ]);
@@ -85,12 +85,15 @@ export async function updateTodayDone(memberId: string) {
       if (insertError) throw insertError;
     }
 
-    const { data: updateData, error: updateError } = await supabaseClient
-      .from("user_action")
-      .update({ recent_done_time: kstDate })
-      .eq("member_id", memberId);
-
-    if (updateError) throw updateError;
+    if (userActionData) {
+      const { data: updateData, error: updateError } = await supabaseClient
+        .from("user_action")
+        .update({
+          recent_done_time: [...userActionData.recent_done_times, kstDate],
+        })
+        .eq("member_id", memberId);
+      if (updateError) throw updateError;
+    }
 
     console.log("[updateTodayDone] Update user_action success");
     return userActionData;
