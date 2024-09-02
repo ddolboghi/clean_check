@@ -43,7 +43,7 @@ export default function Chatbot() {
     {
       role: "assistant",
       content:
-        "안녕하세요. 상담을 시작할게요.😊 먼저, 피부에 어떤 문제가 있는지 구체적으로 말씀해 주실 수 있을까요? 예를 들어, 발진, 여드름, 건조함, 가려움증 등 어떤 증상이 있는지 알려주세요.🧐",
+        "안녕하세요. 상담을 시작할게요.😊 최근 피부에 어떤 문제가 있는지 구체적으로 말씀해 주실 수 있을까요? 예를 들어, 발진, 여드름, 건조함, 가려움증 등 어떤 증상이 있는지 알려주세요.🧐",
     },
   ]);
   const [generatingCheckList, setGeneratingCheckList] =
@@ -55,6 +55,8 @@ export default function Chatbot() {
       savedCheckList: false,
     });
   const [closeResetPopup, setCloseResetPopup] = useState<boolean>(true);
+  const [percentage, setPercentage] = useState<number>(0);
+
   const route = useRouter();
 
   const handleSendMessage = async (e: FormEvent) => {
@@ -86,6 +88,7 @@ export default function Chatbot() {
           disableChatInput: true,
           generateTodoListMessageStart: true,
         });
+        setPercentage(25);
 
         /**-------------------------------------*/
         const gptTodoListMessageResponse = await fetch(
@@ -124,6 +127,7 @@ export default function Chatbot() {
           generateTodoListMessageStart: true,
           generateParsedTodoListStart: true,
         });
+        setPercentage(50);
 
         const parseCheckListResponse = await fetch(
           `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/parse-gpt-checklist`,
@@ -178,6 +182,7 @@ export default function Chatbot() {
           generateParsedTodoListStart: true,
           saveCheckListStart: true,
         });
+        setPercentage(75);
 
         const isSaved = await saveTodolist(todoList);
 
@@ -189,6 +194,7 @@ export default function Chatbot() {
             saveCheckListStart: true,
             savedCheckList: true,
           });
+          setPercentage(100);
           route.push("/checklist");
         } else {
           throw new Error("Fail to save todo list.");
@@ -236,7 +242,10 @@ export default function Chatbot() {
     <main>
       {/* 체크리스트 생성 모달로 띄워야 렌더링되면서 함수가 실행된다. */}
       {generatingCheckList.generateParsedTodoListStart && (
-        <GeneratingCheckList generateCheckList={generatingCheckList} />
+        <GeneratingCheckList
+          generateCheckList={generatingCheckList}
+          percentage={percentage}
+        />
       )}
       {!closeResetPopup && (
         <ResetChatPopUp
