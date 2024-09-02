@@ -53,3 +53,13 @@ export const getDateAndDay = (
 
   return dates;
 };
+
+export const getIsBeforeToday = (targetDate: string | Date) => {
+  const target = new Date(targetDate);
+  const utcToday = new Date();
+  const kstToday = new Date(utcToday.getTime() + 9 * 60 * 60 * 1000);
+
+  kstToday.setHours(0, 0, 0, 0);
+
+  return target < kstToday;
+};

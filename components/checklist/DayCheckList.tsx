@@ -17,6 +17,7 @@ import emptyCheckBox from "@/assets/emptyCheckBox.svg";
 import Image from "next/image";
 import NothingCheckList from "./NothingCheckList";
 import SimpleSpinner from "../ui/SimpleSpinner";
+import { updateTodayDone } from "@/actions/userActions";
 
 type DayCheckList = {
   nowDate: string;
@@ -126,6 +127,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
       setIsCompletedAllTodo(isCompleteAll);
       setTodoList(updatedTodo);
       await updateDaysOfTodo(extraData.checkListId, updatedTodo);
+      await updateTodayDone(memberId);
     }
   };
 
@@ -134,7 +136,6 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
   };
 
   if (loading) return <SimpleSpinner />;
-  if (!todoList) return <NothingCheckList />;
 
   return (
     <>
