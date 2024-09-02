@@ -16,7 +16,7 @@ export default function NothingCheckList() {
             <br />
             완성되면 알림을 보내드릴게요!
           </p>
-          <div className="text-black text-[14px] mt-[10px] mx-auto rounded-3xl flex flex-row items-center justify-center gap-2 bg-[#FFED46] w-[200px] h-[45px]">
+          <div className="text-black text-[14px] mt-[10px] mx-auto rounded-3xl flex flex-row items-center justify-center gap-2 bg-[#FFE812] w-[200px] h-[45px]">
             <KakaoLogo />
             <Link href="http://pf.kakao.com/_xhpqxgG/chat">
               카톡 채널에서 상담하기
