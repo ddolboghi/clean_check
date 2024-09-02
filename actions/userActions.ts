@@ -77,7 +77,7 @@ export async function updateTodayDone(memberId: string) {
         .insert([
           {
             member_id: memberId,
-            recent_done_time: [kstDate],
+            recent_done_times: [kstDate],
             member_name: profilesData.full_name,
           },
         ]);
@@ -89,7 +89,7 @@ export async function updateTodayDone(memberId: string) {
       const { data: updateData, error: updateError } = await supabaseClient
         .from("user_action")
         .update({
-          recent_done_time: [...userActionData.recent_done_times, kstDate],
+          recent_done_times: [...userActionData.recent_done_times, kstDate],
         })
         .eq("member_id", memberId);
       if (updateError) throw updateError;
