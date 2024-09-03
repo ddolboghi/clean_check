@@ -89,8 +89,9 @@ export async function updateTodoDaysToDelay(
     console.log(
       "[updateTodoDaysToDelay] Get check_list by checkListId and memberId success"
     );
+    console.log("[updateTodoDaysToDelay] todayKey: ", todayKey);
     const newTodoList = selectData.todo_list.map((todo) => {
-      const newTodo = { ...todo, days: { ...todo.days } };
+      const newTodo = { ...todo };
       const days = newTodo.days;
 
       if (days.hasOwnProperty(yesterdayKey) && days[yesterdayKey] === false) {
