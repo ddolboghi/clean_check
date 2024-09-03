@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { postWeeklyCheckList } from "@/actions/postWeeklyCheckList";
+import { postWeeklyCheckList } from "@/actions/addCheckList";
 import { Todo } from "@/utils/types";
-import { getDates } from "@/lib/dateTranslator";
-import { getAllProfiles, SupabaseProfile } from "@/actions/profile";
+import { getDates, getStartDateAndEndDate } from "@/lib/dateTranslator";
+import { SupabaseProfile } from "@/actions/profile";
 
 const TodoItem = ({
   todo,
@@ -72,19 +72,30 @@ const TodoItem = ({
   );
 };
 
-export default function AddCheckList() {
+type TodoMapsType = {
+  [key: string]: Todo[];
+};
+
+type AddCheckListProps = {
+  profiles: SupabaseProfile[];
+  initialTodosMap: TodoMapsType;
+};
+
+export default function AddCheckList({
+  profiles,
+  initialTodosMap,
+}: AddCheckListProps) {
+  console.log(initialTodosMap);
   const [loadingMaps, setLoadingMaps] = useState<{ [key: string]: boolean }>(
     {}
   );
   const [errorMaps, setErrorMaps] = useState<{ [key: string]: string }>({});
   const [successMaps, setSuccessMaps] = useState<{ [key: string]: string }>({});
-  const [profiles, setProfiles] = useState<SupabaseProfile[]>([]);
-  const [todosMap, setTodosMap] = useState<{ [key: string]: Todo[] }>({});
+  const [todosMap, setTodosMap] = useState<{ [key: string]: Todo[] }>(
+    initialTodosMap
+  );
 
-  const today = new Date();
-  const startDate = today.toISOString().split("T")[0];
-  today.setDate(today.getDate() + 6);
-  const endDate = today.toISOString().split("T")[0];
+  const { startDate, endDate } = getStartDateAndEndDate();
   const allDays = getDates(startDate, endDate);
 
   const handleButtonClick = async (e: React.FormEvent, memberId: string) => {
@@ -175,27 +186,6 @@ export default function AddCheckList() {
       return { ...prev, [memberId]: [...(prev[memberId] || []), newTodo] };
     });
   };
-
-  useEffect(() => {
-    async function fetchProfiles() {
-      const allProfiles = await getAllProfiles();
-      if (allProfiles) {
-        setProfiles(allProfiles);
-        const initialTodosMap = Object.fromEntries(
-          allProfiles.map((profile) => [
-            profile.id,
-            [{ topic: "", todoId: 1, todo: "", days: {} }],
-          ])
-        );
-        setTodosMap(initialTodosMap);
-      }
-    }
-
-    fetchProfiles();
-
-    const intervalId = setInterval(fetchProfiles, 30000);
-    return () => clearInterval(intervalId);
-  }, []);
 
   return (
     <div className="grid grid-cols-4 gap-2">

@@ -63,3 +63,14 @@ export const getIsBeforeToday = (targetDate: string | Date) => {
 
   return target < kstToday;
 };
+
+export const getStartDateAndEndDate = () => {
+  const startDate = getKSTDateString();
+  const today = new Date(startDate);
+  today.setDate(today.getDate() + 6);
+  const endDateYear = today.getFullYear();
+  const endDateMonth = String(today.getMonth() + 1).padStart(2, "0");
+  const endDateDay = String(today.getDate()).padStart(2, "0");
+  const endDate = `${endDateYear}-${endDateMonth}-${endDateDay}`;
+  return { startDate, endDate };
+};
