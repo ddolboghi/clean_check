@@ -1,3 +1,5 @@
+"use client";
+
 import { logout } from "@/lib/logout";
 
 export default function LogoutButton({
