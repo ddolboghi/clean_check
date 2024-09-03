@@ -31,20 +31,25 @@ export async function postWeeklyCheckList(todoList: Todo[], memberId: string) {
 
 export async function getAllRecentTodoListEachMember() {
   try {
-    const { data: recentData, error: recentError } = await supabaseClient.rpc(
-      "get_recent_check_list"
-    );
+    const { data, error } = await supabaseClient.rpc("get_recent_check_list");
 
-    if (recentError) throw recentError;
+    if (error) throw error;
 
-    if (!recentData) {
+    if (!data) {
       return null;
     }
+
+    const checkLists: SupabaseCheckList[] = data;
+
+    const todosMap: { [key: string]: Todo[] } = {};
+    checkLists.forEach((checkList) => {
+      todosMap[checkList.member_id] = checkList.todo_list;
+    });
 
     console.log(
       "[getAllRecentTodoListEachMember] Get all recent check_list each member success"
     );
-    return recentData;
+    return todosMap;
   } catch (error) {
     console.error("[getAllRecentTodoListEachMember] Error:", error);
     return null;

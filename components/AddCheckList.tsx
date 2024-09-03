@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { postWeeklyCheckList } from "@/actions/addCheckList";
+import {
+  getAllRecentTodoListEachMember,
+  postWeeklyCheckList,
+} from "@/actions/addCheckList";
 import { Todo } from "@/utils/types";
 import { getDates, getStartDateAndEndDate } from "@/lib/dateTranslator";
-import { SupabaseProfile } from "@/actions/profile";
+import { getAllProfiles, SupabaseProfile } from "@/actions/profile";
 
 const TodoItem = ({
   todo,
@@ -72,31 +75,35 @@ const TodoItem = ({
   );
 };
 
-type TodoMapsType = {
-  [key: string]: Todo[];
-};
-
-type AddCheckListProps = {
-  profiles: SupabaseProfile[];
-  initialTodosMap: TodoMapsType;
-};
-
-export default function AddCheckList({
-  profiles,
-  initialTodosMap,
-}: AddCheckListProps) {
-  console.log(initialTodosMap);
+export default function AddCheckList() {
+  const [profiles, setProfiles] = useState<SupabaseProfile[]>([]);
   const [loadingMaps, setLoadingMaps] = useState<{ [key: string]: boolean }>(
     {}
   );
   const [errorMaps, setErrorMaps] = useState<{ [key: string]: string }>({});
   const [successMaps, setSuccessMaps] = useState<{ [key: string]: string }>({});
-  const [todosMap, setTodosMap] = useState<{ [key: string]: Todo[] }>(
-    initialTodosMap
-  );
+  const [todosMap, setTodosMap] = useState<{ [key: string]: Todo[] }>({});
 
   const { startDate, endDate } = getStartDateAndEndDate();
   const allDays = getDates(startDate, endDate);
+
+  useEffect(() => {
+    async function fetchProfiles() {
+      const allProfiles = await getAllProfiles();
+      const checkLists = await getAllRecentTodoListEachMember();
+      console.log(checkLists);
+      if (allProfiles && checkLists) {
+        setProfiles(allProfiles);
+        const initialTodosMap = Object.fromEntries(
+          allProfiles.map((profile) => [profile.id, checkLists[profile.id]])
+          //days는 따로 매핑 로직 구현해야함
+        );
+        setTodosMap({ ...initialTodosMap, ...todosMap });
+      }
+    }
+
+    fetchProfiles();
+  }, []);
 
   const handleButtonClick = async (e: React.FormEvent, memberId: string) => {
     e.preventDefault();
