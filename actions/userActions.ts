@@ -1,23 +1,13 @@
 "use server";
 
 import { supabaseClient } from "@/lib/getSupabaseClient";
-import { createClient } from "@/utils/supabase/server";
 import { SupabaseCheckList } from "./todoList";
 import { getIsBeforeToday } from "@/lib/dateTranslator";
 import { SupabaseProfile } from "./profile";
 
-export async function getHaveCheckList() {
+export async function getHaveCheckList(memberId: string) {
+  console.log("[getHaveCheckList]: ", memberId);
   try {
-    const {
-      data: { user },
-      error: userError,
-    } = await createClient().auth.getUser();
-
-    if (!user) {
-      throw userError;
-    }
-    const memberId = user.id;
-
     const { data: recentCheckListData, error: recentCheckListError } =
       await supabaseClient
         .from("check_list")
