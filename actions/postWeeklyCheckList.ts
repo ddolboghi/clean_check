@@ -1,13 +1,17 @@
 "use server";
 
+import { getKSTDateString } from "@/lib/dateTranslator";
 import { supabaseClient } from "@/lib/getSupabaseClient";
 import { Todo } from "@/utils/types";
 
 export async function postWeeklyCheckList(todoList: Todo[], memberId: string) {
-  const today = new Date();
-  const startDate = today.toISOString().split("T")[0];
+  const startDate = getKSTDateString();
+  const today = new Date(startDate);
   today.setDate(today.getDate() + 6);
-  const endDate = today.toISOString().split("T")[0]; // 'YYYY-MM-DD' 형식으로 변환
+  const endDateYear = today.getFullYear();
+  const endDateMonth = String(today.getMonth() + 1).padStart(2, "0");
+  const endDateDay = String(today.getDate()).padStart(2, "0");
+  const endDate = `${endDateYear}-${endDateMonth}-${endDateDay}`;
 
   try {
     const { data, error } = await supabaseClient.from("check_list").insert([
@@ -16,6 +20,7 @@ export async function postWeeklyCheckList(todoList: Todo[], memberId: string) {
         end_date: endDate,
         todo_list: todoList,
         member_id: memberId,
+        delayed_date: startDate,
       },
     ]);
 
