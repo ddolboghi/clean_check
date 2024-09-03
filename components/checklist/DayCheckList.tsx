@@ -62,7 +62,8 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
             await updateTodoDaysToDelay(
               checkListOfDay.checkListId,
               memberId,
-              nowDate
+              nowDate,
+              checkListOfDay.delayedDate
             );
           }
         }
@@ -211,7 +212,6 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
                     <Image
                       src={isCompleted ? fillCheckBox : emptyCheckBox}
                       width={18}
-                      height={18}
                       alt={isCompleted ? "완료" : "미완료"}
                     />
                   </button>
