@@ -15,7 +15,6 @@ import { excuteConfetti } from "@/lib/confettiCustom";
 import fillCheckBox from "@/assets/fillCheckbox.svg";
 import emptyCheckBox from "@/assets/emptyCheckBox.svg";
 import Image from "next/image";
-import NothingCheckList from "./NothingCheckList";
 import SimpleSpinner from "../ui/SimpleSpinner";
 import { updateTodayDone } from "@/actions/userActions";
 
@@ -206,6 +205,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
                     }`}
                     key={btnTodo.todoId}
                     onClick={() => handleTodoClick(btnTodo)}
+                    disabled={nowDate !== clickedDate ? true : false}
                   >
                     <p className="whitespace-normal mr-2">{btnTodo.todo}</p>
                     <Image
