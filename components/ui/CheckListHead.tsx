@@ -1,4 +1,5 @@
 import CleanFreeLogoWhite from "../icons/CleanFreeLogoWhite";
+import LogoutButton from "../LogoutButton";
 
 export default function CheckListHead() {
   return (
@@ -14,7 +15,9 @@ export default function CheckListHead() {
           </p>
         </div>
         <div className="pt-10">
-          <CleanFreeLogoWhite />
+          <LogoutButton>
+            <CleanFreeLogoWhite />
+          </LogoutButton>
         </div>
       </div>
     </div>
