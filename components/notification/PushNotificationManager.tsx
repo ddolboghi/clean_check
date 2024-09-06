@@ -1,10 +1,5 @@
 "use client";
 
-import {
-  sendNotification,
-  subscribeUser,
-  unsubscribeUser,
-} from "@/actions/notification";
 import urlBase64ToUint8Array from "@/lib/urlBase64ToUint8Array";
 import { useEffect, useState } from "react";
 
@@ -40,24 +35,82 @@ export default function PushNotificationManager() {
       ),
     });
     setSubscription(sub);
-    await subscribeUser(sub);
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/notification-subscribe`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            memberId: "testMemberId",
+            pushSubscription: sub,
+          }),
+        }
+      );
+
+      if (!res.ok) throw new Error("Insert pushSubscription failed.");
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async function unsubscribeFromPush() {
-    await subscription?.unsubscribe();
-    setSubscription(null);
-    await unsubscribeUser();
+    try {
+      // const registration = await navigator.serviceWorker.ready;
+      // const subscription = await registration.pushManager.getSubscription();
+      await subscription?.unsubscribe();
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/notification-unsubscribe`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            memberId: "testMemberId",
+          }),
+        }
+      );
+
+      if (!res.ok) throw new Error("Delete pushSubscription failed.");
+      else {
+        setSubscription(null);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async function sendTestNotification() {
     if (subscription) {
-      await sendNotification(message);
-      setMessage("");
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/send-notification`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              memberId: "testMemberId",
+            }),
+          }
+        );
+
+        if (!res.ok) throw new Error("send notification failed.");
+        else {
+          setMessage("");
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 
   if (!isSupported) {
-    return <p>이 브라우저에서는 푸시 알림이 지원되지 않습니다.</p>;
+    return <p>브라우저에서는 푸시 알림이 지원되지 않습니다.</p>;
   }
 
   return (
