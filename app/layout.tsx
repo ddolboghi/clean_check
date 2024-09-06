@@ -2,6 +2,7 @@ import InstallPrompt from "@/utils/InstallPrompt";
 import "./globals.css";
 import localFont from "next/font/local";
 import { Metadata } from "next";
+import PushNotificationManager from "@/components/notification/PushNotificationManager";
 
 const pretendard = localFont({
   src: "../public/assets/fonts/PretendardVariable.woff2",
@@ -39,6 +40,7 @@ export default function RootLayout({
         />
       </head>
       <body className={pretendard.className}>
+        <PushNotificationManager />
         <InstallPrompt />
         {children}
       </body>
