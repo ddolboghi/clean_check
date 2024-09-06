@@ -4,5 +4,11 @@
     "app/api/**/*": {
       "maxDuration": 30
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/send-scheduled-notification",
+      "schedule": "40 23 * * *"
+    }
+  ]
 }
