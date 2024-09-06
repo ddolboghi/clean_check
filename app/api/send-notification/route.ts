@@ -18,7 +18,7 @@ interface PushNofiticationType {
 }
 
 webpush.setVapidDetails(
-  "mailto:example:@skin-check.vercel.app",
+  "mailto:example@skin-check.vercel.app",
   process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
   process.env.VAPID_PRIVATE_KEY!
 );
@@ -47,9 +47,8 @@ export async function POST(req: NextRequest) {
 
     if (data) {
       const notificationPayload = {
-        title: "지금 피부 루틴을 체크하세요!",
+        title: "✅ 지금 피부 루틴을 체크하세요!",
         body: "지킨 항목들을 체크해주세요.",
-        icon: "/../public/assets/cleanfreeLogo2.png",
       };
 
       const rawPushSubscription = data.push_subscription;
@@ -72,7 +71,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("Unexpected error:", error);
     return NextResponse.json(
-      { message: "An unexpected error occurred" },
+      { message: "An unexpected error occurred", error: error },
       { status: 500 }
     );
   }
