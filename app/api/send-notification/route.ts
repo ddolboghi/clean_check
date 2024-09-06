@@ -2,20 +2,20 @@ import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import webpush from "web-push";
 
-interface PushSubscriptionType {
+type PushSubscriptionType = {
   endpoint: string;
   keys: {
     p256dh: string;
     auth: string;
   };
   expirationTime: null;
-}
+};
 
-interface PushNofiticationType {
+type PushNofiticationType = {
   id: number;
   push_subscription: PushSubscriptionType;
   member_id: string;
-}
+}[];
 
 webpush.setVapidDetails(
   "mailto:example@skin-check.vercel.app",
@@ -25,12 +25,12 @@ webpush.setVapidDetails(
 
 export async function POST(req: NextRequest) {
   try {
-    //vercel cron jobs
-    // if (
-    //   req.headers.get("Authorization") !== `Bearer ${process.env.CRON_SECRET}`
-    // ) {
-    //   return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    // }
+    // vercel cron jobs
+    if (
+      req.headers.get("Authorization") !== `Bearer ${process.env.CRON_SECRET}`
+    ) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
     const { memberId } = await req.json();
     const supabase = createClient();
 
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
       .from("push_notification")
       .select("push_subscription")
       .eq("member_id", memberId)
-      .single<PushNofiticationType>();
+      .returns<PushNofiticationType>();
 
     if (error) {
       console.error("Supabase error:", error);
@@ -51,21 +51,24 @@ export async function POST(req: NextRequest) {
         body: "지킨 항목들을 체크해주세요.",
       };
 
-      const rawPushSubscription = data.push_subscription;
+      data.forEach(async (pushNotification) => {
+        const rawPushSubscription = pushNotification.push_subscription;
 
-      const pushSubscription: PushSubscriptionType = {
-        endpoint: rawPushSubscription.endpoint,
-        keys: {
-          p256dh: rawPushSubscription.keys.p256dh,
-          auth: rawPushSubscription.keys.auth,
-        },
-        expirationTime: null,
-      };
+        const pushSubscription: PushSubscriptionType = {
+          endpoint: rawPushSubscription.endpoint,
+          keys: {
+            p256dh: rawPushSubscription.keys.p256dh,
+            auth: rawPushSubscription.keys.auth,
+          },
+          expirationTime: null,
+        };
 
-      await webpush.sendNotification(
-        pushSubscription,
-        JSON.stringify(notificationPayload)
-      );
+        await webpush.sendNotification(
+          pushSubscription,
+          JSON.stringify(notificationPayload)
+        );
+      });
+
       return NextResponse.json({ message: "success" }, { status: 200 });
     }
   } catch (error) {
