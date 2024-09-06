@@ -2,7 +2,6 @@ import InstallPrompt from "@/utils/InstallPrompt";
 import "./globals.css";
 import localFont from "next/font/local";
 import { Metadata } from "next";
-import PushNotificationManager from "@/components/notification/PushNotificationManager";
 
 const pretendard = localFont({
   src: "../public/assets/fonts/PretendardVariable.woff2",
@@ -33,14 +32,13 @@ export default function RootLayout({
   return (
     <html lang="ko" className={`${pretendard.variable}`}>
       <head>
-        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <meta
           name="apple-mobile-web-app-status-bar-style"
           content="black-translucent"
         />
       </head>
       <body className={pretendard.className}>
-        <PushNotificationManager />
         <InstallPrompt />
         {children}
       </body>
