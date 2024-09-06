@@ -31,13 +31,11 @@ export async function POST(req: NextRequest) {
     ) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
-    const { memberId } = await req.json();
     const supabase = createClient();
 
     const { data, error } = await supabase
       .from("push_notification")
       .select("push_subscription")
-      .eq("member_id", memberId)
       .returns<PushNofiticationType>();
 
     if (error) {
