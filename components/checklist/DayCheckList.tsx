@@ -17,6 +17,7 @@ import emptyCheckBox from "@/public/assets/emptyCheckBox.svg";
 import Image from "next/image";
 import SimpleSpinner from "../ui/SimpleSpinner";
 import { updateTodayDone } from "@/actions/userActions";
+import urlBase64ToUint8Array from "@/lib/urlBase64ToUint8Array";
 
 type DayCheckList = {
   nowDate: string;
@@ -41,6 +42,9 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     startDate: new Date(),
     endDate: new Date(),
   });
+  const [subscription, setSubscription] = useState<PushSubscription | null>(
+    null
+  );
 
   useEffect(() => {
     async function fetchAndUpdateTodoList() {
@@ -83,6 +87,60 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
       startConfetti();
     }
   }, [isCompletedAllTodo]);
+
+  useEffect(() => {
+    async function registerServiceWorker() {
+      if (
+        "serviceWorker" in navigator &&
+        "Notification" in window &&
+        "PushManager" in window
+      ) {
+        const registration = await navigator.serviceWorker.register("/sw.js", {
+          scope: "/",
+          updateViaCache: "none",
+        });
+        const sub = await registration.pushManager.getSubscription();
+        setSubscription(sub);
+      }
+    }
+
+    async function subscribeToPush() {
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission !== "granted") {
+          throw new Error("Notification permission not granted");
+        }
+        const registration = await navigator.serviceWorker.ready;
+        const sub = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(
+            process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
+          ),
+        });
+        setSubscription(sub);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/notification-subscribe`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              memberId: memberId,
+              pushSubscription: sub,
+            }),
+          }
+        );
+
+        if (!res.ok) throw new Error("Insert pushSubscription failed.");
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    registerServiceWorker();
+    subscribeToPush();
+  }, []);
 
   const week = getDateAndDay(extraData.startDate, extraData.endDate);
 
@@ -137,6 +195,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
 
   if (loading) return <SimpleSpinner />;
 
+  //헤드 로고에 알림 취소 버튼 추가하기
   return (
     <>
       {isCompletedAllTodo && (
