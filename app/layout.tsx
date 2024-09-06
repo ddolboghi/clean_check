@@ -1,3 +1,4 @@
+import InstallPrompt from "@/utils/InstallPrompt";
 import "./globals.css";
 import localFont from "next/font/local";
 
@@ -26,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="ko" className={`${pretendard.variable}`}>
       <body className={pretendard.className}>{children}</body>
+      <InstallPrompt />
     </html>
   );
 }
