@@ -7,8 +7,16 @@
   },
   "crons": [
     {
-      "path": "/api/send-scheduled-notification",
-      "schedule": "40 23 * * *"
+      "path": "/api/send-notification",
+      "schedule": "20 3 * * *"
+    },
+    {
+      "path": "/api/send-notification",
+      "schedule": "0 18 * * *"
+    },
+    {
+      "path": "/api/send-notification",
+      "schedule": "0 22 * * *"
     }
   ]
 }
