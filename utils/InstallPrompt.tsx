@@ -14,7 +14,7 @@ export default function InstallPrompt() {
     setIsStandalone(window.matchMedia("(display-mode: standalone)").matches);
   }, []);
 
-  if (!isStandalone) {
+  if (isStandalone) {
     return null; //설치하지 않은 사람들에게만 보여주기
   }
 
