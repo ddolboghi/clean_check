@@ -104,6 +104,10 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
       }
     }
 
+    registerServiceWorker();
+  }, []);
+
+  useEffect(() => {
     async function subscribeToPush() {
       try {
         const permission = await Notification.requestPermission();
@@ -112,7 +116,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         }
         const registration = await navigator.serviceWorker.ready;
         const sub = await registration.pushManager.subscribe({
-          userVisibleOnly: false,
+          userVisibleOnly: true,
           applicationServerKey: urlBase64ToUint8Array(
             process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
           ),
@@ -137,8 +141,6 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         console.error(error);
       }
     }
-
-    registerServiceWorker();
     subscribeToPush();
   }, []);
 
