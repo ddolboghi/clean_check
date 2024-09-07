@@ -6,6 +6,12 @@ import webpush from "web-push";
 export const maxDuration = 30;
 export const dynamic = "force-dynamic";
 
+webpush.setVapidDetails(
+  "mailto:rhdfyd128@gmail.com",
+  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY as string,
+  process.env.VAPID_PRIVATE_KEY as string
+);
+
 export async function POST(req: NextRequest) {
   try {
     if (
@@ -31,15 +37,6 @@ export async function POST(req: NextRequest) {
         body: "지킨 항목들을 체크해주세요.",
       };
 
-      const options = {
-        vapidDetails: {
-          subject: "mailto:example@skin-check.vercel.app",
-          publicKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-          privateKey: process.env.VAPID_PRIVATE_KEY!,
-        },
-        TTL: 60,
-      };
-
       const results = await Promise.all(
         data.map(async (pushNotification) => {
           const rawPushSubscription = pushNotification.push_subscription;
@@ -56,8 +53,7 @@ export async function POST(req: NextRequest) {
           try {
             const res = await webpush.sendNotification(
               pushSubscription,
-              JSON.stringify(notificationPayload),
-              options
+              JSON.stringify(notificationPayload)
             );
             console.log("webpush response:", res);
             return { success: true, response: res };
