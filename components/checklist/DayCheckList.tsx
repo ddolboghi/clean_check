@@ -101,6 +101,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         });
         const sub = await registration.pushManager.getSubscription();
         setSubscription(sub);
+        console.log("service worker registered");
       }
     }
 
@@ -139,7 +140,9 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     }
 
     registerServiceWorker();
-    subscribeToPush();
+    if (!subscription) {
+      subscribeToPush();
+    }
   }, []);
 
   const week = getDateAndDay(extraData.startDate, extraData.endDate);
