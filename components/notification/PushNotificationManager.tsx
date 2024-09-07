@@ -101,9 +101,6 @@ export default function PushNotificationManager() {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              memberId: "testMemberId",
-            }),
           }
         );
 
