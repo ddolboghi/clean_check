@@ -92,7 +92,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     async function registerServiceWorker() {
       if (
         "serviceWorker" in navigator &&
-        // "Notification" in window &&
+        "Notification" in window &&
         "PushManager" in window
       ) {
         const registration = await navigator.serviceWorker.register("/sw.js", {
@@ -193,6 +193,32 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     setIsCompletedAllTodo(!isCompletedAllTodo);
   };
 
+  async function unsubscribeFromPush() {
+    try {
+      await subscription?.unsubscribe();
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/notification-unsubscribe`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            memberId: memberId,
+            pushSubscription: subscription,
+          }),
+        }
+      );
+
+      if (!res.ok) throw new Error("Delete pushSubscription failed.");
+      else {
+        setSubscription(null);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   if (loading) return <SimpleSpinner />;
 
   //헤드 로고에 알림 취소 버튼 추가하기
@@ -202,6 +228,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         <CompletionAllTodoPopUp onClickHomeBtn={onClickHomeBtn} />
       )}
       <div className={`flex flex-col h-screen`}>
+        <button onClick={unsubscribeFromPush}>unsubscribe</button>
         <CheckListHead />
         <div>
           <div className="sticky top-0">
