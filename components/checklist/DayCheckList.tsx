@@ -105,6 +105,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     }
 
     async function subscribeToPush() {
+      alert("subscribeToPush");
       try {
         const permission = await Notification.requestPermission();
         if (permission !== "granted") {
