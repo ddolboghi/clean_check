@@ -92,7 +92,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     async function registerServiceWorker() {
       if (
         "serviceWorker" in navigator &&
-        "Notification" in window &&
+        // "Notification" in window &&
         "PushManager" in window
       ) {
         const registration = await navigator.serviceWorker.register("/sw.js", {
@@ -101,7 +101,6 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         });
         const sub = await registration.pushManager.getSubscription();
         setSubscription(sub);
-        console.log("service worker registered");
       }
     }
 
@@ -140,9 +139,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     }
 
     registerServiceWorker();
-    if (!subscription) {
-      subscribeToPush();
-    }
+    subscribeToPush();
   }, []);
 
   const week = getDateAndDay(extraData.startDate, extraData.endDate);
