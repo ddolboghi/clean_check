@@ -3,11 +3,11 @@ import { PushNofiticationType, PushSubscriptionType } from "@/utils/types";
 import { NextRequest, NextResponse } from "next/server";
 import webpush from "web-push";
 
-webpush.setVapidDetails(
-  "mailto:example@skin-check.vercel.app",
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-  process.env.VAPID_PRIVATE_KEY!
-);
+// webpush.setVapidDetails(
+//   "mailto:example@skin-check.vercel.app",
+//   process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+//   process.env.VAPID_PRIVATE_KEY!
+// );
 
 export async function POST(req: NextRequest) {
   try {
@@ -47,12 +47,22 @@ export async function POST(req: NextRequest) {
           expirationTime: null,
         };
 
+        const options = {
+          vapidDetails: {
+            subject: "mailto:example@skin-check.vercel.app",
+            publicKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+            privateKey: process.env.VAPID_PRIVATE_KEY!,
+          },
+          TTL: 60,
+        };
+
         console.log("pushSubscription: ", pushSubscription);
 
         try {
           await webpush.sendNotification(
             pushSubscription,
-            JSON.stringify(notificationPayload)
+            JSON.stringify(notificationPayload),
+            options
           );
         } catch (error) {
           console.error("webpush error: ", error);
