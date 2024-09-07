@@ -2,9 +2,9 @@ import CleanFreeLogoWhite from "../icons/CleanFreeLogoWhite";
 import LogoutButton from "../LogoutButton";
 
 type CheckListHeadProps = {
-  memberId: string;
-  subscription: PushSubscription | null;
-  handleDeleteSubscription: () => void;
+  memberId?: string;
+  subscription?: PushSubscription | null;
+  handleDeleteSubscription?: () => void;
 };
 
 export default function CheckListHead({
@@ -31,7 +31,7 @@ export default function CheckListHead({
 
       if (!res.ok) throw new Error("Delete pushSubscription failed.");
       else {
-        handleDeleteSubscription();
+        if (handleDeleteSubscription) handleDeleteSubscription();
       }
     } catch (error) {
       console.error(error);
