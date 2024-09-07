@@ -1,14 +1,10 @@
 import { createClient } from "@/utils/supabase/server";
-import { PushNofiticationType, PushSubscriptionType } from "@/utils/types";
+import { PushNofiticationType, RequestDataType } from "@/utils/types";
 import { NextRequest, NextResponse } from "next/server";
-
-interface RequestDataType {
-  memberId: string;
-  pushSubscription: PushSubscriptionType;
-}
 
 export async function POST(req: NextRequest) {
   try {
+    console.log("[notification-subscribe] start");
     const { memberId, pushSubscription }: RequestDataType = await req.json();
     const supabase = createClient();
 
@@ -24,11 +20,15 @@ export async function POST(req: NextRequest) {
       (data) => data.push_subscription.keys.auth === pushSubscription.keys.auth
     );
 
-    if (isExistedAuth)
+    if (isExistedAuth) {
+      console.log(
+        "[notification-subscribe] push_subscription keys.auth existed."
+      );
       return NextResponse.json(
         { message: "The subscription already exists." },
         { status: 200 }
       );
+    }
 
     const { data: insertData, error: insertError } = await supabase
       .from("push_notification")
