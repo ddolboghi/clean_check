@@ -6,7 +6,6 @@ import { getIsBeforeToday } from "@/lib/dateTranslator";
 import { SupabaseProfile } from "./profile";
 
 export async function getHaveCheckList(memberId: string) {
-  console.log("[getHaveCheckList]: ", memberId);
   try {
     const { data: recentCheckListData, error: recentCheckListError } =
       await supabaseClient
