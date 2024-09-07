@@ -105,7 +105,6 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     }
 
     async function subscribeToPush() {
-      alert("subscribeToPush");
       try {
         const permission = await Notification.requestPermission();
         if (permission !== "granted") {
@@ -113,7 +112,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         }
         const registration = await navigator.serviceWorker.ready;
         const sub = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
+          userVisibleOnly: false,
           applicationServerKey: urlBase64ToUint8Array(
             process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
           ),
