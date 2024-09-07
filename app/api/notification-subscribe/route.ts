@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    console.log("[notification-subscribe] start");
     const { memberId, pushSubscription }: RequestDataType = await req.json();
     const supabase = createClient();
 
