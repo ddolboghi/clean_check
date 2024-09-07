@@ -16,7 +16,7 @@ export default function CheckListHead({
     try {
       await subscription?.unsubscribe();
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/notification-unsubscribe`,
+        `${process.env.NEXT_PUBLIC_SITE_URL}/api/notification-unsubscribe`,
         {
           method: "POST",
           headers: {

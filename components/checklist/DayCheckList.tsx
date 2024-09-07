@@ -173,7 +173,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
       });
       setSubscription(sub);
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/notification-subscribe`,
+        `${process.env.NEXT_PUBLIC_SITE_URL}/api/notification-subscribe`,
         {
           method: "POST",
           headers: {
