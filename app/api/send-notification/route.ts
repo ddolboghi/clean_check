@@ -59,11 +59,12 @@ export async function POST(req: NextRequest) {
         console.log("pushSubscription: ", pushSubscription);
 
         try {
-          await webpush.sendNotification(
+          const res = await webpush.sendNotification(
             pushSubscription,
             JSON.stringify(notificationPayload),
             options
           );
+          console.log("webpush response: ", res);
         } catch (error) {
           console.error("webpush error: ", error);
         }
