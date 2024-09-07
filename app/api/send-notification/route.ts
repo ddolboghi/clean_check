@@ -3,12 +3,6 @@ import { PushNofiticationType, PushSubscriptionType } from "@/utils/types";
 import { NextRequest, NextResponse } from "next/server";
 import webpush from "web-push";
 
-// webpush.setVapidDetails(
-//   "mailto:example@skin-check.vercel.app",
-//   process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-//   process.env.VAPID_PRIVATE_KEY!
-// );
-
 export async function POST(req: NextRequest) {
   try {
     // vercel cron jobs
@@ -29,48 +23,67 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: error.message }, { status: 400 });
     }
 
-    if (data) {
+    if (data && data.length > 0) {
       const notificationPayload = {
         title: "✅ 지금 피부 루틴을 체크하세요!",
         body: "지킨 항목들을 체크해주세요.",
       };
 
-      data.forEach(async (pushNotification) => {
-        const rawPushSubscription = pushNotification.push_subscription;
+      const options = {
+        vapidDetails: {
+          subject: "mailto:example@skin-check.vercel.app",
+          publicKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+          privateKey: process.env.VAPID_PRIVATE_KEY!,
+        },
+        TTL: 60,
+      };
 
-        const pushSubscription: PushSubscriptionType = {
-          endpoint: rawPushSubscription.endpoint,
-          keys: {
-            p256dh: rawPushSubscription.keys.p256dh,
-            auth: rawPushSubscription.keys.auth,
-          },
-          expirationTime: null,
-        };
+      const results = await Promise.all(
+        data.map(async (pushNotification) => {
+          const rawPushSubscription = pushNotification.push_subscription;
 
-        const options = {
-          vapidDetails: {
-            subject: "mailto:example@skin-check.vercel.app",
-            publicKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-            privateKey: process.env.VAPID_PRIVATE_KEY!,
-          },
-          TTL: 60,
-        };
+          const pushSubscription: PushSubscriptionType = {
+            endpoint: rawPushSubscription.endpoint,
+            keys: {
+              p256dh: rawPushSubscription.keys.p256dh,
+              auth: rawPushSubscription.keys.auth,
+            },
+            expirationTime: null,
+          };
 
-        console.log("pushSubscription: ", pushSubscription);
+          console.log("pushSubscription: ", pushSubscription);
 
-        try {
-          const res = await webpush.sendNotification(
-            pushSubscription,
-            JSON.stringify(notificationPayload),
-            options
-          );
-          console.log("webpush response: ", res);
-        } catch (error) {
-          console.error("webpush error: ", error);
-        }
-      });
+          try {
+            const res = await webpush.sendNotification(
+              pushSubscription,
+              JSON.stringify(notificationPayload),
+              options
+            );
+            console.log("webpush response: ", res);
+            return { success: true, response: res };
+          } catch (error) {
+            console.error("webpush error: ", error);
+            return { success: false, error: error };
+          }
+        })
+      );
 
-      return NextResponse.json({ message: "success" }, { status: 200 });
+      const successCount = results.filter((r) => r.success).length;
+      const failCount = results.length - successCount;
+
+      return NextResponse.json(
+        {
+          message: "Notifications sent",
+          successCount,
+          failCount,
+        },
+        { status: 200 }
+      );
+    } else {
+      return NextResponse.json(
+        { message: "No push notifications to send" },
+        { status: 200 }
+      );
     }
   } catch (error) {
     console.error("Unexpected error:", error);
