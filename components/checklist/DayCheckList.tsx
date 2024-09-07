@@ -158,32 +158,6 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     setIsCompletedAllTodo(!isCompletedAllTodo);
   };
 
-  async function unsubscribeFromPush() {
-    try {
-      await subscription?.unsubscribe();
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/notification-unsubscribe`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            memberId: memberId,
-            pushSubscription: subscription,
-          }),
-        }
-      );
-
-      if (!res.ok) throw new Error("Delete pushSubscription failed.");
-      else {
-        setSubscription(null);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   async function subscribeToPush() {
     try {
       const permission = await Notification.requestPermission();
@@ -218,6 +192,10 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     }
   }
 
+  const handleDeleteSubscription = () => {
+    setSubscription(null);
+  };
+
   if (loading) return <SimpleSpinner />;
 
   return (
@@ -227,7 +205,11 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
       )}
       <div className={`flex flex-col h-screen`}>
         {!subscription && <button onClick={subscribeToPush}>알림 받기</button>}
-        <CheckListHead />
+        <CheckListHead
+          memberId={memberId}
+          subscription={subscription}
+          handleDeleteSubscription={handleDeleteSubscription}
+        />
         <div>
           <div className="sticky top-0">
             {/* nav section */}
