@@ -90,11 +90,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
 
   useEffect(() => {
     async function registerServiceWorker() {
-      if (
-        "serviceWorker" in navigator &&
-        "Notification" in window &&
-        "PushManager" in window
-      ) {
+      if ("serviceWorker" in navigator && "PushManager" in window) {
         const registration = await navigator.serviceWorker.register("/sw.js", {
           scope: "/",
           updateViaCache: "none",
