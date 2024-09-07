@@ -7,6 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "스킨체크 반응형 웹앱입니다.",
     start_url: "/login",
     display: "standalone",
+    theme_color: "#ffffff",
     icons: [
       {
         src: "/assets/cleanfreeLogoReversed.png",
