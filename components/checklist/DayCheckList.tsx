@@ -213,7 +213,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         <div>
           <div className="sticky top-0">
             {/* nav section */}
-            <nav className="py-6 px-4 rounded-t-[40px] bg-white flex justify-center items-center text-base font-light tracking-tight text-center whitespace-nowrap text-[#B2B2B2]">
+            <nav className="py-4 px-4 rounded-t-[40px] bg-white flex justify-center items-center text-base font-light tracking-tight text-center whitespace-nowrap text-[#B2B2B2]">
               {Object.entries(week).map(([date, day]) => (
                 <button
                   key={date}
@@ -232,7 +232,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
             </nav>
 
             {/* topic section */}
-            <nav className="min-h-7 px-6 pb-[8px] bg-white flex justify-start flex-row space-x-2 overflow-x-auto">
+            <nav className="min-h-7 px-6 pb-4 bg-white flex justify-start flex-row space-x-2 overflow-x-auto">
               {topicList.map((topic, topicIdx) => (
                 <button
                   key={topicIdx}
