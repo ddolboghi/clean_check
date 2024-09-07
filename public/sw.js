@@ -3,7 +3,7 @@ self.addEventListener("push", function (event) {
     const data = event.data.json();
     const options = {
       body: data.body,
-      icon: data.icon || "/assets/cleanfreeLogo2.png",
+      icon: data.icon || "/assets/cleanfreeLogoReversed.png",
       badge: "/assets/fillCheckbox.svg",
       vibrate: [100, 50, 100],
       data: {
