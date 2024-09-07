@@ -19,3 +19,8 @@ export type PushNofiticationType = {
   push_subscription: PushSubscriptionType;
   member_id: string;
 }[];
+
+export type RequestDataType = {
+  memberId: string;
+  pushSubscription: PushSubscriptionType;
+};
