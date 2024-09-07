@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Skin Check",
-    short_name: "SkinCheck",
-    description: "This is a progressive web app from SkinCheck.",
+    name: "스킨체크",
+    short_name: "스킨체크",
+    description: "스킨체크 반응형 웹앱입니다.",
     start_url: "/login",
     display: "standalone",
     icons: [
