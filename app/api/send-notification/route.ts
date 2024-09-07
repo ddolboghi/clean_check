@@ -1,21 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
+import { PushNofiticationType, PushSubscriptionType } from "@/utils/types";
 import { NextRequest, NextResponse } from "next/server";
 import webpush from "web-push";
-
-type PushSubscriptionType = {
-  endpoint: string;
-  keys: {
-    p256dh: string;
-    auth: string;
-  };
-  expirationTime: null;
-};
-
-type PushNofiticationType = {
-  id: number;
-  push_subscription: PushSubscriptionType;
-  member_id: string;
-}[];
 
 webpush.setVapidDetails(
   "mailto:example@skin-check.vercel.app",
