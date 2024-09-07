@@ -1,5 +1,5 @@
 import Image from "next/image";
-import completeSvg from "@/assets/complete.svg";
+import completeSvg from "@/public/assets/complete.svg";
 import "@/style/completionAllTodoPopUp.css";
 
 type CompletionAllTodoPopUpProps = {

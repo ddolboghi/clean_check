@@ -12,11 +12,12 @@ import CheckListHead from "../ui/CheckListHead";
 import { getUniqueTopic } from "@/lib/todoListlib";
 import CompletionAllTodoPopUp from "../ui/CompletionAllTodoPopUp";
 import { excuteConfetti } from "@/lib/confettiCustom";
-import fillCheckBox from "@/assets/fillCheckbox.svg";
-import emptyCheckBox from "@/assets/emptyCheckBox.svg";
+import fillCheckBox from "@/public/assets/fillCheckbox.svg";
+import emptyCheckBox from "@/public/assets/emptyCheckBox.svg";
 import Image from "next/image";
 import SimpleSpinner from "../ui/SimpleSpinner";
 import { updateTodayDone } from "@/actions/userActions";
+import urlBase64ToUint8Array from "@/lib/urlBase64ToUint8Array";
 
 type DayCheckList = {
   nowDate: string;
@@ -41,6 +42,9 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     startDate: new Date(),
     endDate: new Date(),
   });
+  const [subscription, setSubscription] = useState<PushSubscription | null>(
+    null
+  );
 
   useEffect(() => {
     async function fetchAndUpdateTodoList() {
@@ -83,6 +87,25 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
       startConfetti();
     }
   }, [isCompletedAllTodo]);
+
+  useEffect(() => {
+    async function registerServiceWorker() {
+      if (
+        "serviceWorker" in navigator &&
+        "Notification" in window &&
+        "PushManager" in window
+      ) {
+        const registration = await navigator.serviceWorker.register("/sw.js", {
+          scope: "/",
+          updateViaCache: "none",
+        });
+        const sub = await registration.pushManager.getSubscription();
+        setSubscription(sub);
+      }
+    }
+
+    registerServiceWorker();
+  }, []);
 
   const week = getDateAndDay(extraData.startDate, extraData.endDate);
 
@@ -135,6 +158,44 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     setIsCompletedAllTodo(!isCompletedAllTodo);
   };
 
+  async function subscribeToPush() {
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        throw new Error("Notification permission not granted");
+      }
+      const registration = await navigator.serviceWorker.ready;
+      const sub = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(
+          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
+        ),
+      });
+      setSubscription(sub);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/notification-subscribe`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            memberId: memberId,
+            pushSubscription: sub,
+          }),
+        }
+      );
+
+      if (!res.ok) throw new Error("Insert pushSubscription failed.");
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const handleDeleteSubscription = () => {
+    setSubscription(null);
+  };
+
   if (loading) return <SimpleSpinner />;
 
   return (
@@ -143,11 +204,16 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         <CompletionAllTodoPopUp onClickHomeBtn={onClickHomeBtn} />
       )}
       <div className={`flex flex-col h-screen`}>
-        <CheckListHead />
+        {!subscription && <button onClick={subscribeToPush}>알림 받기</button>}
+        <CheckListHead
+          memberId={memberId}
+          subscription={subscription}
+          handleDeleteSubscription={handleDeleteSubscription}
+        />
         <div>
           <div className="sticky top-0">
             {/* nav section */}
-            <nav className="py-6 px-4 rounded-t-[40px] bg-white flex justify-center items-center text-base font-light tracking-tight text-center whitespace-nowrap text-[#B2B2B2]">
+            <nav className="py-4 px-4 rounded-t-[40px] bg-white flex justify-center items-center text-base font-light tracking-tight text-center whitespace-nowrap text-[#B2B2B2]">
               {Object.entries(week).map(([date, day]) => (
                 <button
                   key={date}
@@ -166,7 +232,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
             </nav>
 
             {/* topic section */}
-            <nav className="min-h-7 px-6 pb-[8px] bg-white flex justify-start flex-row space-x-2 overflow-x-auto">
+            <nav className="min-h-7 px-6 pb-4 bg-white flex justify-start flex-row space-x-2 overflow-x-auto">
               {topicList.map((topic, topicIdx) => (
                 <button
                   key={topicIdx}
