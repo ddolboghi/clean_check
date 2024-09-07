@@ -5,7 +5,6 @@ import webpush from "web-push";
 
 export async function POST(req: NextRequest) {
   try {
-    // vercel cron jobs
     if (
       req.headers.get("Authorization") !== `Bearer ${process.env.CRON_SECRET}`
     ) {
@@ -51,15 +50,12 @@ export async function POST(req: NextRequest) {
             expirationTime: null,
           };
 
-          console.log("pushSubscription: ", pushSubscription);
-
           try {
             const res = await webpush.sendNotification(
               pushSubscription,
               JSON.stringify(notificationPayload),
               options
             );
-            console.log("webpush response: ", res);
             return { success: true, response: res };
           } catch (error) {
             console.error("webpush error: ", error);
