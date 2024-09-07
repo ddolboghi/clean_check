@@ -104,21 +104,6 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
       }
     }
 
-    async function getSubscriptions() {
-      try {
-        const res = fetch(
-          `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/notification-subscription/${memberId}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        console.log(res);
-      } catch (error) {}
-    }
-
     registerServiceWorker();
   }, []);
 
