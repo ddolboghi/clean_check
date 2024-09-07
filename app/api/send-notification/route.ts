@@ -49,10 +49,12 @@ export async function POST(req: NextRequest) {
 
         console.log("pushSubscription: ", pushSubscription);
 
-        await webpush.sendNotification(
+        const res = await webpush.sendNotification(
           pushSubscription,
           JSON.stringify(notificationPayload)
         );
+
+        console.log("webpush response:", res);
       });
 
       return NextResponse.json({ message: "success" }, { status: 200 });
