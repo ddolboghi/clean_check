@@ -7,16 +7,14 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "This is a progressive web app from SkinCheck.",
     start_url: "/login",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#000000",
     icons: [
       {
-        src: "/assets/cleanfreeLogo2.png",
+        src: "/assets/cleanfreeLogoReversed.png",
         sizes: "192x192",
         type: "image/png",
       },
       {
-        src: "/assets/cleanfreeLogo2.png",
+        src: "/assets/cleanfreeLogoReversed.png",
         sizes: "512x512",
         type: "image/png",
       },
