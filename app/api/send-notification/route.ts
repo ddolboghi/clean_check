@@ -56,6 +56,7 @@ export async function POST(req: NextRequest) {
               JSON.stringify(notificationPayload),
               options
             );
+            console.log("webpush response:", res);
             return { success: true, response: res };
           } catch (error) {
             console.error("webpush error: ", error);
