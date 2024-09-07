@@ -47,6 +47,8 @@ export async function POST(req: NextRequest) {
           expirationTime: null,
         };
 
+        console.log("pushSubscription: ", pushSubscription);
+
         await webpush.sendNotification(
           pushSubscription,
           JSON.stringify(notificationPayload)
