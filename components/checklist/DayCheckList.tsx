@@ -104,43 +104,22 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
       }
     }
 
-    async function subscribeToPush() {
+    async function getSubscriptions() {
       try {
-        const permission = await Notification.requestPermission();
-        alert(permission);
-        if (permission !== "granted") {
-          throw new Error("Notification permission not granted");
-        }
-        const registration = await navigator.serviceWorker.ready;
-        const sub = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(
-            process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
-          ),
-        });
-        setSubscription(sub);
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/notification-subscribe`,
+        const res = fetch(
+          `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/notification-subscription/${memberId}`,
           {
-            method: "POST",
+            method: "GET",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              memberId: memberId,
-              pushSubscription: sub,
-            }),
           }
         );
-
-        if (!res.ok) throw new Error("Insert pushSubscription failed.");
-      } catch (error) {
-        console.error(error);
-      }
+        console.log(res);
+      } catch (error) {}
     }
 
     registerServiceWorker();
-    subscribeToPush();
   }, []);
 
   const week = getDateAndDay(extraData.startDate, extraData.endDate);
@@ -220,16 +199,49 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     }
   }
 
+  async function subscribeToPush() {
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        throw new Error("Notification permission not granted");
+      }
+      const registration = await navigator.serviceWorker.ready;
+      const sub = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(
+          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
+        ),
+      });
+      setSubscription(sub);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/notification-subscribe`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            memberId: memberId,
+            pushSubscription: sub,
+          }),
+        }
+      );
+
+      if (!res.ok) throw new Error("Insert pushSubscription failed.");
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   if (loading) return <SimpleSpinner />;
 
-  //헤드 로고에 알림 취소 버튼 추가하기
   return (
     <>
       {isCompletedAllTodo && (
         <CompletionAllTodoPopUp onClickHomeBtn={onClickHomeBtn} />
       )}
       <div className={`flex flex-col h-screen`}>
-        <button onClick={unsubscribeFromPush}>unsubscribe</button>
+        {!subscription && <button onClick={subscribeToPush}>알림 받기</button>}
         <CheckListHead />
         <div>
           <div className="sticky top-0">
