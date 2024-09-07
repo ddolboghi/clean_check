@@ -3,6 +3,9 @@ import { PushNofiticationType, PushSubscriptionType } from "@/utils/types";
 import { NextRequest, NextResponse } from "next/server";
 import webpush from "web-push";
 
+export const maxDuration = 30;
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   try {
     if (
