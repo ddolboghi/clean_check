@@ -104,13 +104,10 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
       }
     }
 
-    registerServiceWorker();
-  }, []);
-
-  useEffect(() => {
     async function subscribeToPush() {
       try {
         const permission = await Notification.requestPermission();
+        alert(permission);
         if (permission !== "granted") {
           throw new Error("Notification permission not granted");
         }
@@ -141,6 +138,8 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         console.error(error);
       }
     }
+
+    registerServiceWorker();
     subscribeToPush();
   }, []);
 
