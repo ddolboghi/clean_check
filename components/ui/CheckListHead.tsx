@@ -1,3 +1,5 @@
+import Link from "next/link";
+import ChatbotReversedIcon from "../icons/ChatbotReversedIcon";
 import CleanFreeLogoWhite from "../icons/CleanFreeLogoWhite";
 import LogoutButton from "../LogoutButton";
 
@@ -41,21 +43,23 @@ export default function CheckListHead({
 
   return (
     <section className="bg-[#24E6C1] px-6 mb-[-55px]">
-      <div className="mb-[53px] flex flex-row justify-between items-center">
-        <div>
-          <h1 className="pt-[76px] font-semibold text-[26px] pb-2 leading-tight">
-            작은 습관으로 지키는
-            <br /> 나의 피부
-          </h1>
-          <p className="mb-[35px] text-[#286459] font-medium">
-            지금부터 바로 시작해요!
-          </p>
-        </div>
-        <div className="pt-10">
+      <div className="mb-[53px] flex flex-col justify-between">
+        <div className="pt-10 flex flex-row justify-between">
           <LogoutButton>
             <CleanFreeLogoWhite />
           </LogoutButton>
+          <Link href="/chat">
+            <ChatbotReversedIcon />
+          </Link>
         </div>
+        <div>
+          <p className="text-[#286459] font-medium">지금부터 바로 시작해요!</p>
+          <h1 className="font-semibold text-[26px] pb-2 leading-tight">
+            작은 습관으로 지키는
+            <br /> 나의 피부
+          </h1>
+        </div>
+        <div></div>
       </div>
     </section>
   );
