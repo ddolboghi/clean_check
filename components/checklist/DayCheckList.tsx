@@ -117,7 +117,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         const newTopicList = getUniqueTopic(newTodoListOfDay);
         setTopicList(newTopicList);
       }
-      // setClickedTopic("전체");
+      setClickedTopic("전체");
     }
   };
 
