@@ -30,7 +30,7 @@ export type GeneratingCheckListType = {
 type ParsedCheckList =
   | {
       todoId: number;
-      timeOrder: number;
+      topic: string;
       todo: string;
       dayNum: number;
     }[]
@@ -163,7 +163,7 @@ export default function Chatbot() {
         parsedTodoList.forEach((parsedTodo) => {
           const todoEle: Todo = {
             todoId: parsedTodo.todoId,
-            timeOrder: parsedTodo.timeOrder,
+            topic: parsedTodo.topic,
             todo: parsedTodo.todo,
             days: getDaysFromDayGap(parsedTodo.dayNum),
           };

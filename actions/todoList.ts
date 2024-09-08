@@ -36,7 +36,7 @@ export async function getTodoListByDate(date: Date | string, memberId: string) {
       Object.keys(todo.days).includes(date.toString())
     );
 
-    filteredTodos.sort((a, b) => a.timeOrder - b.timeOrder);
+    // filteredTodos.sort((a, b) => a.timeOrder - b.timeOrder);
 
     const startDate = recentData.start_date;
     const endDate = recentData.end_date;

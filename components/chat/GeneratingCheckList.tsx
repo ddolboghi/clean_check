@@ -1,4 +1,4 @@
-import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
+import { CircularProgressbar } from "react-circular-progressbar";
 import { GeneratingCheckListType } from "./Chatbot";
 
 export default function GeneratingCheckList({
