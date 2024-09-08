@@ -1,6 +1,6 @@
-import { Message } from "@/components/chat/Chatbot";
+import { ChatGptMessage } from "@/utils/types";
 
-export const getIsOverQuestion = (chat: Message[]) => {
+export const getIsOverQuestion = (chat: ChatGptMessage[]) => {
   const numberOfMaxQuestion = Number(
     process.env.NEXT_PUBLIC_NUMBER_OF_MAX_QUESTION as string
   );
@@ -9,6 +9,6 @@ export const getIsOverQuestion = (chat: Message[]) => {
   );
 };
 
-export const getNumberOfBotQuestions = (chat: Message[]) => {
+export const getNumberOfBotQuestions = (chat: ChatGptMessage[]) => {
   return chat.filter((c) => c.role !== "user").length;
 };

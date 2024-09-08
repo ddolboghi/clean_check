@@ -1,6 +1,6 @@
-import { Message } from "./Chatbot";
+import { ChatGptMessage } from "@/utils/types";
 
-export default function UserMessage({ role, content }: Message) {
+export default function UserMessage({ role, content }: ChatGptMessage) {
   if (role === "user") {
     return (
       <div className="flex justify-end">
