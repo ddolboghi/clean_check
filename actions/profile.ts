@@ -20,7 +20,7 @@ export async function getAllProfiles(): Promise<SupabaseProfile[]> {
       return [];
     }
 
-    console.log("[getAllProfiles] Get all profiles success", profilesData);
+    console.log("[getAllProfiles] Get all profiles success");
     return profilesData;
   } catch (error) {
     console.error("[getAllProfiles] ErrorgetAllProfiles:", error);

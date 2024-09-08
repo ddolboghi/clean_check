@@ -1,6 +1,5 @@
 "use server";
 
-import { getKSTPreviousDateString } from "@/lib/dateTranslator";
 import { supabaseClient } from "@/lib/getSupabaseClient";
 import { Todo } from "@/utils/types";
 
@@ -15,7 +14,7 @@ export interface SupabaseCheckList {
 }
 
 export async function getTodoListByDate(date: Date | string, memberId: string) {
-  console.log("넘겨받은 date:", date);
+  console.log("[getTodoListByDate] 넘겨받은 date:", date);
   try {
     const { data: recentData, error: recentError } = await supabaseClient
       .from("check_list")
@@ -46,7 +45,7 @@ export async function getTodoListByDate(date: Date | string, memberId: string) {
     console.log("[getTodoListByDate] Get todo_list by date success");
     return { checkListId, filteredTodos, startDate, endDate, delayedDate };
   } catch (error) {
-    console.error("[getTodoListByDate] Error getTodoListByDay:", error);
+    console.error("[getTodoListByDate] Error:", error);
     return null;
   }
 }
@@ -66,7 +65,7 @@ export async function updateDaysOfTodo(
     console.log("[updateDaysOfTodo] Data updated successfully");
     return data;
   } catch (error) {
-    console.error("[updateDaysOfTodo] Error updatedDaysOfTodo:", error);
+    console.error("[updateDaysOfTodo] Error:", error);
     return null;
   }
 }
@@ -74,11 +73,13 @@ export async function updateDaysOfTodo(
 export async function updateTodoDaysToDelay(
   checkListId: number,
   memberId: string,
-  todayKey: string
+  todayKey: string,
+  yesterdayKey: string
 ) {
+  console.log(
+    `[updateTodoDaysToDelay] yesterdayKey: ${yesterdayKey}, todayKey: ${todayKey}`
+  );
   try {
-    const yesterdayKey = getKSTPreviousDateString();
-
     const { data: selectData, error: selectError } = await supabaseClient
       .from("check_list")
       .select("*")
@@ -114,13 +115,10 @@ export async function updateTodoDaysToDelay(
 
     if (updateError) throw updateError;
 
-    console.log("[updateTodoDaysToDelay]: Update delayed todo success");
+    console.log("[updateTodoDaysToDelay] Update delayed todo success");
     return updateData;
   } catch (error) {
-    console.error(
-      "[updateTodoDaysToDelay]: Error in updateTodoDaysToDelay:",
-      error
-    );
+    console.error("[updateTodoDaysToDelay] Error:", error);
     return null;
   }
 }

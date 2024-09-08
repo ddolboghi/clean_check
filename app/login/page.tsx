@@ -1,6 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import cleanFreeLogo from "@/assets/cleanfreeLogo2.png";
+import cleanFreeLogo from "@/public/assets/cleanfreeLogo2.png";
 import Image from "next/image";
 import "@/style/loginPageAnimation.css";
 import KakaoLoginButton from "@/components/KakaoLoginButton";

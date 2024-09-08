@@ -15,7 +15,7 @@ export default async function page() {
   }
   const memberId = user.id;
   const nowDate = getKSTDateString();
-  const haveCheckList = await getHaveCheckList();
+  const haveCheckList = await getHaveCheckList(memberId);
 
   return (
     <main>
