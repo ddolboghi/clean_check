@@ -122,3 +122,37 @@ export async function updateTodoDaysToDelay(
     return null;
   }
 }
+
+export async function getNumOfTodoList(memberId: string) {
+  try {
+    const { data: recentData, error: recentError } = await supabaseClient
+      .from("check_list")
+      .select("todo_list")
+      .eq("member_id", memberId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single<SupabaseCheckList>();
+
+    if (recentError) throw recentError;
+
+    if (!recentData || !recentData.todo_list) {
+      return null;
+    }
+
+    const numberOfTodos = recentData.todo_list.reduce((totalCount, todo) => {
+      return totalCount + Object.keys(todo.days).length;
+    }, 0);
+    const numberOfDoneTodos = recentData.todo_list.reduce((count, todo) => {
+      const trueCount = Object.values(todo.days).filter(
+        (value) => value === true
+      ).length;
+      return count + trueCount;
+    }, 0);
+
+    console.log("[getNumOfTodo] Get number of todo success");
+    return { numberOfTodos, numberOfDoneTodos };
+  } catch (error) {
+    console.error("[getNumOfTodo] Error:", error);
+    return null;
+  }
+}
