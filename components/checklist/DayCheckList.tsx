@@ -11,14 +11,14 @@ import { getDateAndDay } from "@/lib/dateTranslator";
 import CheckListHead from "../ui/CheckListHead";
 import CompletionAllTodoPopUp from "../ui/CompletionAllTodoPopUp";
 import { excuteConfetti } from "@/lib/confettiCustom";
-import fillCheckBox from "@/public/assets/fillCheckbox.svg";
-import emptyCheckBox from "@/public/assets/emptyCheckBox.svg";
-import Image from "next/image";
 import SimpleSpinner from "../ui/SimpleSpinner";
-import { useRouter } from "next/navigation";
 import { updateTodayDone } from "@/actions/userActions";
 import urlBase64ToUint8Array from "@/lib/urlBase64ToUint8Array";
 import { getUniqueTopic } from "@/lib/todoListlib";
+import WeekNav from "./WeekNav";
+import TopicNav from "./TopicNav";
+import NothingCheckList from "./NothingCheckList";
+import TodoSection from "./TodoSection";
 
 type DayCheckList = {
   nowDate: string;
@@ -46,7 +46,6 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
   const [subscription, setSubscription] = useState<PushSubscription | null>(
     null
   );
-  const route = useRouter();
 
   useEffect(() => {
     async function fetchAndUpdateTodoList() {
@@ -118,7 +117,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         const newTopicList = getUniqueTopic(newTodoListOfDay);
         setTopicList(newTopicList);
       }
-      setClickedTopic("전체");
+      // setClickedTopic("전체");
     }
   };
 
@@ -208,84 +207,30 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
           subscription={subscription}
           handleDeleteSubscription={handleDeleteSubscription}
         />
-        <div>
-          <div className="sticky top-0">
-            {/* nav section */}
-            <nav className="py-6 px-4 rounded-t-[40px] bg-white flex justify-center items-center text-base font-light tracking-tight text-center whitespace-nowrap text-[#B2B2B2]">
-              {Object.entries(week).map(([date, day]) => (
-                <button
-                  key={date}
-                  onClick={() => handleDayOfWeek(date)}
-                  className={`self-stretch px-3 py-1.5 w-[53px] h-[63px] ${
-                    clickedDate === date &&
-                    "font-light text-[#B2B2B2] bg-[#DFF4F0] rounded-[15px]"
-                  }`}
-                >
-                  <div className="pb-1">{day}</div>
-                  <div className="pb-0.5 text-xs">
-                    {date.split("-")[2].replace(/^0/, "")}
-                  </div>
-                </button>
-              ))}
-            </nav>
-
-            {/* topic section */}
-            <nav className="min-h-7 px-6 pb-4 bg-white flex justify-start flex-row space-x-2 overflow-x-auto">
-              {topicList.map((topic, topicIdx) => (
-                <button
-                  key={topicIdx}
-                  onClick={() => handleTopic(topic)}
-                  className="text-sm tracking-tight leading-loose text-center whitespace-nowrap rounded-3xl scrollbar-hide"
-                >
-                  <div
-                    className={`px-5 rounded-3xl text-center ${
-                      topic === clickedTopic
-                        ? "bg-[#565656] text-white"
-                        : "bg-gray-200 bg-opacity-80 text-zinc-500"
-                    }`}
-                  >
-                    {topic}
-                  </div>
-                </button>
-              ))}
-            </nav>
-          </div>
-
-          {/* todo section */}
-          <section
-            className={`px-6 bg-white flex flex-col gap-5 overflow-y-scroll scrollbar-hide`}
-          >
-            {todoList &&
-              todoList
-                .filter(
-                  (btnTodo) =>
-                    clickedTopic === "전체" || btnTodo.topic === clickedTopic
-                )
-                .map((btnTodo) => {
-                  const isCompleted = btnTodo.days[clickedDate];
-
-                  return (
-                    <button
-                      className={`flex justify-between items-center px-6 py-4 w-full rounded-3xl border-2 border-solid ${
-                        isCompleted
-                          ? "bg-white bg-opacity-80 border-zinc-100 text-[#B2B2B2]"
-                          : "bg-[#E1F5F1] border-[#E1F5F1] text-[#528A80]"
-                      }`}
-                      key={btnTodo.todoId}
-                      onClick={() => handleTodoClick(btnTodo)}
-                    >
-                      <p className="whitespace-normal mr-2">{btnTodo.todo}</p>
-                      <Image
-                        src={isCompleted ? fillCheckBox : emptyCheckBox}
-                        width={18}
-                        height={18}
-                        alt={isCompleted ? "완료" : "미완료"}
-                      />
-                    </button>
-                  );
-                })}
+        {todoList ? (
+          <section>
+            <div className="sticky top-0">
+              <WeekNav
+                week={week}
+                handleDayOfWeek={handleDayOfWeek}
+                clickedDate={clickedDate}
+              />
+              <TopicNav
+                topicList={topicList}
+                clickedTopic={clickedTopic}
+                handleTopic={handleTopic}
+              />
+            </div>
+            <TodoSection
+              todoList={todoList}
+              clickedTopic={clickedTopic}
+              clickedDate={clickedDate}
+              handleTodoClick={handleTodoClick}
+            />
           </section>
-        </div>
+        ) : (
+          <NothingCheckList />
+        )}
       </div>
     </>
   );

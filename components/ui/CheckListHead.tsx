@@ -40,7 +40,7 @@ export default function CheckListHead({
   //추후 필요 시 알림 받지 않는 기능 추가하기
 
   return (
-    <div className="bg-[#24E6C1] px-6 mb-[-55px]">
+    <section className="bg-[#24E6C1] px-6 mb-[-55px]">
       <div className="mb-[53px] flex flex-row justify-between items-center">
         <div>
           <h1 className="pt-[76px] font-semibold text-[26px] pb-2 leading-tight">
@@ -57,6 +57,6 @@ export default function CheckListHead({
           </LogoutButton>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
