@@ -6,9 +6,9 @@ import {
   updateTodoDaysToDelay,
 } from "@/actions/todoList";
 import { Todo } from "@/utils/types";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getDateAndDay } from "@/lib/dateTranslator";
-import CheckListHead from "../ui/CheckListHead";
+import CheckListHead from "./CheckListHead";
 import CompletionAllTodoPopUp from "../ui/CompletionAllTodoPopUp";
 import { excuteConfetti } from "@/lib/confettiCustom";
 import SimpleSpinner from "../ui/SimpleSpinner";
@@ -19,6 +19,10 @@ import WeekNav from "./WeekNav";
 import TopicNav from "./TopicNav";
 import NothingCheckList from "./NothingCheckList";
 import TodoSection from "./TodoSection";
+import LogoutButton from "../LogoutButton";
+import CleanFreeLogoWhite from "../icons/CleanFreeLogoWhite";
+import ChatbotReversedIcon from "../icons/ChatbotReversedIcon";
+import Link from "next/link";
 
 type DayCheckList = {
   nowDate: string;
@@ -46,6 +50,36 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
   const [subscription, setSubscription] = useState<PushSubscription | null>(
     null
   );
+  const [navTranslateY, setNavTranslateY] = useState(0);
+  const headerRef = useRef<HTMLElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const header = headerRef.current;
+    const nav = navRef.current;
+    const section = sectionRef.current;
+
+    if (!header || !nav || !section) return;
+
+    const headerHeight = header.offsetHeight;
+
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      if (scrollY > 0) {
+        setNavTranslateY(-116);
+      } else {
+        setNavTranslateY(0);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   useEffect(() => {
     async function fetchAndUpdateTodoList() {
@@ -200,16 +234,33 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
       {isCompletedAllTodo && (
         <CompletionAllTodoPopUp onClickHomeBtn={onClickHomeBtn} />
       )}
-      <div className="flex flex-col h-screen">
+      <main className="flex flex-col min-h-screen">
         {!subscription && <button onClick={subscribeToPush}>알림 받기</button>}
+        <header
+          ref={headerRef}
+          className="px-9 bg-[#24E6C1] pt-10 pb-1 flex flex-row justify-between sticky top-0 z-20"
+        >
+          <LogoutButton>
+            <CleanFreeLogoWhite />
+          </LogoutButton>
+          <Link href="/chat">
+            <ChatbotReversedIcon />
+          </Link>
+        </header>
         <CheckListHead
+          todoList={todoList}
           memberId={memberId}
           subscription={subscription}
           handleDeleteSubscription={handleDeleteSubscription}
         />
         {todoList ? (
-          <section>
-            <div className="sticky top-0">
+          <div
+            ref={navRef}
+            className="transition-transform duration-300"
+            style={{ transform: `translateY(${navTranslateY}px)` }}
+          >
+            <div className="sticky top-[204px]">
+              <div className="relative left-1/2 -translate-x-1/2 top-3 w-[80px] h-[4px] bg-[#DADADA]"></div>
               <WeekNav
                 week={week}
                 handleDayOfWeek={handleDayOfWeek}
@@ -221,17 +272,19 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
                 handleTopic={handleTopic}
               />
             </div>
-            <TodoSection
-              todoList={todoList}
-              clickedTopic={clickedTopic}
-              clickedDate={clickedDate}
-              handleTodoClick={handleTodoClick}
-            />
-          </section>
+            <section ref={sectionRef}>
+              <TodoSection
+                todoList={todoList}
+                clickedTopic={clickedTopic}
+                clickedDate={clickedDate}
+                handleTodoClick={handleTodoClick}
+              />
+            </section>
+          </div>
         ) : (
           <NothingCheckList />
         )}
-      </div>
+      </main>
     </>
   );
 }
