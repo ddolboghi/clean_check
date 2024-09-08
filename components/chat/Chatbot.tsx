@@ -12,34 +12,17 @@ import ResetChatPopUp from "../ui/ResetChatPopUp";
 import ChatHeader from "./ChatHeader";
 import ChatLoading from "../ui/ChatLoading";
 import { getDaysFromDayGap } from "@/lib/dateTranslator";
-import { Todo } from "@/utils/types";
-
-export type Message = {
-  content: string;
-  role: "user" | "assistant" | "system" | "final";
-};
-
-export type GeneratingCheckListType = {
-  disableChatInput: boolean;
-  generateTodoListMessageStart: boolean;
-  generateParsedTodoListStart: boolean;
-  saveCheckListStart: boolean;
-  savedCheckList: boolean;
-};
-
-type ParsedCheckList =
-  | {
-      todoId: number;
-      topic: string;
-      todo: string;
-      dayNum: number;
-    }[]
-  | null;
+import {
+  ChatGptMessage,
+  GeneratingCheckListType,
+  ParsedCheckList,
+  Todo,
+} from "@/utils/types";
 
 export default function Chatbot() {
   const [userMessage, setUserMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [messages, setMessages] = useState<Message[]>([
+  const [messages, setMessages] = useState<ChatGptMessage[]>([
     {
       role: "assistant",
       content:
@@ -65,7 +48,7 @@ export default function Chatbot() {
     if (!userMessage) return;
 
     // Create new message object
-    const newMessage: Message = { role: "user", content: userMessage };
+    const newMessage: ChatGptMessage = { role: "user", content: userMessage };
 
     // Update the message state
     setMessages((prevMessage) => [...prevMessage, newMessage]);
@@ -90,7 +73,6 @@ export default function Chatbot() {
         });
         setPercentage(25);
 
-        /**-------------------------------------*/
         const gptTodoListMessageResponse = await fetch(
           `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/create-checklist-by-gpt`,
           {
@@ -169,7 +151,6 @@ export default function Chatbot() {
           };
           todoList.push(todoEle);
         });
-        /**-------------------------------------*/
 
         if (!todoList || todoList.length === 0) {
           throw new Error("Fail to create todo list.");

@@ -1,10 +1,9 @@
 "use server";
 
-import { Message } from "@/components/chat/Chatbot";
 import OpenAI from "openai";
 import { getIsOverQuestion } from "@/lib/chatLib";
 import { getKSTDateString } from "@/lib/dateTranslator";
-import { Todo } from "@/utils/types";
+import { ChatGptMessage, Todo } from "@/utils/types";
 import { supabaseClient } from "@/lib/getSupabaseClient";
 import { createClient } from "@/utils/supabase/server";
 
@@ -17,11 +16,11 @@ const openAI = new OpenAI({
  * @param chatMessages
  * @returns
  */
-export async function chatCompletion(chatMessages: Message[]) {
+export async function chatCompletion(chatMessages: ChatGptMessage[]) {
   try {
     const chatPrompt = process.env.NEXT_PUBLIC_CHAT_PROMPT as string;
 
-    let chat: Message[] = [
+    let chat: ChatGptMessage[] = [
       { role: "system", content: chatPrompt },
       ...chatMessages,
     ];
@@ -31,7 +30,7 @@ export async function chatCompletion(chatMessages: Message[]) {
       return {
         role: "assistant",
         content: "이제 상담 내용을 바탕으로 체크리스트를 만들게요.",
-      } as Message;
+      } as ChatGptMessage;
     }
 
     const completion = await openAI.chat.completions.create({
@@ -50,13 +49,13 @@ export async function chatCompletion(chatMessages: Message[]) {
       throw new Error("No message from OPENAI API");
     }
 
-    return { role: "assistant", content: assistantMessage } as Message;
+    return { role: "assistant", content: assistantMessage } as ChatGptMessage;
   } catch (error) {
     console.log("[chatCompletion] Error: ", error);
     return {
       role: "assistant",
       content: "문제가 발생했어요. 나중에 다시 시도해 주세요.",
-    } as Message;
+    } as ChatGptMessage;
   }
 }
 
@@ -106,7 +105,7 @@ export async function saveTodolist(todoList: Todo[]) {
  * 오늘 상담 기록을 저장한다.
  * @param messages - typeof Message[]. 'assistant'와 'user' role인 message만 추출한다.
  */
-export async function saveChat(messages: Message[]) {
+export async function saveChat(messages: ChatGptMessage[]) {
   //member_id: user.id
   //chat_history<jsonb>: messages
   //
