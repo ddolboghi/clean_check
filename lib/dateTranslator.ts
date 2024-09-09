@@ -1,22 +1,8 @@
 export const getKSTDateString = (): string => {
-  const utcDate = new Date();
-  const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
-  const year = kstDate.getFullYear();
-  const month = String(kstDate.getMonth() + 1).padStart(2, "0");
-  const day = String(kstDate.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-};
-
-export const getKSTPreviousDateString = () => {
-  const utcDate = new Date();
-  const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
-  kstDate.setDate(kstDate.getDate() - 1);
-
-  const year = kstDate.getFullYear();
-  const month = String(kstDate.getMonth() + 1).padStart(2, "0");
-  const day = String(kstDate.getDate()).padStart(2, "0");
-
+  const kstDate = new Date().toLocaleString("sv");
+  const year = kstDate.slice(0, 4);
+  const month = kstDate.slice(5, 7);
+  const day = kstDate.slice(8, 10);
   return `${year}-${month}-${day}`;
 };
 
