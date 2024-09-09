@@ -37,7 +37,7 @@ export default function TodoSection({
               key={btnTodo.todoId}
               onClick={() => handleTodoClick(btnTodo)}
             >
-              <p className="whitespace-normal mr-2">{btnTodo.todo}</p>
+              <p className="whitespace-normal mr-2 text-left">{btnTodo.todo}</p>
               <Image
                 src={isCompleted ? fillCheckBox : emptyCheckBox}
                 width={18}

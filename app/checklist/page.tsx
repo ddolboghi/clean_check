@@ -14,9 +14,5 @@ export default async function page() {
   const memberId = user.id;
   const nowDate = getKSTDateString();
 
-  return (
-    <main>
-      <DayCheckList nowDate={nowDate} memberId={memberId} />
-    </main>
-  );
+  return <DayCheckList nowDate={nowDate} memberId={memberId} />;
 }

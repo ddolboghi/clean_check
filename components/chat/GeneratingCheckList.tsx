@@ -1,5 +1,5 @@
+import { GeneratingCheckListType } from "@/utils/types";
 import { CircularProgressbar } from "react-circular-progressbar";
-import { GeneratingCheckListType } from "./Chatbot";
 
 export default function GeneratingCheckList({
   generateCheckList,
@@ -8,20 +8,20 @@ export default function GeneratingCheckList({
   generateCheckList: GeneratingCheckListType;
   percentage: number;
 }) {
-  console.log(generateCheckList);
-  console.log(percentage);
-
   const getProgressText = () => {
-    if (!generateCheckList.generateTodoListMessageStart) {
+    if (generateCheckList.generateAnalyzeConversations) {
+      return "상담 내역을\n분석 중이에요.";
+    }
+    if (generateCheckList.generateTodoListMessage) {
       return "체크리스트를\n생성 중이에요.";
     }
-    if (generateCheckList.generateParsedTodoListStart) {
+    if (generateCheckList.generateParsedTodoList) {
       return "내게 꼭 맞는 맞춤형\n리스트를 생성 중이에요.";
     }
-    if (generateCheckList.saveCheckListStart) {
+    if (generateCheckList.saveCheckList) {
       return "거의 다\n완료됐어요.";
     }
-    if (generateCheckList.savedCheckList) {
+    if (generateCheckList.savedCheckListSuccess) {
       return "체크리스트를 통해\n피부를 지켜보아요.";
     }
     return "";

@@ -32,10 +32,11 @@ export type ChatGptMessage = {
 
 export type GeneratingCheckListType = {
   disableChatInput: boolean;
-  generateTodoListMessageStart: boolean;
-  generateParsedTodoListStart: boolean;
-  saveCheckListStart: boolean;
-  savedCheckList: boolean;
+  generateAnalyzeConversations: boolean;
+  generateTodoListMessage: boolean;
+  generateParsedTodoList: boolean;
+  saveCheckList: boolean;
+  savedCheckListSuccess: boolean;
 };
 
 export type ParsedCheckList =

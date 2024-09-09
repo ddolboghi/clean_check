@@ -1,5 +1,4 @@
 import { ChatGptMessage } from "@/utils/types";
-import CleanFreeLogoGrad from "../icons/CleanFreeLogoGrad";
 import ChatbotIcon from "../icons/ChatbotIcon";
 
 export default function BotMessage({ role, content }: ChatGptMessage) {
