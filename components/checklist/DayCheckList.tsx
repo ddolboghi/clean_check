@@ -63,11 +63,12 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     if (!header || !nav || !section) return;
 
     const headerHeight = header.offsetHeight;
+    const sectionHeight = section.offsetHeight;
 
     const handleScroll = () => {
       const scrollY = window.scrollY;
       if (scrollY > 0) {
-        setNavTranslateY(-116);
+        setNavTranslateY(-118);
       } else {
         setNavTranslateY(0);
       }
