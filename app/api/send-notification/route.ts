@@ -15,7 +15,8 @@ webpush.setVapidDetails(
 export async function POST(req: NextRequest) {
   try {
     if (
-      req.headers.get("Authorization") !== `Bearer ${process.env.CRON_SECRET}`
+      req.headers.get("Authorization") !==
+      `Bearer ${process.env.NEXT_PUBLIC_CRON_SECRET}`
     ) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
