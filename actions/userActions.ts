@@ -17,17 +17,22 @@ export async function getHaveCheckList(memberId: string) {
         .single<SupabaseCheckList>();
 
     if (recentCheckListError) throw recentCheckListError;
-    if (!recentCheckListData)
-      throw new Error("[getHaveCheckList] Not found check_list data.");
 
-    const isBeforeToday = getIsBeforeToday(recentCheckListData.end_date);
-    if (!isBeforeToday) {
-      console.log("[getHaveCheckList] The week has not yet passed.");
-      return true;
+    //체크리스트가 없으면 새로 생성
+    if (!recentCheckListData) {
+      console.log("[getHaveCheckList] Not found check_list data.");
+      return false;
     }
 
-    console.log("[getHaveCheckList] The week has passed.");
-    return false;
+    //마지막 날이 지났으면 새로 생성
+    const isBeforeToday = getIsBeforeToday(recentCheckListData.end_date);
+    if (isBeforeToday) {
+      console.log("[getHaveCheckList] The week has passed.");
+      return false;
+    }
+
+    console.log("[getHaveCheckList] The week has not yet passed.");
+    return true;
   } catch (error) {
     console.error("[getHaveCheckList] Error: ", error);
     return null;
