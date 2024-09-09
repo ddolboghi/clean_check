@@ -50,37 +50,6 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
   const [subscription, setSubscription] = useState<PushSubscription | null>(
     null
   );
-  const [navTranslateY, setNavTranslateY] = useState(0);
-  const headerRef = useRef<HTMLElement>(null);
-  const navRef = useRef<HTMLDivElement>(null);
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const header = headerRef.current;
-    const nav = navRef.current;
-    const section = sectionRef.current;
-
-    if (!header || !nav || !section) return;
-
-    const headerHeight = header.offsetHeight;
-    const sectionHeight = section.offsetHeight;
-
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      if (scrollY > 0) {
-        setNavTranslateY(-118);
-      } else {
-        setNavTranslateY(0);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
 
   useEffect(() => {
     async function fetchAndUpdateTodoList() {
@@ -237,10 +206,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
       )}
       <main className="flex flex-col min-h-screen">
         {!subscription && <button onClick={subscribeToPush}>알림 받기</button>}
-        <header
-          ref={headerRef}
-          className="px-9 bg-[#24E6C1] pt-10 pb-1 flex flex-row justify-between sticky top-0 z-20"
-        >
+        <header className="px-9 bg-[#24E6C1] pt-10 pb-1 flex flex-row justify-between sticky top-0 z-20">
           <LogoutButton>
             <CleanFreeLogoWhite />
           </LogoutButton>
@@ -257,12 +223,8 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
           handleDeleteSubscription={handleDeleteSubscription}
         />
         {todoList ? (
-          <div
-            ref={navRef}
-            className="transition-transform duration-300"
-            style={{ transform: `translateY(${navTranslateY}px)` }}
-          >
-            <div className="sticky top-[204px]">
+          <>
+            <div className="sticky top-[87px] transition-all duration-300">
               <div className="relative left-1/2 -translate-x-1/2 top-3 w-[80px] h-[4px] bg-[#DADADA]"></div>
               <WeekNav
                 week={week}
@@ -275,15 +237,13 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
                 handleTopic={handleTopic}
               />
             </div>
-            <section ref={sectionRef}>
-              <TodoSection
-                todoList={todoList}
-                clickedTopic={clickedTopic}
-                clickedDate={clickedDate}
-                handleTodoClick={handleTodoClick}
-              />
-            </section>
-          </div>
+            <TodoSection
+              todoList={todoList}
+              clickedTopic={clickedTopic}
+              clickedDate={clickedDate}
+              handleTodoClick={handleTodoClick}
+            />
+          </>
         ) : (
           <NothingCheckList />
         )}

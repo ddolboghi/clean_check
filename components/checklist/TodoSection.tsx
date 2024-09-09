@@ -17,7 +17,7 @@ export default function TodoSection({
   handleTodoClick,
 }: TodoSectionProps) {
   return (
-    <div
+    <section
       className={`px-6 bg-white flex flex-col gap-5 overflow-y-scroll scrollbar-hide`}
     >
       {todoList
@@ -47,6 +47,6 @@ export default function TodoSection({
             </button>
           );
         })}
-    </div>
+    </section>
   );
 }
