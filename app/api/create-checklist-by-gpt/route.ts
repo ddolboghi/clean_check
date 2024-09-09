@@ -10,15 +10,14 @@ const openAI = new OpenAI({
 
 export async function POST(req: NextRequest) {
   try {
-    const { chatMessages } = await req.json();
+    const { analyzedConversation } = await req.json();
     const checkListPrompt = process.env.NEXT_PUBLIC_CHEKLIST_PROMPT as string;
-    const chat = [
-      { role: "system", content: checkListPrompt },
-      ...chatMessages,
-    ];
 
     const completion = await openAI.chat.completions.create({
-      messages: chat as OpenAI.ChatCompletionMessageParam[],
+      messages: [
+        { role: "system", content: checkListPrompt },
+        { role: "user", content: analyzedConversation },
+      ],
       model: "gpt-4o-mini",
     });
 
@@ -32,10 +31,10 @@ export async function POST(req: NextRequest) {
       throw new Error("No checklist");
     }
 
-    console.log("[createCheckListByGPT] checklistMessage create success.");
+    console.log("[create-checklist] success.");
     return NextResponse.json({ checklistMessage });
   } catch (error) {
-    console.error("[createCheckListByGPT] Error: ", error);
+    console.error("[create-checklist] Error: ", error);
     return NextResponse.json(
       { error: "Internal Server Error." },
       { status: 500 }

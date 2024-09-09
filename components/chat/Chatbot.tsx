@@ -29,10 +29,11 @@ export default function Chatbot() {
   const [generatingCheckList, setGeneratingCheckList] =
     useState<GeneratingCheckListType>({
       disableChatInput: false,
-      generateTodoListMessageStart: false,
-      generateParsedTodoListStart: false,
-      saveCheckListStart: false,
-      savedCheckList: false,
+      generateAnalyzeConversations: false,
+      generateTodoListMessage: false,
+      generateParsedTodoList: false,
+      saveCheckList: false,
+      savedCheckListSuccess: false,
     });
   const [closeResetPopup, setCloseResetPopup] = useState<boolean>(true);
   const [percentage, setPercentage] = useState<number>(0);
@@ -66,10 +67,50 @@ export default function Chatbot() {
         setGeneratingCheckList({
           ...generatingCheckList,
           disableChatInput: true,
-          generateTodoListMessageStart: true,
+        });
+        setPercentage(11);
+
+        //----------------------------------------------------------
+        const gptAnalyzedConversationsResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/analyzing-conversations`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ chatMessages: newChatMessages }),
+          }
+        );
+
+        if (!gptAnalyzedConversationsResponse.ok) {
+          throw new Error(
+            `gptAnalyzedConversationsResponse status: ${gptAnalyzedConversationsResponse.status}`
+          );
+        }
+
+        const gptAnalyzedConversationsData =
+          await gptAnalyzedConversationsResponse.json();
+        let analyzedConversation = null;
+        if (gptAnalyzedConversationsResponse.ok) {
+          analyzedConversation =
+            gptAnalyzedConversationsData.analyzedConversation;
+        } else {
+          throw gptAnalyzedConversationsData.error;
+        }
+
+        if (!analyzedConversation) {
+          console.log("Error analyzedConversation: ", analyzedConversation);
+          throw new Error("analyzedConversation is empty.");
+        }
+        console.log(analyzedConversation);
+
+        setGeneratingCheckList({
+          ...generatingCheckList,
+          disableChatInput: true,
+          generateAnalyzeConversations: true,
         });
         setPercentage(25);
-
+        //----------------------------------------------------------
         const gptTodoListMessageResponse = await fetch(
           `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/create-checklist-by-gpt`,
           {
@@ -77,7 +118,9 @@ export default function Chatbot() {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ chatMessages: chatMessages }),
+            body: JSON.stringify({
+              analyzedConversation: analyzedConversation,
+            }),
           }
         );
 
@@ -103,11 +146,11 @@ export default function Chatbot() {
         setGeneratingCheckList({
           ...generatingCheckList,
           disableChatInput: true,
-          generateTodoListMessageStart: true,
-          generateParsedTodoListStart: true,
+          generateAnalyzeConversations: true,
+          generateTodoListMessage: true,
         });
         setPercentage(50);
-
+        //--------------------------------------------------------
         const parseCheckListResponse = await fetch(
           `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/parse-gpt-checklist`,
           {
@@ -156,21 +199,32 @@ export default function Chatbot() {
         setGeneratingCheckList({
           ...generatingCheckList,
           disableChatInput: true,
-          generateTodoListMessageStart: true,
-          generateParsedTodoListStart: true,
-          saveCheckListStart: true,
+          generateAnalyzeConversations: true,
+          generateTodoListMessage: true,
+          generateParsedTodoList: true,
         });
         setPercentage(75);
-
+        //-------------------------------------------
         const isSaved = await saveTodolist(todoList);
+        setGeneratingCheckList({
+          ...generatingCheckList,
+          disableChatInput: true,
+          generateAnalyzeConversations: true,
+          generateTodoListMessage: true,
+          generateParsedTodoList: true,
+          saveCheckList: true,
+        });
+        setPercentage(95);
 
         if (isSaved) {
           setGeneratingCheckList({
+            ...generatingCheckList,
             disableChatInput: true,
-            generateTodoListMessageStart: true,
-            generateParsedTodoListStart: true,
-            saveCheckListStart: true,
-            savedCheckList: true,
+            generateAnalyzeConversations: true,
+            generateTodoListMessage: true,
+            generateParsedTodoList: true,
+            saveCheckList: true,
+            savedCheckListSuccess: true,
           });
           setPercentage(100);
           route.push("/checklist");
@@ -182,10 +236,11 @@ export default function Chatbot() {
       alert("체크리스트 생성 중 문제가 발생했어요. 상담 페이지로 돌아갈게요.");
       setGeneratingCheckList({
         disableChatInput: false,
-        generateTodoListMessageStart: false,
-        generateParsedTodoListStart: false,
-        saveCheckListStart: false,
-        savedCheckList: false,
+        generateAnalyzeConversations: false,
+        generateTodoListMessage: false,
+        generateParsedTodoList: false,
+        saveCheckList: false,
+        savedCheckListSuccess: false,
       });
       const resetMessages = messages.slice(0, 1);
       setMessages(resetMessages);
@@ -225,6 +280,8 @@ export default function Chatbot() {
         handleResetPopup={handleResetPopup}
       />
       <ChatSection
+        userMessage={userMessage}
+        setUserMessage={setUserMessage}
         messages={messages}
         loading={loading}
         handleSendMessage={handleSendMessage}

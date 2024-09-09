@@ -3,9 +3,11 @@ import ChatLoading from "../ui/ChatLoading";
 import BotMessage from "./BotMessage";
 import ChatInput from "./ChatInput";
 import UserMessage from "./UserMessage";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef } from "react";
 
 type ChatSectionProps = {
+  userMessage: string;
+  setUserMessage: (value: string) => void;
   messages: ChatGptMessage[];
   loading: boolean;
   handleSendMessage: (e: FormEvent) => Promise<void>;
@@ -13,12 +15,13 @@ type ChatSectionProps = {
 };
 
 export default function ChatSection({
+  userMessage,
+  setUserMessage,
   messages,
   loading,
   handleSendMessage,
   disableChatInput,
 }: ChatSectionProps) {
-  const [userMessage, setUserMessage] = useState<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
