@@ -93,3 +93,11 @@ export const getStartDateAndEndDate = () => {
   const endDate = `${endDateYear}-${endDateMonth}-${endDateDay}`;
   return { startDate, endDate };
 };
+
+export const formatDateString = (dateString: Date): string => {
+  const date = new Date(dateString);
+  const month = date.getMonth() + 1; // getMonth()는 0부터 시작하므로 1을 더해줌
+  const day = date.getDate();
+
+  return `${month}월 ${day}일`;
+};

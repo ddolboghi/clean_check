@@ -250,6 +250,8 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         <CheckListHead
           todoList={todoList}
           memberId={memberId}
+          startDate={extraData.startDate}
+          endDate={extraData.endDate}
           subscription={subscription}
           handleDeleteSubscription={handleDeleteSubscription}
         />

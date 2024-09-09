@@ -9,10 +9,13 @@ import { Todo } from "@/utils/types";
 import { useEffect, useState } from "react";
 import { getNumOfTodoList } from "@/actions/todoList";
 import { ProgressText } from "../ui/ProgressText";
+import { formatDateString } from "@/lib/dateTranslator";
 
 type CheckListHeadProps = {
   todoList: Todo[] | null;
   memberId: string;
+  startDate: Date;
+  endDate: Date;
   subscription?: PushSubscription | null;
   handleDeleteSubscription?: () => void;
 };
@@ -20,6 +23,8 @@ type CheckListHeadProps = {
 export default function CheckListHead({
   todoList,
   memberId,
+  startDate,
+  endDate,
   subscription,
   handleDeleteSubscription,
 }: CheckListHeadProps) {
@@ -44,13 +49,18 @@ export default function CheckListHead({
     fetchNumOfTodoList();
   }, [todoList]);
 
+  const formatDate = `${formatDateString(startDate)} - ${formatDateString(
+    endDate
+  )}`;
   return (
     <section className="bg-[#24E6C1] px-9 mb-[-55px]">
       <div className="mb-[53px] flex flex-col justify-between">
         <h1 className="font-semibold text-[20px] py-2 leading-tight">
           <ProgressText value={progressValue} />
         </h1>
-        {todoList && <ProgressBar value={progressValue} />}
+        {todoList && (
+          <ProgressBar value={progressValue} formatDate={formatDate} />
+        )}
       </div>
     </section>
   );
