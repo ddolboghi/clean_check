@@ -12,8 +12,13 @@ export default async function page() {
     redirect("/login");
   }
 
-  const haveCheckList = await getHaveCheckList(user.id);
-  if (haveCheckList) redirect("/checklist");
+  const result = await getHaveCheckList(user.id);
+  if (!result) redirect("/checklist");
 
-  return <Chatbot />;
+  return (
+    <Chatbot
+      haveCheckList={result.haveCheckList}
+      initialMessage={result.initialMessage}
+    />
+  );
 }

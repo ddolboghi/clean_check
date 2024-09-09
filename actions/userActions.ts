@@ -4,6 +4,10 @@ import { supabaseClient } from "@/lib/getSupabaseClient";
 import { SupabaseCheckList } from "./todoList";
 import { getIsBeforeToday } from "@/lib/dateTranslator";
 import { SupabaseProfile } from "./profile";
+import {
+  initialMessageForCreating,
+  initialMessageForUpdating,
+} from "@/data/chat";
 
 export async function getHaveCheckList(memberId: string) {
   try {
@@ -21,18 +25,24 @@ export async function getHaveCheckList(memberId: string) {
     //체크리스트가 없으면 새로 생성
     if (!recentCheckListData) {
       console.log("[getHaveCheckList] Not found check_list data.");
-      return false;
+      return {
+        haveCheckList: false,
+        initialMessage: initialMessageForCreating,
+      };
     }
 
     //마지막 날이 지났으면 새로 생성
     const isBeforeToday = getIsBeforeToday(recentCheckListData.end_date);
     if (isBeforeToday) {
       console.log("[getHaveCheckList] The week has passed.");
-      return false;
+      return {
+        haveCheckList: false,
+        initialMessage: initialMessageForCreating,
+      };
     }
 
     console.log("[getHaveCheckList] The week has not yet passed.");
-    return true;
+    return { haveCheckList: true, initialMessage: initialMessageForUpdating };
   } catch (error) {
     console.error("[getHaveCheckList] Error: ", error);
     return null;

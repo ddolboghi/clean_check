@@ -17,13 +17,21 @@ import {
 import ChatSection from "./ChatSection";
 import { initialMessageForCreating } from "@/data/chat";
 
-export default function Chatbot() {
+type ChatbotProps = {
+  haveCheckList: boolean;
+  initialMessage: string;
+};
+
+export default function Chatbot({
+  haveCheckList,
+  initialMessage,
+}: ChatbotProps) {
   const [userMessage, setUserMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [messages, setMessages] = useState<ChatGptMessage[]>([
     {
       role: "assistant",
-      content: initialMessageForCreating,
+      content: initialMessage,
     },
   ]);
   const [generatingCheckList, setGeneratingCheckList] =
