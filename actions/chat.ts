@@ -1,7 +1,6 @@
 "use server";
 
 import OpenAI from "openai";
-import { getIsOverQuestion } from "@/lib/chatLib";
 import { getKSTDateString } from "@/lib/dateTranslator";
 import { ChatGptMessage, Todo } from "@/utils/types";
 import { supabaseClient } from "@/lib/getSupabaseClient";
@@ -16,7 +15,9 @@ const openAI = new OpenAI({
  * @param chatMessages
  * @returns
  */
-export async function chatCompletion(chatMessages: ChatGptMessage[]) {
+export async function chatCompletionForCreating(
+  chatMessages: ChatGptMessage[]
+) {
   try {
     const chatPrompt = process.env.NEXT_PUBLIC_CHAT_PROMPT as string;
 
@@ -25,13 +26,13 @@ export async function chatCompletion(chatMessages: ChatGptMessage[]) {
       ...chatMessages,
     ];
 
-    const isOverConversations = getIsOverQuestion(chat);
-    if (isOverConversations) {
-      return {
-        role: "assistant",
-        content: "이제 상담 내용을 바탕으로 체크리스트를 만들게요.",
-      } as ChatGptMessage;
-    }
+    // const isOverConversations = getIsOverQuestion(chat);
+    // if (isOverConversations) {
+    //   return {
+    //     role: "assistant",
+    //     content: "이제 상담 내용을 바탕으로 체크리스트를 만들게요.",
+    //   } as ChatGptMessage;
+    // }
 
     const completion = await openAI.chat.completions.create({
       messages: chat as OpenAI.ChatCompletionMessageParam[],

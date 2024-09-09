@@ -1,16 +1,12 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState } from "react";
-import BotMessage from "./BotMessage";
-import UserMessage from "./UserMessage";
-import ChatInput from "./ChatInput";
-import { chatCompletion, saveTodolist } from "@/actions/chat";
+import { FormEvent, useState } from "react";
+import { chatCompletionForCreating, saveTodolist } from "@/actions/chat";
 import { getIsOverQuestion } from "@/lib/chatLib";
 import { useRouter } from "next/navigation";
 import GeneratingCheckList from "./GeneratingCheckList";
 import ResetChatPopUp from "../ui/ResetChatPopUp";
 import ChatHeader from "./ChatHeader";
-import ChatLoading from "../ui/ChatLoading";
 import { getDaysFromDayGap } from "@/lib/dateTranslator";
 import {
   ChatGptMessage,
@@ -18,6 +14,8 @@ import {
   ParsedCheckList,
   Todo,
 } from "@/utils/types";
+import ChatSection from "./ChatSection";
+import { initialMessageForCreating } from "@/data/chat";
 
 export default function Chatbot() {
   const [userMessage, setUserMessage] = useState<string>("");
@@ -25,8 +23,7 @@ export default function Chatbot() {
   const [messages, setMessages] = useState<ChatGptMessage[]>([
     {
       role: "assistant",
-      content:
-        "안녕하세요. 상담을 시작할게요.😊 최근 피부에 어떤 문제가 있는지 구체적으로 말씀해 주실 수 있을까요? 예를 들어, 발진, 여드름, 건조함, 가려움증 등 어떤 증상이 있는지 알려주세요.🧐",
+      content: initialMessageForCreating,
     },
   ]);
   const [generatingCheckList, setGeneratingCheckList] =
@@ -59,7 +56,7 @@ export default function Chatbot() {
       const chatMessages = messages.slice(1);
       const newChatMessages = [...chatMessages, newMessage];
 
-      const res = await chatCompletion(newChatMessages);
+      const res = await chatCompletionForCreating(newChatMessages);
 
       const isOverQuestion = getIsOverQuestion(newChatMessages);
       console.log(isOverQuestion);
@@ -208,17 +205,6 @@ export default function Chatbot() {
     setCloseResetPopup(!closeResetPopup);
   };
 
-  //스크롤 자동 이동
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
   return (
     <main>
       {/* 체크리스트 생성 모달로 띄워야 렌더링되면서 함수가 실행된다. */}
@@ -238,26 +224,12 @@ export default function Chatbot() {
         routeBack={() => route.back()}
         handleResetPopup={handleResetPopup}
       />
-      <section className="px-7 py-[110px]">
-        <div className="flex flex-col gap-4 overflow-y-auto flex-grow">
-          {messages &&
-            messages.map((m, i) => {
-              return m.role === "assistant" ? (
-                <BotMessage {...m} key={i} />
-              ) : (
-                <UserMessage {...m} key={i} />
-              );
-            })}
-          {loading && <ChatLoading />}
-          <div ref={messagesEndRef} />
-        </div>
-        <ChatInput
-          userMessage={userMessage}
-          setUserMessage={setUserMessage}
-          handleSendMessage={handleSendMessage}
-          disableChatInput={generatingCheckList.disableChatInput}
-        />
-      </section>
+      <ChatSection
+        messages={messages}
+        loading={loading}
+        handleSendMessage={handleSendMessage}
+        disableChatInput={generatingCheckList.disableChatInput}
+      />
     </main>
   );
 }
