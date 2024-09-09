@@ -55,7 +55,9 @@ export default function ChatInput({
         />
       </div>
       <div className="pr-[24px] py-2 flex items-center justify-end bg-white">
-        <span className="font-thin pr-2">{userMessage.length}/500</span>
+        <span className="font-thin pr-2">
+          {userMessage.length}/{MAX_LENGTH_INPUT_MESSAGE}
+        </span>
         <button type="submit" disabled={userMessage.length === 0}>
           {userMessage.length === 0 ? <BeforeSend /> : <AfterSend />}
         </button>

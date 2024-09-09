@@ -1,1 +1,1 @@
-export const MAX_LENGTH_INPUT_MESSAGE = 500;
+export const MAX_LENGTH_INPUT_MESSAGE = 300;
