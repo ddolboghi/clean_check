@@ -8,6 +8,7 @@ import {
   initialMessageForCreating,
   initialMessageForUpdating,
 } from "@/data/chat";
+import { createClient } from "@/utils/supabase/server";
 
 export async function getHaveCheckList(memberId: string) {
   try {
@@ -105,5 +106,23 @@ export async function updateTodayDone(memberId: string) {
   } catch (error) {
     console.error("[updateTodayDone] Error update user_action:", error);
     return null;
+  }
+}
+
+export async function saveFCMToken(memberId: string, token: string) {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase.from("fcm_tokens").insert([
+      {
+        member_id: memberId,
+        token: token,
+      },
+    ]);
+
+    if (error) throw new Error("Saving token faild.");
+
+    console.log("[saveFCMToken] Success: ", data);
+  } catch (error) {
+    console.error("[saveFCMToken] Error: ", error);
   }
 }
