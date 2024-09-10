@@ -124,7 +124,6 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         })
         .then(() => {
           const messaging = getMessaging(app);
-          alert(JSON.stringify(messaging));
           return getToken(messaging, {
             vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY as string,
           });
@@ -136,7 +135,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
           setShowNotificationPermissionBtn(false);
         })
         .catch((error) => {
-          console.error(error);
+          alert(error);
           setShowNotificationPermissionBtn(true);
         });
     } else {
