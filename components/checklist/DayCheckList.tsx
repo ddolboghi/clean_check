@@ -23,6 +23,7 @@ import CleanFreeLogoWhite from "../icons/CleanFreeLogoWhite";
 import ChatbotReversedIcon from "../icons/ChatbotReversedIcon";
 import Link from "next/link";
 import { getMessaging, getToken } from "firebase/messaging";
+import { app } from "@/firebase";
 
 type DayCheckList = {
   nowDate: string;
@@ -121,7 +122,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         } else {
           alert("Notification permission granted.");
           await navigator.serviceWorker.ready;
-          const messaging = getMessaging();
+          const messaging = getMessaging(app);
           alert(`messging object: ${JSON.stringify(messaging)}`);
           const token = await getToken(messaging, {
             vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY as string,
