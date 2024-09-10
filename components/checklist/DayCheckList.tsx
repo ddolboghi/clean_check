@@ -110,34 +110,38 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     registerServiceWorker();
   }, []);
 
-  const clickPushHandler = async () => {
-    try {
-      if (
-        typeof window !== "undefined" &&
-        typeof window.navigator !== "undefined"
-      ) {
-        const permission = await Notification.requestPermission();
-        if (permission !== "granted") {
-          throw new Error("Notification permission not granted.");
-        } else {
-          alert("Notification permission granted.");
-          await navigator.serviceWorker.ready;
+  const clickPushHandler = () => {
+    if (
+      typeof window !== "undefined" &&
+      typeof window.navigator !== "undefined"
+    ) {
+      Notification.requestPermission()
+        .then((permission) => {
+          if (permission !== "granted") {
+            throw new Error("Notification permission not granted.");
+          }
+          return navigator.serviceWorker.ready;
+        })
+        .then(() => {
           const messaging = getMessaging(app);
-          alert(`messging object: ${JSON.stringify(messaging)}`);
-          const token = await getToken(messaging, {
+          alert(JSON.stringify(messaging));
+          return getToken(messaging, {
             vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY as string,
           });
-          alert(`token: ${token}`);
-          await saveFCMToken(memberId, token);
+        })
+        .then((token) => {
+          return saveFCMToken(memberId, token);
+        })
+        .then(() => {
           setShowNotificationPermissionBtn(false);
-        }
-      } else {
-        throw new Error("window is undefined");
-      }
-    } catch (error) {
-      console.error(error);
+        })
+        .catch((error) => {
+          console.error(error);
+          setShowNotificationPermissionBtn(true);
+        });
+    } else {
+      console.error("window is undefined");
       setShowNotificationPermissionBtn(true);
-      alert("문제가 발생했어요. 잠시 후 다시 시도해주세요.");
     }
   };
 
