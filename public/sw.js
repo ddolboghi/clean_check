@@ -1,10 +1,10 @@
 self.addEventListener("push", function (event) {
   if (event.data) {
-    console.log("push event operating", event);
+    console.log("push event operating", event.timeStamp);
     const data = event.data.json();
     const options = {
       body: data.body,
-      // icon: "/assets/cleanfreeLogoReversed.png",
+      icon: "/assets/cleanfreeLogoReversed.png",
     };
     event.waitUntil(self.registration.showNotification(data.title, options));
   } else {
