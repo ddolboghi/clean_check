@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import { getMessaging, Messaging } from "firebase/messaging";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FCM_API_KEY,
@@ -12,8 +11,3 @@ const firebaseConfig = {
 };
 
 export const app = initializeApp(firebaseConfig);
-// let messaging: Messaging | undefined;
-// if (typeof window !== "undefined" && typeof window.navigator !== "undefined") {
-//   messaging = getMessaging(app);
-// }
-// export { messaging };
