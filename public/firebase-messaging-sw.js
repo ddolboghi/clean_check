@@ -19,7 +19,6 @@ const messaging = firebase.messaging();
 
 self.addEventListener("push", function (event) {
   if (event.data) {
-    console.log("push event operating", event.timeStamp);
     const data = event.data.json().data;
     const options = {
       body: data.body,
