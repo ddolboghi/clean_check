@@ -98,9 +98,10 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
       typeof window !== "undefined" &&
       typeof window.navigator !== "undefined"
     ) {
+      const userAgent = navigator.userAgent;
+      alert(userAgent);
       Notification.requestPermission()
         .then((permission) => {
-          console.log("permission");
           if (permission === "granted") {
             return fetchToken();
           } else {
@@ -108,18 +109,17 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
           }
         })
         .then((token) => {
-          alert(token);
           if (token) return saveFCMToken(memberId, token);
         })
         .then(() => {
           setShowNotificationPermissionBtn(false);
         })
         .catch((error) => {
-          alert(`${error}`);
+          console.error(error);
           setShowNotificationPermissionBtn(true);
         });
     } else {
-      console.error("window is undefined");
+      console.log("window is undefined");
       setShowNotificationPermissionBtn(true);
     }
   };
