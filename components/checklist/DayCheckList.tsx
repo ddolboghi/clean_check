@@ -23,7 +23,6 @@ import CleanFreeLogoWhite from "../icons/CleanFreeLogoWhite";
 import ChatbotReversedIcon from "../icons/ChatbotReversedIcon";
 import Link from "next/link";
 import { getMessaging, getToken } from "firebase/messaging";
-import { app } from "@/firebase";
 
 type DayCheckList = {
   nowDate: string;
@@ -103,7 +102,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
             updateViaCache: "none",
           }
         );
-        const sub = await registration.pushManager.getSubscription();
+        console.log(registration);
       }
     }
 
@@ -121,10 +120,11 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
           throw new Error("Notification permission not granted.");
         } else {
           alert("Notification permission granted.");
-          const messaging = getMessaging(app);
+          await navigator.serviceWorker.ready;
+          const messaging = getMessaging();
           alert(`messging object: ${JSON.stringify(messaging)}`);
           const token = await getToken(messaging, {
-            vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY,
+            vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY as string,
           });
           alert(`token: ${token}`);
           await saveFCMToken(memberId, token);
