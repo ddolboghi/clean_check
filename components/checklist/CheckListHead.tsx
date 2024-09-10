@@ -16,8 +16,6 @@ type CheckListHeadProps = {
   memberId: string;
   startDate: Date;
   endDate: Date;
-  subscription?: PushSubscription | null;
-  handleDeleteSubscription?: () => void;
 };
 
 export default function CheckListHead({
@@ -25,8 +23,6 @@ export default function CheckListHead({
   memberId,
   startDate,
   endDate,
-  subscription,
-  handleDeleteSubscription,
 }: CheckListHeadProps) {
   //추후 필요 시 알림 받지 않는 기능 추가하기
   const [progressValue, setProgressValue] = useState<number>(0);
