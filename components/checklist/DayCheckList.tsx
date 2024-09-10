@@ -28,6 +28,9 @@ import { app, fetchToken } from "@/firebase";
 type DayCheckList = {
   nowDate: string;
   memberId: string;
+  allowedDevices: {
+    devices: string[];
+  } | null;
 };
 
 type ExtraData = {
@@ -36,7 +39,11 @@ type ExtraData = {
   endDate: Date;
 };
 
-export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
+export default function DayCheckList({
+  nowDate,
+  memberId,
+  allowedDevices,
+}: DayCheckList) {
   const [loading, setLoading] = useState<boolean>(true);
   const [clickedDate, setClickedDate] = useState<string>(nowDate);
   const [todoList, setTodoList] = useState<Todo[] | null>(null);
@@ -49,7 +56,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     endDate: new Date(),
   });
   const [showNotificationPermissionBtn, setShowNotificationPermissionBtn] =
-    useState<boolean>(true);
+    useState<boolean>(!!allowedDevices);
 
   useEffect(() => {
     async function fetchAndUpdateTodoList() {
@@ -93,13 +100,27 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     }
   }, [isCompletedAllTodo]);
 
+  useEffect(() => {
+    if (
+      allowedDevices &&
+      typeof window !== "undefined" &&
+      typeof window.navigator !== "undefined"
+    ) {
+      const devices = allowedDevices.devices;
+      const userAgent = navigator.userAgent;
+      const isAllowedDevice = devices.some((device) => device === userAgent);
+      console.log(isAllowedDevice);
+      if (isAllowedDevice) {
+        setShowNotificationPermissionBtn(false);
+      }
+    }
+  }, []);
+
   const clickPushHandler = () => {
     if (
       typeof window !== "undefined" &&
       typeof window.navigator !== "undefined"
     ) {
-      const userAgent = navigator.userAgent;
-      alert(userAgent);
       Notification.requestPermission()
         .then((permission) => {
           if (permission === "granted") {
@@ -109,7 +130,8 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
           }
         })
         .then((token) => {
-          if (token) return saveFCMToken(memberId, token);
+          const userAgent = navigator.userAgent;
+          if (token) return saveFCMToken(memberId, userAgent, token);
         })
         .then(() => {
           setShowNotificationPermissionBtn(false);
