@@ -93,6 +93,23 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     }
   }, [isCompletedAllTodo]);
 
+  useEffect(() => {
+    async function registerServiceWorker() {
+      if ("serviceWorker" in navigator && "PushManager" in window) {
+        const registration = await navigator.serviceWorker.register(
+          "/firebase-messaging-sw.js",
+          {
+            scope: "/",
+            updateViaCache: "none",
+          }
+        );
+        const sub = await registration.pushManager.getSubscription();
+      }
+    }
+
+    registerServiceWorker();
+  }, []);
+
   const clickPushHandler = async () => {
     try {
       if (
@@ -105,7 +122,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         } else {
           alert("Notification permission granted.");
           const messaging = getMessaging(app);
-          alert(`messging object: ${messaging}`);
+          alert(`messging object: ${JSON.stringify(messaging)}`);
           const token = await getToken(messaging, {
             vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY,
           });
