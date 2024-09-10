@@ -7,7 +7,7 @@ export const maxDuration = 30;
 export const dynamic = "force-dynamic";
 
 webpush.setVapidDetails(
-  "mailto:rhdfyd128@gmail.com",
+  "https://skin-check-dev.vercel.app",
   process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY as string,
   process.env.VAPID_PRIVATE_KEY as string
 );
