@@ -23,7 +23,7 @@ import CleanFreeLogoWhite from "../icons/CleanFreeLogoWhite";
 import ChatbotReversedIcon from "../icons/ChatbotReversedIcon";
 import Link from "next/link";
 import { getMessaging, getToken } from "firebase/messaging";
-import { app } from "@/firebase";
+import { app, fetchToken } from "@/firebase";
 
 type DayCheckList = {
   nowDate: string;
@@ -93,23 +93,6 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     }
   }, [isCompletedAllTodo]);
 
-  useEffect(() => {
-    async function registerServiceWorker() {
-      if ("serviceWorker" in navigator && "PushManager" in window) {
-        const registration = await navigator.serviceWorker.register(
-          "/firebase-messaging-sw.js",
-          {
-            scope: "/",
-            updateViaCache: "none",
-          }
-        );
-        console.log(registration);
-      }
-    }
-
-    registerServiceWorker();
-  }, []);
-
   const clickPushHandler = () => {
     if (
       typeof window !== "undefined" &&
@@ -118,24 +101,17 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
       Notification.requestPermission()
         .then((permission) => {
           if (permission !== "granted") {
-            throw new Error("Notification permission not granted.");
+            return fetchToken();
           }
-          return navigator.serviceWorker.ready;
-        })
-        .then(() => {
-          const messaging = getMessaging(app);
-          return getToken(messaging, {
-            vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY as string,
-          });
         })
         .then((token) => {
-          return saveFCMToken(memberId, token);
+          if (token) return saveFCMToken(memberId, token);
         })
         .then(() => {
           setShowNotificationPermissionBtn(false);
         })
         .catch((error) => {
-          alert(error);
+          alert(`${error}`);
           setShowNotificationPermissionBtn(true);
         });
     } else {
