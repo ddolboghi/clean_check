@@ -28,8 +28,9 @@ export const fetchToken = async () => {
       return token;
     }
     return null;
-  } catch (err) {
-    console.error("An error occurred while fetching the token:", err);
+  } catch (error) {
+    alert(error);
+    console.error("An error occurred while fetching the token:", error);
     return null;
   }
 };
