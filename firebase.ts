@@ -11,9 +11,9 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FCM_MEASUREMENT_ID,
 };
 
+export const app = initializeApp(firebaseConfig);
 let messaging: Messaging | undefined;
 if (typeof window !== "undefined" && typeof window.navigator !== "undefined") {
-  const app = initializeApp(firebaseConfig);
   messaging = getMessaging(app);
 }
 export { messaging };

@@ -22,8 +22,8 @@ import LogoutButton from "../LogoutButton";
 import CleanFreeLogoWhite from "../icons/CleanFreeLogoWhite";
 import ChatbotReversedIcon from "../icons/ChatbotReversedIcon";
 import Link from "next/link";
-import { getToken } from "firebase/messaging";
-import { messaging } from "../../firebase";
+import { getMessaging, getToken } from "firebase/messaging";
+import { app } from "@/firebase";
 
 type DayCheckList = {
   nowDate: string;
@@ -97,14 +97,14 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     try {
       if (
         typeof window !== "undefined" &&
-        typeof window.navigator !== "undefined" &&
-        messaging
+        typeof window.navigator !== "undefined"
       ) {
         const permission = await Notification.requestPermission();
         if (permission !== "granted") {
           throw new Error("Notification permission not granted.");
         } else {
           alert("Notification permission granted.");
+          const messaging = getMessaging(app);
           const token = await getToken(messaging, {
             vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY,
           });
