@@ -12,8 +12,7 @@ import CheckListHead from "./CheckListHead";
 import CompletionAllTodoPopUp from "../ui/CompletionAllTodoPopUp";
 import { excuteConfetti } from "@/lib/confettiCustom";
 import SimpleSpinner from "../ui/SimpleSpinner";
-import { updateTodayDone } from "@/actions/userActions";
-import urlBase64ToUint8Array from "@/lib/urlBase64ToUint8Array";
+import { saveFCMToken, updateTodayDone } from "@/actions/userActions";
 import { getUniqueTopic } from "@/lib/todoListlib";
 import WeekNav from "./WeekNav";
 import TopicNav from "./TopicNav";
@@ -23,6 +22,8 @@ import LogoutButton from "../LogoutButton";
 import CleanFreeLogoWhite from "../icons/CleanFreeLogoWhite";
 import ChatbotReversedIcon from "../icons/ChatbotReversedIcon";
 import Link from "next/link";
+import { getToken } from "firebase/messaging";
+import { messaging } from "../../firebase";
 
 type DayCheckList = {
   nowDate: string;
@@ -47,9 +48,8 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     startDate: new Date(),
     endDate: new Date(),
   });
-  const [subscription, setSubscription] = useState<PushSubscription | null>(
-    null
-  );
+  const [showNotificationPermissionBtn, setShowNotificationPermissionBtn] =
+    useState<boolean>(true);
 
   useEffect(() => {
     async function fetchAndUpdateTodoList() {
@@ -93,22 +93,25 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     }
   }, [isCompletedAllTodo]);
 
-  useEffect(() => {
-    async function registerServiceWorker() {
-      if ("serviceWorker" in navigator && "PushManager" in window) {
-        const registration = await navigator.serviceWorker.register("/sw.js", {
-          scope: "/",
-          updateViaCache: "none",
+  const clickPushHandler = async () => {
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        throw new Error("Notification permission not granted.");
+      } else {
+        console.log("Notification permission granted.");
+        const token = await getToken(messaging, {
+          vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY,
         });
-        const sub = await registration.pushManager.getSubscription();
-        setSubscription(sub);
+        await saveFCMToken(memberId, token);
+        setShowNotificationPermissionBtn(false);
       }
+    } catch (error) {
+      console.error(error);
+      setShowNotificationPermissionBtn(true);
+      alert("문제가 발생했어요. 잠시 후 다시 시도해주세요.");
     }
-
-    registerServiceWorker();
-    console.log("register service worker");
-  }, []);
-  console.log("subscription: ", subscription);
+  };
 
   const week = getDateAndDay(extraData.startDate, extraData.endDate);
 
@@ -161,43 +164,6 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     setIsCompletedAllTodo(!isCompletedAllTodo);
   };
 
-  async function subscribeToPush() {
-    try {
-      const permission = await Notification.requestPermission();
-      if (permission !== "granted") {
-        throw new Error("Notification permission not granted");
-      }
-      const registration = await navigator.serviceWorker.ready;
-      const sub = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(
-          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
-        ),
-      });
-      setSubscription(sub);
-      const host =
-        process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_VERCEL_URL;
-      const res = await fetch(`${host}/api/notification-subscribe`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          memberId: memberId,
-          pushSubscription: sub,
-        }),
-      });
-
-      if (!res.ok) throw new Error("Insert pushSubscription failed.");
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  const handleDeleteSubscription = () => {
-    setSubscription(null);
-  };
-
   if (loading) return <SimpleSpinner />;
 
   return (
@@ -206,7 +172,9 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         <CompletionAllTodoPopUp onClickHomeBtn={onClickHomeBtn} />
       )}
       <main className="flex flex-col min-h-screen">
-        {!subscription && <button onClick={subscribeToPush}>알림 받기</button>}
+        {showNotificationPermissionBtn && (
+          <button onClick={clickPushHandler}>알림 받기</button>
+        )}
         <header className="px-9 bg-[#24E6C1] pt-10 pb-1 flex flex-row justify-between sticky top-0 z-20">
           <LogoutButton>
             <CleanFreeLogoWhite />
@@ -220,8 +188,6 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
           memberId={memberId}
           startDate={extraData.startDate}
           endDate={extraData.endDate}
-          subscription={subscription}
-          handleDeleteSubscription={handleDeleteSubscription}
         />
         {todoList ? (
           <>
