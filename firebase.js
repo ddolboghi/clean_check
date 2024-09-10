@@ -12,4 +12,6 @@ const firebaseConfig = {
 };
 
 export const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
+if (typeof window !== "undefined" && typeof window.navigator !== "undefined") {
+  const messaging = getMessaging(app);
+}
