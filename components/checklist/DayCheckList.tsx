@@ -6,7 +6,7 @@ import {
   updateTodoDaysToDelay,
 } from "@/actions/todoList";
 import { Todo } from "@/utils/types";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { getDateAndDay } from "@/lib/dateTranslator";
 import CheckListHead from "./CheckListHead";
 import CompletionAllTodoPopUp from "../ui/CompletionAllTodoPopUp";
@@ -105,12 +105,11 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         } else {
           alert("Notification permission granted.");
           const messaging = getMessaging(app);
+          alert(`messging object: ${messaging}`);
           const token = await getToken(messaging, {
             vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY,
           });
-          if (token) {
-            alert("token published");
-          }
+          alert(`token: ${token}`);
           await saveFCMToken(memberId, token);
           setShowNotificationPermissionBtn(false);
         }
