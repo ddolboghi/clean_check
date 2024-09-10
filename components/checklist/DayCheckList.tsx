@@ -105,6 +105,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
           throw new Error("Notification permission not granted.");
         } else {
           console.log("Notification permission granted.");
+          await navigator.serviceWorker.ready;
           const token = await getToken(messaging, {
             vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY,
           });
