@@ -173,19 +173,18 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         ),
       });
       setSubscription(sub);
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/api/notification-subscribe`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            memberId: memberId,
-            pushSubscription: sub,
-          }),
-        }
-      );
+      const host =
+        process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_VERCEL_URL;
+      const res = await fetch(`${host}/api/notification-subscribe`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          memberId: memberId,
+          pushSubscription: sub,
+        }),
+      });
 
       if (!res.ok) throw new Error("Insert pushSubscription failed.");
     } catch (error) {
