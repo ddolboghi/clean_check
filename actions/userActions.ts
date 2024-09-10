@@ -109,13 +109,17 @@ export async function updateTodayDone(memberId: string) {
   }
 }
 
-export async function saveFCMToken(memberId: string, token: string) {
+export async function saveFCMToken(
+  memberId: string,
+  userAgent: string,
+  token: string
+) {
   try {
-    const supabase = createClient();
-    const { data, error } = await supabase.from("fcm_tokens").insert([
+    const { data, error } = await supabaseClient.from("fcm_tokens").insert([
       {
         member_id: memberId,
         token: token,
+        user_agent: userAgent,
       },
     ]);
 
@@ -124,5 +128,33 @@ export async function saveFCMToken(memberId: string, token: string) {
     console.log("[saveFCMToken] Success: ", data);
   } catch (error) {
     console.error("[saveFCMToken] Error: ", error);
+  }
+}
+
+type FCMTokens = {
+  member_Id: string;
+  token: string;
+  user_agent: string;
+}[];
+
+export async function getAlloewdFCMDevices(memberId: string) {
+  try {
+    const { data, error } = await supabaseClient
+      .from("fcm_tokens")
+      .select("*")
+      .eq("member_id", memberId)
+      .returns<FCMTokens>();
+
+    if (error) throw new Error("Saving token faild.");
+
+    console.log("[getAlloewdFCMDevices] Success");
+    let devices: string[] = [];
+    if (data.length > 0) {
+      devices = data.map((fcmToken) => fcmToken.user_agent);
+    }
+    return { devices: devices };
+  } catch (error) {
+    console.error("[getAlloewdFCMDevices] Error: ", error);
+    return null;
   }
 }
