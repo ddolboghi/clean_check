@@ -106,7 +106,9 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     }
 
     registerServiceWorker();
+    console.log("register service worker");
   }, []);
+  console.log("subscription: ", subscription);
 
   const week = getDateAndDay(extraData.startDate, extraData.endDate);
 

@@ -1,5 +1,6 @@
 self.addEventListener("push", function (event) {
   if (event.data) {
+    console.log("push event operating", event);
     const data = event.data.json();
     const options = {
       body: data.body,
