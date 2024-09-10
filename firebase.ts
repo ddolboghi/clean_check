@@ -25,12 +25,11 @@ export const fetchToken = async () => {
       const token = await getToken(fcmMessaging, {
         vapidKey: process.env.NEXT_PUBLIC_FIREBASE_FCM_VAPID_KEY,
       });
-      alert(token);
       return token;
     }
     return null;
   } catch (error) {
-    alert(error);
+    alert(`fetchToken error: ${error}`);
     console.error("An error occurred while fetching the token:", error);
     return null;
   }
