@@ -22,6 +22,11 @@ export default function manifest(): MetadataRoute.Manifest {
         sizes: "512x512",
         type: "image/png",
       },
+      {
+        src: "/assets/cleanfreeLogoReversed.png",
+        sizes: "615x615",
+        type: "image/png",
+      },
     ],
   };
 }
