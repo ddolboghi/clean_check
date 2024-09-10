@@ -105,6 +105,7 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
           }
         })
         .then((token) => {
+          alert(token);
           if (token) return saveFCMToken(memberId, token);
         })
         .then(() => {
