@@ -100,8 +100,11 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     ) {
       Notification.requestPermission()
         .then((permission) => {
-          if (permission !== "granted") {
+          console.log("permission");
+          if (permission === "granted") {
             return fetchToken();
+          } else {
+            throw new Error("Notification permission not granted.");
           }
         })
         .then((token) => {
