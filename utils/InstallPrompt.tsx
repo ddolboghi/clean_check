@@ -20,26 +20,17 @@ export default function InstallPrompt() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white min-w-[300px]">
-        <h3>앱 설치하기</h3>
-        <button>홈화면에 앱 추가</button>
+      <div className="p-5 bg-white min-w-[200px] max-w-[364px] rounded-[23px] text-center h-[181px]">
+        <h1 className="font-medium text-[24px] pb-5">앱 설치하기</h1>
         {isIOS ? (
-          <p>
-            기기에 앱을 설치하려면 공유 버튼을 누르세요.
-            <span role="img" aria-label="share icon">
-              {" "}
-              ⎋{" "}
-            </span>
-            그리고 "홈화면에 추가"를 누르세요.
-            <span role="img" aria-label="plus icon">
-              {" "}
-              ➕{" "}
-            </span>
-            .
+          <p className="text-[14px] text-[#4A7069]">
+            공유 버튼을 누른 후<br />
+            '홈화면에 추가'를 누르세요.
           </p>
         ) : (
-          //안드로이드 설치 유도 수정하기
-          <p>주소창에서 다운로드 버튼을 클릭하세요.</p>
+          <p className="text-[14px] text-[#4A7069]">
+            주소창에서 다운로드 버튼을 클릭하세요.
+          </p>
         )}
       </div>
     </div>
