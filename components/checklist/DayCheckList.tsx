@@ -95,16 +95,24 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
 
   const clickPushHandler = async () => {
     try {
-      const permission = await Notification.requestPermission();
-      if (permission !== "granted") {
-        throw new Error("Notification permission not granted.");
+      if (
+        typeof window !== "undefined" &&
+        typeof window.navigator !== "undefined" &&
+        messaging
+      ) {
+        const permission = await Notification.requestPermission();
+        if (permission !== "granted") {
+          throw new Error("Notification permission not granted.");
+        } else {
+          console.log("Notification permission granted.");
+          const token = await getToken(messaging, {
+            vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY,
+          });
+          await saveFCMToken(memberId, token);
+          setShowNotificationPermissionBtn(false);
+        }
       } else {
-        console.log("Notification permission granted.");
-        const token = await getToken(messaging, {
-          vapidKey: process.env.NEXT_PUBLIC_FCM_VAPID_KEY,
-        });
-        await saveFCMToken(memberId, token);
-        setShowNotificationPermissionBtn(false);
+        throw new Error("window is undefined");
       }
     } catch (error) {
       console.error(error);
