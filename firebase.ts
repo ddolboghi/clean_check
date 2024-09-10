@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getMessaging, Messaging } from "firebase/messaging";
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FCM_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FCM_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FCM_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FCM_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FCM_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FCM_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_FCM_MEASUREMENT_ID,
+  apiKey: "AIzaSyCyYiX0wSuvYN0Fcj9X0uK_c5V61GLB8eY",
+  authDomain: "skin-check-2001e.firebaseapp.com",
+  projectId: "skin-check-2001e",
+  storageBucket: "skin-check-2001e.appspot.com",
+  messagingSenderId: "664553089796",
+  appId: "1:664553089796:web:27705746c0564b8f0f3e51",
+  measurementId: "G-Y838JL8F9P",
 };
 
 let messaging: Messaging | undefined;
