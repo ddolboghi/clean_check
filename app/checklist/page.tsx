@@ -1,5 +1,6 @@
-import { getAlloewdFCMDevices } from "@/actions/userActions";
+import { getAlloewdFCMDevices, getHaveCheckList } from "@/actions/userActions";
 import DayCheckList from "@/components/checklist/DayCheckList";
+import NothingCheckList from "@/components/checklist/NothingCheckList";
 import SimpleSpinner from "@/components/ui/SimpleSpinner";
 import { getKSTDateString } from "@/lib/dateTranslator";
 import { createClient } from "@/utils/supabase/server";
@@ -17,6 +18,7 @@ export default async function page() {
   const memberId = user.id;
   const nowDate = getKSTDateString();
   const allowedDevices = await getAlloewdFCMDevices(memberId);
+  const result = await getHaveCheckList(memberId);
 
   return (
     <Suspense fallback={<SimpleSpinner />}>
@@ -24,7 +26,9 @@ export default async function page() {
         nowDate={nowDate}
         memberId={memberId}
         allowedDevices={allowedDevices}
-      />
+      >
+        {result.haveCheckList ? <SimpleSpinner /> : <NothingCheckList />}
+      </DayCheckList>
     </Suspense>
   );
 }

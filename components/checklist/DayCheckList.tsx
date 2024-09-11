@@ -15,7 +15,6 @@ import { saveFCMToken, updateTodayDone } from "@/actions/userActions";
 import { getUniqueTopic } from "@/lib/todoListlib";
 import WeekNav from "./WeekNav";
 import TopicNav from "./TopicNav";
-import NothingCheckList from "./NothingCheckList";
 import TodoSection from "./TodoSection";
 import LogoutButton from "../LogoutButton";
 import CleanFreeLogoWhite from "../icons/CleanFreeLogoWhite";
@@ -29,6 +28,7 @@ type DayCheckList = {
   allowedDevices: {
     devices: string[];
   } | null;
+  children: React.ReactNode;
 };
 
 type ExtraData = {
@@ -41,6 +41,7 @@ export default function DayCheckList({
   nowDate,
   memberId,
   allowedDevices,
+  children,
 }: DayCheckList) {
   const [clickedDate, setClickedDate] = useState<string>(nowDate);
   const [todoList, setTodoList] = useState<Todo[] | null>(null);
@@ -237,7 +238,7 @@ export default function DayCheckList({
             />
           </section>
         ) : (
-          <NothingCheckList />
+          children
         )}
       </main>
     </>
