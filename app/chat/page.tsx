@@ -1,7 +1,9 @@
 import { getHaveCheckList } from "@/actions/userActions";
 import Chatbot from "@/components/chat/Chatbot";
+import SimpleSpinner from "@/components/ui/SimpleSpinner";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 export default async function page() {
   const {
@@ -16,9 +18,11 @@ export default async function page() {
   if (!result) redirect("/checklist");
 
   return (
-    <Chatbot
-      haveCheckList={result.haveCheckList}
-      initialMessage={result.initialMessage}
-    />
+    <Suspense fallback={<SimpleSpinner />}>
+      <Chatbot
+        haveCheckList={result.haveCheckList}
+        initialMessage={result.initialMessage}
+      />
+    </Suspense>
   );
 }

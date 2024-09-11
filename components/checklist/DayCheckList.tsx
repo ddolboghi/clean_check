@@ -6,12 +6,11 @@ import {
   updateTodoDaysToDelay,
 } from "@/actions/todoList";
 import { Todo } from "@/utils/types";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { getDateAndDay } from "@/lib/dateTranslator";
 import CheckListHead from "./CheckListHead";
 import CompletionAllTodoPopUp from "../ui/CompletionAllTodoPopUp";
 import { excuteConfetti } from "@/lib/confettiCustom";
-import SimpleSpinner from "../ui/SimpleSpinner";
 import { saveFCMToken, updateTodayDone } from "@/actions/userActions";
 import { getUniqueTopic } from "@/lib/todoListlib";
 import WeekNav from "./WeekNav";
@@ -22,8 +21,8 @@ import LogoutButton from "../LogoutButton";
 import CleanFreeLogoWhite from "../icons/CleanFreeLogoWhite";
 import ChatbotReversedIcon from "../icons/ChatbotReversedIcon";
 import Link from "next/link";
-import { getMessaging, getToken } from "firebase/messaging";
-import { app, fetchToken } from "@/firebase";
+import { fetchToken } from "@/firebase";
+import SimpleSpinner from "../ui/SimpleSpinner";
 
 type DayCheckList = {
   nowDate: string;
@@ -44,7 +43,6 @@ export default function DayCheckList({
   memberId,
   allowedDevices,
 }: DayCheckList) {
-  const [loading, setLoading] = useState<boolean>(true);
   const [clickedDate, setClickedDate] = useState<string>(nowDate);
   const [todoList, setTodoList] = useState<Todo[] | null>(null);
   const [clickedTopic, setClickedTopic] = useState<string>("전체");
@@ -61,7 +59,6 @@ export default function DayCheckList({
   useEffect(() => {
     async function fetchAndUpdateTodoList() {
       try {
-        setLoading(true);
         const checkListOfDay = await getTodoListByDate(nowDate, memberId);
 
         if (checkListOfDay) {
@@ -85,8 +82,6 @@ export default function DayCheckList({
         }
       } catch (err) {
         console.error("Error fetching todo list:");
-      } finally {
-        setLoading(false);
       }
     }
 
@@ -109,7 +104,7 @@ export default function DayCheckList({
       const devices = allowedDevices.devices;
       const userAgent = navigator.userAgent;
       const isAllowedDevice = devices.some((device) => device === userAgent);
-      console.log(isAllowedDevice);
+      console.log(isAllowedDevice ? "allowed device" : "not allowed device");
       if (isAllowedDevice) {
         setShowNotificationPermissionBtn(false);
       }
@@ -197,8 +192,6 @@ export default function DayCheckList({
     setIsCompletedAllTodo(!isCompletedAllTodo);
   };
 
-  if (loading) return <SimpleSpinner />;
-
   return (
     <>
       {isCompletedAllTodo && (
@@ -223,7 +216,7 @@ export default function DayCheckList({
           endDate={extraData.endDate}
         />
         {todoList ? (
-          <>
+          <section>
             <div className="sticky top-[87px] transition-all duration-300">
               <div className="relative left-1/2 -translate-x-1/2 top-3 w-[80px] h-[4px] bg-[#DADADA]"></div>
               <WeekNav
@@ -243,7 +236,7 @@ export default function DayCheckList({
               clickedDate={clickedDate}
               handleTodoClick={handleTodoClick}
             />
-          </>
+          </section>
         ) : (
           <NothingCheckList />
         )}
