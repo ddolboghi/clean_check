@@ -1,4 +1,4 @@
-import { getAlloewdFCMDevices, getHaveCheckList } from "@/actions/userActions";
+import { getHaveCheckList } from "@/actions/userActions";
 import DayCheckList from "@/components/checklist/DayCheckList";
 import NothingCheckList from "@/components/checklist/NothingCheckList";
 import SimpleSpinner from "@/components/ui/SimpleSpinner";
@@ -18,16 +18,11 @@ export default async function page() {
   }
   const memberId = user.id;
   const nowDate = getKSTDateString();
-  const allowedDevices = await getAlloewdFCMDevices(memberId);
   const result = await getHaveCheckList(memberId);
 
   return (
     <Suspense fallback={<SimpleSpinner />}>
-      <DayCheckList
-        nowDate={nowDate}
-        memberId={memberId}
-        allowedDevices={allowedDevices}
-      >
+      <DayCheckList nowDate={nowDate} memberId={memberId}>
         {result.haveCheckList ? (
           <section className="px-6 flex flex-col gap-5">
             <Skeleton className="relative left-1/2 -translate-x-1/2 top-20 w-full h-[60px] rounded-full" />

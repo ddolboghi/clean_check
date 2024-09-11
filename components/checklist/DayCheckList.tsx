@@ -11,23 +11,19 @@ import { getDateAndDay } from "@/lib/dateTranslator";
 import CheckListHead from "./CheckListHead";
 import CompletionAllTodoPopUp from "../ui/CompletionAllTodoPopUp";
 import { excuteConfetti } from "@/lib/confettiCustom";
-import { saveFCMToken, updateTodayDone } from "@/actions/userActions";
+import { updateTodayDone } from "@/actions/userActions";
 import { getUniqueTopic } from "@/lib/todoListlib";
 import WeekNav from "./WeekNav";
 import TopicNav from "./TopicNav";
 import TodoSection from "./TodoSection";
-import LogoutButton from "../LogoutButton";
 import CleanFreeLogoWhite from "../icons/CleanFreeLogoWhite";
 import ChatbotReversedIcon from "../icons/ChatbotReversedIcon";
 import Link from "next/link";
-import { fetchToken } from "@/firebase";
+import SettingPopUp from "../ui/SettingPopUp";
 
 type DayCheckList = {
   nowDate: string;
   memberId: string;
-  allowedDevices: {
-    devices: string[];
-  } | null;
   children: React.ReactNode;
 };
 
@@ -40,7 +36,6 @@ type ExtraData = {
 export default function DayCheckList({
   nowDate,
   memberId,
-  allowedDevices,
   children,
 }: DayCheckList) {
   const [clickedDate, setClickedDate] = useState<string>(nowDate);
@@ -53,8 +48,7 @@ export default function DayCheckList({
     startDate: new Date(),
     endDate: new Date(),
   });
-  const [showNotificationPermissionBtn, setShowNotificationPermissionBtn] =
-    useState<boolean>(!!allowedDevices);
+  const [showSetting, setShowSetting] = useState<boolean>(false);
 
   useEffect(() => {
     async function fetchAndUpdateTodoList() {
@@ -94,52 +88,6 @@ export default function DayCheckList({
       startConfetti();
     }
   }, [isCompletedAllTodo]);
-
-  useEffect(() => {
-    if (
-      allowedDevices &&
-      typeof window !== "undefined" &&
-      typeof window.navigator !== "undefined"
-    ) {
-      const devices = allowedDevices.devices;
-      const userAgent = navigator.userAgent;
-      const isAllowedDevice = devices.some((device) => device === userAgent);
-      console.log(isAllowedDevice ? "allowed device" : "not allowed device");
-      if (isAllowedDevice) {
-        setShowNotificationPermissionBtn(false);
-      }
-    }
-  }, []);
-
-  const clickPushHandler = () => {
-    if (
-      typeof window !== "undefined" &&
-      typeof window.navigator !== "undefined"
-    ) {
-      Notification.requestPermission()
-        .then((permission) => {
-          if (permission === "granted") {
-            return fetchToken();
-          } else {
-            throw new Error("Notification permission not granted.");
-          }
-        })
-        .then((token) => {
-          const userAgent = navigator.userAgent;
-          if (token) return saveFCMToken(memberId, userAgent, token);
-        })
-        .then(() => {
-          setShowNotificationPermissionBtn(false);
-        })
-        .catch((error) => {
-          console.error(error);
-          setShowNotificationPermissionBtn(true);
-        });
-    } else {
-      console.log("window is undefined");
-      setShowNotificationPermissionBtn(true);
-    }
-  };
 
   const week = getDateAndDay(extraData.startDate, extraData.endDate);
 
@@ -192,19 +140,26 @@ export default function DayCheckList({
     setIsCompletedAllTodo(!isCompletedAllTodo);
   };
 
+  const onClickSettingBtn = () => {
+    setShowSetting(!showSetting);
+  };
+
   return (
     <>
+      {showSetting && (
+        <SettingPopUp
+          onClickSettingBtn={onClickSettingBtn}
+          memberId={memberId}
+        />
+      )}
       {isCompletedAllTodo && (
         <CompletionAllTodoPopUp onClickHomeBtn={onClickHomeBtn} />
       )}
       <main className="flex flex-col min-h-screen">
-        {showNotificationPermissionBtn && (
-          <button onClick={clickPushHandler}>알림 받기</button>
-        )}
         <header className="px-9 bg-[#24E6C1] py-1 flex flex-row justify-between sticky top-0 z-20">
-          <LogoutButton>
+          <button onClick={onClickSettingBtn}>
             <CleanFreeLogoWhite />
-          </LogoutButton>
+          </button>
           <Link href="/chat">
             <ChatbotReversedIcon />
           </Link>
