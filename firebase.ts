@@ -22,8 +22,12 @@ export const fetchToken = async () => {
   try {
     const fcmMessaging = await messaging();
     if (fcmMessaging) {
+      const swRegistration = await navigator.serviceWorker.register(
+        "/firebase-messaging-sw.js"
+      );
       const token = await getToken(fcmMessaging, {
         vapidKey: process.env.NEXT_PUBLIC_FIREBASE_FCM_VAPID_KEY,
+        serviceWorkerRegistration: swRegistration,
       });
       return token;
     }
