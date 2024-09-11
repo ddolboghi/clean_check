@@ -201,7 +201,7 @@ export default function DayCheckList({
         {showNotificationPermissionBtn && (
           <button onClick={clickPushHandler}>알림 받기</button>
         )}
-        <header className="px-9 bg-[#24E6C1] pt-10 pb-1 flex flex-row justify-between sticky top-0 z-20">
+        <header className="px-9 bg-[#24E6C1] py-1 flex flex-row justify-between sticky top-0 z-20">
           <LogoutButton>
             <CleanFreeLogoWhite />
           </LogoutButton>
