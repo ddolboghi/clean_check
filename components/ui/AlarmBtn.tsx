@@ -38,7 +38,7 @@ export default function AlarmBtn({ memberId }: AlarmBtnProps) {
               setNotificationPermission("granted");
               return fetchToken();
             } else {
-              setNotificationPermission("denided");
+              setNotificationPermission("denied");
               throw new Error("Notification permission not granted.");
             }
           })
@@ -62,7 +62,7 @@ export default function AlarmBtn({ memberId }: AlarmBtnProps) {
   return (
     <button onClick={clickPushHandler}>
       {notificationPermission === "granted" ||
-      notificationPermission === "denided" ? (
+      notificationPermission === "denied" ? (
         <Image src={grayBell} width={26} alt="알림 허용했거나 거부함" />
       ) : (
         <Image src={bell} width={26} alt="알림 허용 묻지 않음" />
