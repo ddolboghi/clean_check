@@ -1,9 +1,11 @@
 export const getKSTDateString = (): string => {
-  const kstDate = new Date().toLocaleString("sv");
+  const kstDate = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" })
+  );
   console.log(kstDate);
-  const year = kstDate.slice(0, 4);
-  const month = kstDate.slice(5, 7);
-  const day = kstDate.slice(8, 10);
+  const year = kstDate.getFullYear();
+  const month = String(kstDate.getMonth() + 1).padStart(2, "0");
+  const day = String(kstDate.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
 
