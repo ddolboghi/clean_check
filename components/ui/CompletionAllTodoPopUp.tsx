@@ -1,6 +1,6 @@
 import Image from "next/image";
 import completeSvg from "@/public/assets/complete.svg";
-import "@/style/completionAllTodoPopUp.css";
+import "@/style/popUpAnimation.css";
 
 type CompletionAllTodoPopUpProps = {
   onClickHomeBtn: () => void;

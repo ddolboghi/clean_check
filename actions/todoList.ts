@@ -29,6 +29,7 @@ export async function getTodoListByDate(date: Date | string, memberId: string) {
     if (!recentData || !recentData.todo_list) {
       return null;
     }
+    console.log("[getTodoListByDate] Get todo_list by date success");
 
     const checkListId: number = recentData.id;
 
@@ -36,12 +37,14 @@ export async function getTodoListByDate(date: Date | string, memberId: string) {
       Object.keys(todo.days).includes(date.toString())
     );
 
-    const startDate = recentData.start_date;
-    const endDate = recentData.end_date;
-    const delayedDate = recentData.delayed_date;
+    if (filteredTodos.length > 0) {
+      const startDate = recentData.start_date;
+      const endDate = recentData.end_date;
+      const delayedDate = recentData.delayed_date;
+      return { checkListId, filteredTodos, startDate, endDate, delayedDate };
+    }
 
-    console.log("[getTodoListByDate] Get todo_list by date success");
-    return { checkListId, filteredTodos, startDate, endDate, delayedDate };
+    return null;
   } catch (error) {
     console.error("[getTodoListByDate] Error:", error);
     return null;
@@ -117,6 +120,40 @@ export async function updateTodoDaysToDelay(
     return updateData;
   } catch (error) {
     console.error("[updateTodoDaysToDelay] Error:", error);
+    return null;
+  }
+}
+
+export async function getNumOfTodoList(memberId: string) {
+  try {
+    const { data: recentData, error: recentError } = await supabaseClient
+      .from("check_list")
+      .select("todo_list")
+      .eq("member_id", memberId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single<SupabaseCheckList>();
+
+    if (recentError) throw recentError;
+
+    if (!recentData || !recentData.todo_list) {
+      return null;
+    }
+
+    const numberOfTodos = recentData.todo_list.reduce((totalCount, todo) => {
+      return totalCount + Object.keys(todo.days).length;
+    }, 0);
+    const numberOfDoneTodos = recentData.todo_list.reduce((count, todo) => {
+      const trueCount = Object.values(todo.days).filter(
+        (value) => value === true
+      ).length;
+      return count + trueCount;
+    }, 0);
+
+    console.log("[getNumOfTodo] Get number of todo success");
+    return { numberOfTodos, numberOfDoneTodos };
+  } catch (error) {
+    console.error("[getNumOfTodo] Error:", error);
     return null;
   }
 }

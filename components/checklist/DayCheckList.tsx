@@ -8,20 +8,23 @@ import {
 import { Todo } from "@/utils/types";
 import { useEffect, useState } from "react";
 import { getDateAndDay } from "@/lib/dateTranslator";
-import CheckListHead from "../ui/CheckListHead";
-import { getUniqueTopic } from "@/lib/todoListlib";
+import CheckListHead from "./CheckListHead";
 import CompletionAllTodoPopUp from "../ui/CompletionAllTodoPopUp";
 import { excuteConfetti } from "@/lib/confettiCustom";
-import fillCheckBox from "@/public/assets/fillCheckbox.svg";
-import emptyCheckBox from "@/public/assets/emptyCheckBox.svg";
-import Image from "next/image";
-import SimpleSpinner from "../ui/SimpleSpinner";
 import { updateTodayDone } from "@/actions/userActions";
-import urlBase64ToUint8Array from "@/lib/urlBase64ToUint8Array";
+import { getUniqueTopic } from "@/lib/todoListlib";
+import WeekNav from "./WeekNav";
+import TopicNav from "./TopicNav";
+import TodoSection from "./TodoSection";
+import CleanFreeLogoWhite from "../icons/CleanFreeLogoWhite";
+import ChatbotReversedIcon from "../icons/ChatbotReversedIcon";
+import Link from "next/link";
+import SettingPopUp from "../ui/SettingPopUp";
 
 type DayCheckList = {
   nowDate: string;
   memberId: string;
+  children: React.ReactNode;
 };
 
 type ExtraData = {
@@ -30,8 +33,11 @@ type ExtraData = {
   endDate: Date;
 };
 
-export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
-  const [loading, setLoading] = useState<boolean>(true);
+export default function DayCheckList({
+  nowDate,
+  memberId,
+  children,
+}: DayCheckList) {
   const [clickedDate, setClickedDate] = useState<string>(nowDate);
   const [todoList, setTodoList] = useState<Todo[] | null>(null);
   const [clickedTopic, setClickedTopic] = useState<string>("전체");
@@ -42,14 +48,11 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     startDate: new Date(),
     endDate: new Date(),
   });
-  const [subscription, setSubscription] = useState<PushSubscription | null>(
-    null
-  );
+  const [showSetting, setShowSetting] = useState<boolean>(false);
 
   useEffect(() => {
     async function fetchAndUpdateTodoList() {
       try {
-        setLoading(true);
         const checkListOfDay = await getTodoListByDate(nowDate, memberId);
 
         if (checkListOfDay) {
@@ -73,8 +76,6 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
         }
       } catch (err) {
         console.error("Error fetching todo list:");
-      } finally {
-        setLoading(false);
       }
     }
 
@@ -87,21 +88,6 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
       startConfetti();
     }
   }, [isCompletedAllTodo]);
-
-  useEffect(() => {
-    async function registerServiceWorker() {
-      if ("serviceWorker" in navigator && "PushManager" in window) {
-        const registration = await navigator.serviceWorker.register("/sw.js", {
-          scope: "/",
-          updateViaCache: "none",
-        });
-        const sub = await registration.pushManager.getSubscription();
-        setSubscription(sub);
-      }
-    }
-
-    registerServiceWorker();
-  }, []);
 
   const week = getDateAndDay(extraData.startDate, extraData.endDate);
 
@@ -154,137 +140,62 @@ export default function DayCheckList({ nowDate, memberId }: DayCheckList) {
     setIsCompletedAllTodo(!isCompletedAllTodo);
   };
 
-  async function subscribeToPush() {
-    try {
-      const permission = await Notification.requestPermission();
-      if (permission !== "granted") {
-        throw new Error("Notification permission not granted");
-      }
-      const registration = await navigator.serviceWorker.ready;
-      const sub = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(
-          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
-        ),
-      });
-      setSubscription(sub);
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/api/notification-subscribe`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            memberId: memberId,
-            pushSubscription: sub,
-          }),
-        }
-      );
-
-      if (!res.ok) throw new Error("Insert pushSubscription failed.");
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  const handleDeleteSubscription = () => {
-    setSubscription(null);
+  const onClickSettingBtn = () => {
+    setShowSetting(!showSetting);
   };
-
-  if (loading) return <SimpleSpinner />;
 
   return (
     <>
+      {showSetting && (
+        <SettingPopUp
+          onClickSettingBtn={onClickSettingBtn}
+          memberId={memberId}
+        />
+      )}
       {isCompletedAllTodo && (
         <CompletionAllTodoPopUp onClickHomeBtn={onClickHomeBtn} />
       )}
-      <div className={`flex flex-col h-screen`}>
-        {!subscription && <button onClick={subscribeToPush}>알림 받기</button>}
+      <main className="flex flex-col min-h-screen">
+        <header className="px-9 bg-[#24E6C1] py-1 flex flex-row justify-between sticky top-0 z-20">
+          <button onClick={onClickSettingBtn}>
+            <CleanFreeLogoWhite />
+          </button>
+          <Link href="/chat">
+            <ChatbotReversedIcon />
+          </Link>
+        </header>
         <CheckListHead
+          todoList={todoList}
           memberId={memberId}
-          subscription={subscription}
-          handleDeleteSubscription={handleDeleteSubscription}
+          startDate={extraData.startDate}
+          endDate={extraData.endDate}
         />
-        <div>
-          <div className="sticky top-0">
-            {/* nav section */}
-            <nav className="py-4 px-4 rounded-t-[40px] bg-white flex justify-center items-center text-base font-light tracking-tight text-center whitespace-nowrap text-[#B2B2B2]">
-              {Object.entries(week).map(([date, day]) => (
-                <button
-                  key={date}
-                  onClick={() => handleDayOfWeek(date)}
-                  className={`self-stretch px-3 py-1.5 w-[53px] h-[63px] ${
-                    clickedDate === date &&
-                    "font-light text-[#B2B2B2] bg-[#DFF4F0] rounded-[15px]"
-                  }`}
-                >
-                  <div className="pb-1">{day}</div>
-                  <div className="pb-0.5 text-xs">
-                    {date.split("-")[2].replace(/^0/, "")}
-                  </div>
-                </button>
-              ))}
-            </nav>
-
-            {/* topic section */}
-            <nav className="min-h-7 px-6 pb-4 bg-white flex justify-start flex-row space-x-2 overflow-x-auto">
-              {topicList.map((topic, topicIdx) => (
-                <button
-                  key={topicIdx}
-                  onClick={() => handleTopic(topic)}
-                  className="text-sm tracking-tight leading-loose text-center whitespace-nowrap rounded-3xl scrollbar-hide"
-                >
-                  <div
-                    className={`px-5 rounded-3xl text-center ${
-                      topic === clickedTopic
-                        ? "bg-[#565656] text-white"
-                        : "bg-gray-200 bg-opacity-80 text-zinc-500"
-                    }`}
-                  >
-                    {topic}
-                  </div>
-                </button>
-              ))}
-            </nav>
-          </div>
-
-          {/* todo section */}
-          <section
-            className={`px-6 bg-white flex flex-col gap-5 overflow-y-scroll scrollbar-hide`}
-          >
-            {todoList &&
-              todoList
-                .filter(
-                  (btnTodo) =>
-                    clickedTopic === "전체" || btnTodo.topic === clickedTopic
-                )
-                .map((btnTodo) => {
-                  const isCompleted = btnTodo.days[clickedDate];
-
-                  return (
-                    <button
-                      className={`flex justify-between items-center px-6 py-4 w-full rounded-3xl border-2 border-solid ${
-                        isCompleted
-                          ? "bg-white bg-opacity-80 border-zinc-100 text-[#B2B2B2]"
-                          : "bg-[#E1F5F1] border-[#E1F5F1] text-[#528A80]"
-                      }`}
-                      key={btnTodo.todoId}
-                      onClick={() => handleTodoClick(btnTodo)}
-                      disabled={nowDate !== clickedDate ? true : false}
-                    >
-                      <p className="whitespace-normal mr-2">{btnTodo.todo}</p>
-                      <Image
-                        src={isCompleted ? fillCheckBox : emptyCheckBox}
-                        width={18}
-                        alt={isCompleted ? "완료" : "미완료"}
-                      />
-                    </button>
-                  );
-                })}
+        {todoList ? (
+          <section>
+            <div className="sticky top-[87px] transition-all duration-300">
+              <div className="relative left-1/2 -translate-x-1/2 top-3 w-[80px] h-[4px] bg-[#DADADA]"></div>
+              <WeekNav
+                week={week}
+                handleDayOfWeek={handleDayOfWeek}
+                clickedDate={clickedDate}
+              />
+              <TopicNav
+                topicList={topicList}
+                clickedTopic={clickedTopic}
+                handleTopic={handleTopic}
+              />
+            </div>
+            <TodoSection
+              todoList={todoList}
+              clickedTopic={clickedTopic}
+              clickedDate={clickedDate}
+              handleTodoClick={handleTodoClick}
+            />
           </section>
-        </div>
-      </div>
+        ) : (
+          children
+        )}
+      </main>
     </>
   );
 }

@@ -15,13 +15,13 @@ export async function middleware(request: NextRequest) {
   } = await createClient().auth.getUser();
   // console.log("유저 정보 middleware: ", user);
 
-  const protectedRoutes = ["/checklist"];
+  const protectedRoutes = ["/checklist", "/chat"];
 
   const isLoggedIn = user !== null;
 
   if (protectedRoutes.includes(pathname)) {
     if (!isLoggedIn) {
-      return NextResponse.redirect(new URL("/", request.url));
+      return NextResponse.redirect(new URL("/login", request.url));
     }
   }
 

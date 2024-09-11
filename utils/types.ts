@@ -24,3 +24,26 @@ export type RequestDataType = {
   memberId: string;
   pushSubscription: PushSubscriptionType;
 };
+
+export type ChatGptMessage = {
+  content: string;
+  role: "user" | "assistant" | "system" | "final";
+};
+
+export type GeneratingCheckListType = {
+  disableChatInput: boolean;
+  generateAnalyzeConversations: boolean;
+  generateTodoListMessage: boolean;
+  generateParsedTodoList: boolean;
+  saveCheckList: boolean;
+  savedCheckListSuccess: boolean;
+};
+
+export type ParsedCheckList =
+  | {
+      todoId: number;
+      topic: string;
+      todo: string;
+      dayNum: number;
+    }[]
+  | null;
