@@ -19,7 +19,7 @@ export default function InstallPrompt({
   }, []);
 
   if (isStandalone) {
-    return null; //설치하지 않은 사람들에게만 보여주기
+    return { children };
   }
 
   return (
