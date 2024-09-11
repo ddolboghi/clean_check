@@ -8,7 +8,6 @@ import {
   initialMessageForCreating,
   initialMessageForUpdating,
 } from "@/data/chat";
-import { createClient } from "@/utils/supabase/server";
 
 export async function getHaveCheckList(memberId: string) {
   try {
@@ -46,7 +45,7 @@ export async function getHaveCheckList(memberId: string) {
     return { haveCheckList: true, initialMessage: initialMessageForUpdating };
   } catch (error) {
     console.error("[getHaveCheckList] Error: ", error);
-    return null;
+    return { haveCheckList: false, initialMessage: initialMessageForCreating };
   }
 }
 

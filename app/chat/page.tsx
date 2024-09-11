@@ -15,7 +15,6 @@ export default async function page() {
   }
 
   const result = await getHaveCheckList(user.id);
-  if (!result) redirect("/checklist");
 
   return (
     <Suspense fallback={<SimpleSpinner />}>
