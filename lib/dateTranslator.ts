@@ -1,5 +1,6 @@
 export const getKSTDateString = (): string => {
   const kstDate = new Date().toLocaleString("sv");
+  console.log(kstDate);
   const year = kstDate.slice(0, 4);
   const month = kstDate.slice(5, 7);
   const day = kstDate.slice(8, 10);
