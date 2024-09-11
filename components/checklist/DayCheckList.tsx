@@ -16,10 +16,9 @@ import { getUniqueTopic } from "@/lib/todoListlib";
 import WeekNav from "./WeekNav";
 import TopicNav from "./TopicNav";
 import TodoSection from "./TodoSection";
-import CleanFreeLogoWhite from "../icons/CleanFreeLogoWhite";
 import ChatbotReversedIcon from "../icons/ChatbotReversedIcon";
 import Link from "next/link";
-import SettingPopUp from "../ui/SettingPopUp";
+import AlarmBtn from "../ui/AlarmBtn";
 
 type DayCheckList = {
   nowDate: string;
@@ -48,7 +47,6 @@ export default function DayCheckList({
     startDate: new Date(),
     endDate: new Date(),
   });
-  const [showSetting, setShowSetting] = useState<boolean>(false);
 
   useEffect(() => {
     async function fetchAndUpdateTodoList() {
@@ -140,26 +138,14 @@ export default function DayCheckList({
     setIsCompletedAllTodo(!isCompletedAllTodo);
   };
 
-  const onClickSettingBtn = () => {
-    setShowSetting(!showSetting);
-  };
-
   return (
     <>
-      {showSetting && (
-        <SettingPopUp
-          onClickSettingBtn={onClickSettingBtn}
-          memberId={memberId}
-        />
-      )}
       {isCompletedAllTodo && (
         <CompletionAllTodoPopUp onClickHomeBtn={onClickHomeBtn} />
       )}
       <main className="flex flex-col min-h-screen">
         <header className="px-9 bg-[#24E6C1] py-1 flex flex-row justify-between sticky top-0 z-20">
-          <button onClick={onClickSettingBtn}>
-            <CleanFreeLogoWhite />
-          </button>
+          <AlarmBtn memberId={memberId} />
           <Link href="/chat">
             <ChatbotReversedIcon />
           </Link>
