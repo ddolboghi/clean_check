@@ -26,6 +26,7 @@ self.addEventListener("push", function (event) {
       data: {
         click_action: data.click_action,
       },
+      badge: "/assets/cleanfreeLogoReversed.png",
     };
     event.waitUntil(self.registration.showNotification(data.title, options));
   } else {
