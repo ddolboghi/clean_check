@@ -32,7 +32,7 @@ export default function ChatSection({
     scrollToBottom();
   }, [messages]);
   return (
-    <section className="px-7 py-[110px]">
+    <section className="px-7 pt-10 pb-[110px]">
       <div className="flex flex-col gap-4 overflow-y-auto flex-grow">
         {messages.map((m, i) => {
           return m.role === "assistant" ? (
