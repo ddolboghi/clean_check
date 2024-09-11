@@ -269,7 +269,7 @@ export default function Chatbot({
   };
 
   return (
-    <main>
+    <main className="min-h-screen">
       {/* 체크리스트 생성 모달로 띄워야 렌더링되면서 함수가 실행된다. */}
       {generatingCheckList.disableChatInput && (
         <GeneratingCheckList
