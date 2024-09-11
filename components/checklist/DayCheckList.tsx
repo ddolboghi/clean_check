@@ -6,7 +6,7 @@ import {
   updateTodoDaysToDelay,
 } from "@/actions/todoList";
 import { Todo } from "@/utils/types";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getDateAndDay } from "@/lib/dateTranslator";
 import CheckListHead from "./CheckListHead";
 import CompletionAllTodoPopUp from "../ui/CompletionAllTodoPopUp";
@@ -22,7 +22,6 @@ import CleanFreeLogoWhite from "../icons/CleanFreeLogoWhite";
 import ChatbotReversedIcon from "../icons/ChatbotReversedIcon";
 import Link from "next/link";
 import { fetchToken } from "@/firebase";
-import SimpleSpinner from "../ui/SimpleSpinner";
 
 type DayCheckList = {
   nowDate: string;
