@@ -29,6 +29,7 @@ export async function getTodoListByDate(date: Date | string, memberId: string) {
     if (!recentData || !recentData.todo_list) {
       return null;
     }
+    console.log("[getTodoListByDate] Get todo_list by date success");
 
     const checkListId: number = recentData.id;
 
@@ -36,14 +37,14 @@ export async function getTodoListByDate(date: Date | string, memberId: string) {
       Object.keys(todo.days).includes(date.toString())
     );
 
-    // filteredTodos.sort((a, b) => a.timeOrder - b.timeOrder);
+    if (filteredTodos.length > 0) {
+      const startDate = recentData.start_date;
+      const endDate = recentData.end_date;
+      const delayedDate = recentData.delayed_date;
+      return { checkListId, filteredTodos, startDate, endDate, delayedDate };
+    }
 
-    const startDate = recentData.start_date;
-    const endDate = recentData.end_date;
-    const delayedDate = recentData.delayed_date;
-
-    console.log("[getTodoListByDate] Get todo_list by date success");
-    return { checkListId, filteredTodos, startDate, endDate, delayedDate };
+    return null;
   } catch (error) {
     console.error("[getTodoListByDate] Error:", error);
     return null;
