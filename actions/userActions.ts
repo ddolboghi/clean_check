@@ -108,11 +108,36 @@ export async function updateTodayDone(memberId: string) {
   }
 }
 
+export async function deleteFCMToken(memberId: string, userAgent: string) {
+  try {
+    console.log(userAgent);
+    const { data, error } = await supabaseClient
+      .from("fcm_tokens")
+      .delete()
+      .match({
+        member_id: memberId,
+        user_agent: userAgent,
+      });
+
+    if (error) throw error;
+    console.log("[deleteFCMToken] Success");
+    return true;
+  } catch (error) {
+    console.error("[deleteFCMToken] Error:", error);
+    return false;
+  }
+}
+
 export async function saveFCMToken(
+  notificationAllow: boolean,
   memberId: string,
   userAgent: string,
   token: string
 ) {
+  if (notificationAllow) {
+    deleteFCMToken(memberId, userAgent);
+  }
+
   try {
     const { data, error } = await supabaseClient.from("fcm_tokens").insert([
       {
@@ -130,30 +155,31 @@ export async function saveFCMToken(
   }
 }
 
-type FCMTokens = {
+type FCMToken = {
   member_Id: string;
   token: string;
   user_agent: string;
-}[];
+};
 
-export async function getAlloewdFCMDevices(memberId: string) {
+export async function getAllowedFCMDevice(memberId: string, userAgent: string) {
   try {
     const { data, error } = await supabaseClient
       .from("fcm_tokens")
       .select("*")
       .eq("member_id", memberId)
-      .returns<FCMTokens>();
+      .eq("user_agent", userAgent)
+      .returns<FCMToken[]>();
 
-    if (error) throw new Error("Saving token faild.");
+    if (error) throw error;
 
-    console.log("[getAlloewdFCMDevices] Success");
+    console.log("[getAllowedFCMDevice] Success");
     let devices: string[] = [];
     if (data.length > 0) {
       devices = data.map((fcmToken) => fcmToken.user_agent);
     }
     return { devices: devices };
   } catch (error) {
-    console.error("[getAlloewdFCMDevices] Error: ", error);
+    console.error("[getAllowedFCMDevice] Error: ", error);
     return null;
   }
 }
