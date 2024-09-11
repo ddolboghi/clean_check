@@ -1,6 +1,6 @@
 import "./globals.css";
 import localFont from "next/font/local";
-import { Metadata } from "next";
+import { Metadata, Viewport } from "next";
 import InstallPromptWrapper from "@/components/InstallPromptWrapper";
 
 const pretendard = localFont({
@@ -22,6 +22,10 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "black-translucent",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({
