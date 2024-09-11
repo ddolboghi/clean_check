@@ -1,7 +1,7 @@
-import InstallPrompt from "@/utils/InstallPrompt";
 import "./globals.css";
 import localFont from "next/font/local";
 import { Metadata } from "next";
+import InstallPromptWrapper from "@/components/InstallPromptWrapper";
 
 const pretendard = localFont({
   src: "../public/assets/fonts/PretendardVariable.woff2",
@@ -39,8 +39,7 @@ export default function RootLayout({
         />
       </head>
       <body className={pretendard.className}>
-        <InstallPrompt />
-        {children}
+        <InstallPromptWrapper>{children}</InstallPromptWrapper>
       </body>
     </html>
   );
