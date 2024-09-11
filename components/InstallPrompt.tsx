@@ -18,8 +18,8 @@ export default function InstallPrompt({
     setIsStandalone(window.matchMedia("(display-mode: standalone)").matches);
   }, []);
 
-  if (isStandalone) {
-    return { children };
+  if (!isStandalone) {
+    return <>{children}</>;
   }
 
   return (
