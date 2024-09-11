@@ -128,33 +128,6 @@ export async function deleteFCMToken(memberId: string, userAgent: string) {
   }
 }
 
-export async function saveFCMToken(
-  notificationAllow: boolean,
-  memberId: string,
-  userAgent: string,
-  token: string
-) {
-  if (notificationAllow) {
-    deleteFCMToken(memberId, userAgent);
-  }
-
-  try {
-    const { data, error } = await supabaseClient.from("fcm_tokens").insert([
-      {
-        member_id: memberId,
-        token: token,
-        user_agent: userAgent,
-      },
-    ]);
-
-    if (error) throw new Error("Saving token faild.");
-
-    console.log("[saveFCMToken] Success: ", data);
-  } catch (error) {
-    console.error("[saveFCMToken] Error: ", error);
-  }
-}
-
 type FCMToken = {
   member_Id: string;
   token: string;
@@ -177,9 +150,32 @@ export async function getAllowedFCMDevice(memberId: string, userAgent: string) {
     if (data.length > 0) {
       devices = data.map((fcmToken) => fcmToken.user_agent);
     }
-    return { devices: devices };
+    return devices;
   } catch (error) {
     console.error("[getAllowedFCMDevice] Error: ", error);
-    return null;
+    return [];
+  }
+}
+
+export async function saveFCMToken(
+  memberId: string,
+  userAgent: string,
+  token: string
+) {
+  try {
+    await deleteFCMToken(memberId, userAgent);
+    const { data, error } = await supabaseClient.from("fcm_tokens").insert([
+      {
+        member_id: memberId,
+        token: token,
+        user_agent: userAgent,
+      },
+    ]);
+
+    if (error) throw new Error("Saving token faild.");
+
+    console.log("[saveFCMToken] Saving fcm token success: ", data);
+  } catch (error) {
+    console.error("[saveFCMToken] Error: ", error);
   }
 }
