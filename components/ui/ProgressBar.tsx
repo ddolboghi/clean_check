@@ -26,7 +26,11 @@ export default function ProgressBar({ value, formatDate }: ProgressBarProps) {
             {formatDate}
           </div>
         </div>
-        <Progress value={clampedProgress} className="h-[10px] bg-[#E1F5F1]" />
+        <Progress
+          aria-label="aria progress"
+          value={clampedProgress}
+          className="h-[10px] bg-[#E1F5F1]"
+        />
       </div>
     </div>
   );
