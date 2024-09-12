@@ -10,7 +10,8 @@ const openAI = new OpenAI({
 
 export async function POST(req: NextRequest) {
   try {
-    const { analyzedConversation } = await req.json();
+    const { analyzedConversation }: { analyzedConversation: string } =
+      await req.json();
     const checkListPrompt = process.env.NEXT_PUBLIC_CHEKLIST_PROMPT as string;
 
     const completion = await openAI.chat.completions.create({
