@@ -19,6 +19,7 @@ import TodoSection from "./TodoSection";
 import ChatbotReversedIcon from "../icons/ChatbotReversedIcon";
 import Link from "next/link";
 import AlarmBtn from "../ui/AlarmBtn";
+import CleanFreeLogoWhite from "../icons/CleanFreeLogoWhite";
 
 type DayCheckList = {
   nowDate: string;
@@ -144,11 +145,14 @@ export default function DayCheckList({
         <CompletionAllTodoPopUp onClickHomeBtn={onClickHomeBtn} />
       )}
       <main className="flex flex-col min-h-screen">
-        <header className="px-9 bg-[#24E6C1] py-1 flex flex-row justify-between sticky top-0 z-20">
-          <AlarmBtn memberId={memberId} />
-          <Link href="/chat">
-            <ChatbotReversedIcon />
-          </Link>
+        <header className="px-9 bg-[#24E6C1] py-1 flex flex-row items-center justify-between sticky top-0 z-20">
+          <CleanFreeLogoWhite />
+          <div className="flex flex-row">
+            <AlarmBtn memberId={memberId} />
+            <Link href="/chat" className="pl-5">
+              <ChatbotReversedIcon />
+            </Link>
+          </div>
         </header>
         <CheckListHead
           todoList={todoList}

@@ -15,17 +15,12 @@ import {
   Todo,
 } from "@/utils/types";
 import ChatSection from "./ChatSection";
-import { initialMessageForCreating } from "@/data/chat";
 
 type ChatbotProps = {
-  haveCheckList: boolean;
   initialMessage: string;
 };
 
-export default function Chatbot({
-  haveCheckList,
-  initialMessage,
-}: ChatbotProps) {
+export default function Chatbot({ initialMessage }: ChatbotProps) {
   const [userMessage, setUserMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [messages, setMessages] = useState<ChatGptMessage[]>([
@@ -56,13 +51,15 @@ export default function Chatbot({
     // Create new message object
     const newMessage: ChatGptMessage = {
       role: "user",
-      content: `Patient: ${userMessage}`,
+      content: userMessage,
     };
 
     // Update the message state
     setMessages((prevMessage) => [...prevMessage, newMessage]);
     setLoading(true);
     setUserMessage("");
+    const host =
+      process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_VERCEL_URL;
 
     try {
       const chatMessages = messages.slice(1);
@@ -104,7 +101,7 @@ export default function Chatbot({
 
         const gptAnalyzedConversationsData =
           await gptAnalyzedConversationsResponse.json();
-        let analyzedConversation = null;
+        let analyzedConversation: string | null = null;
         if (gptAnalyzedConversationsResponse.ok) {
           analyzedConversation =
             gptAnalyzedConversationsData.analyzedConversation;
