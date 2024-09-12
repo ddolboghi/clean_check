@@ -51,13 +51,15 @@ export default function Chatbot({ initialMessage }: ChatbotProps) {
     // Create new message object
     const newMessage: ChatGptMessage = {
       role: "user",
-      content: `Patient: ${userMessage}`,
+      content: userMessage,
     };
 
     // Update the message state
     setMessages((prevMessage) => [...prevMessage, newMessage]);
     setLoading(true);
     setUserMessage("");
+    const host =
+      process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_VERCEL_URL;
 
     try {
       const chatMessages = messages.slice(1);
@@ -78,7 +80,7 @@ export default function Chatbot({ initialMessage }: ChatbotProps) {
 
         //----------------------------------------------------------
         const gptAnalyzedConversationsResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/analyzing-conversations`,
+          `${host}/api/analyzing-conversations`,
           {
             method: "POST",
             headers: {
@@ -96,7 +98,7 @@ export default function Chatbot({ initialMessage }: ChatbotProps) {
 
         const gptAnalyzedConversationsData =
           await gptAnalyzedConversationsResponse.json();
-        let analyzedConversation = null;
+        let analyzedConversation: string | null = null;
         if (gptAnalyzedConversationsResponse.ok) {
           analyzedConversation =
             gptAnalyzedConversationsData.analyzedConversation;
@@ -118,13 +120,15 @@ export default function Chatbot({ initialMessage }: ChatbotProps) {
         setPercentage(25);
         //----------------------------------------------------------
         const gptTodoListMessageResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/create-checklist-by-gpt`,
+          `${host}/api/create-checklist-by-gpt`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ chatMessages: newChatMessages }),
+            body: JSON.stringify({
+              analyzedConversation: analyzedConversation,
+            }),
           }
         );
 
@@ -156,7 +160,7 @@ export default function Chatbot({ initialMessage }: ChatbotProps) {
         setPercentage(50);
         //--------------------------------------------------------
         const parseCheckListResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/parse-gpt-checklist`,
+          `${host}/api/parse-gpt-checklist`,
           {
             method: "POST",
             headers: {

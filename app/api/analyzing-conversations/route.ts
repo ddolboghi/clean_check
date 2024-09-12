@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     }
 
     console.log("[analyzing-conversation] success: ", analyzedConversation);
-    return NextResponse.json({ analyzedConversation });
+    return NextResponse.json({ analyzedConversation: analyzedConversation });
   } catch (error) {
     console.error("[analyzing-conversation] Error: ", error);
     return NextResponse.json(
