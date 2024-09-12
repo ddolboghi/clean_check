@@ -82,45 +82,45 @@ export default function Chatbot({
         setPercentage(11);
 
         //----------------------------------------------------------
-        const gptAnalyzedConversationsResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/analyzing-conversations`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ chatMessages: newChatMessages }),
-          }
-        );
+        // const gptAnalyzedConversationsResponse = await fetch(
+        //   `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/analyzing-conversations`,
+        //   {
+        //     method: "POST",
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //     },
+        //     body: JSON.stringify({ chatMessages: newChatMessages }),
+        //   }
+        // );
 
-        if (!gptAnalyzedConversationsResponse.ok) {
-          throw new Error(
-            `gptAnalyzedConversationsResponse status: ${gptAnalyzedConversationsResponse.status}`
-          );
-        }
+        // if (!gptAnalyzedConversationsResponse.ok) {
+        //   throw new Error(
+        //     `gptAnalyzedConversationsResponse status: ${gptAnalyzedConversationsResponse.status}`
+        //   );
+        // }
 
-        const gptAnalyzedConversationsData =
-          await gptAnalyzedConversationsResponse.json();
-        let analyzedConversation = null;
-        if (gptAnalyzedConversationsResponse.ok) {
-          analyzedConversation =
-            gptAnalyzedConversationsData.analyzedConversation;
-        } else {
-          throw gptAnalyzedConversationsData.error;
-        }
+        // const gptAnalyzedConversationsData =
+        //   await gptAnalyzedConversationsResponse.json();
+        // let analyzedConversation = null;
+        // if (gptAnalyzedConversationsResponse.ok) {
+        //   analyzedConversation =
+        //     gptAnalyzedConversationsData.analyzedConversation;
+        // } else {
+        //   throw gptAnalyzedConversationsData.error;
+        // }
 
-        if (!analyzedConversation) {
-          console.log("Error analyzedConversation: ", analyzedConversation);
-          throw new Error("analyzedConversation is empty.");
-        }
-        console.log(analyzedConversation);
+        // if (!analyzedConversation) {
+        //   console.log("Error analyzedConversation: ", analyzedConversation);
+        //   throw new Error("analyzedConversation is empty.");
+        // }
+        // console.log(analyzedConversation);
 
-        setGeneratingCheckList({
-          ...generatingCheckList,
-          disableChatInput: true,
-          generateAnalyzeConversations: true,
-        });
-        setPercentage(25);
+        // setGeneratingCheckList({
+        //   ...generatingCheckList,
+        //   disableChatInput: true,
+        //   generateAnalyzeConversations: true,
+        // });
+        // setPercentage(25);
         //----------------------------------------------------------
         const gptTodoListMessageResponse = await fetch(
           `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/create-checklist-by-gpt`,
@@ -129,9 +129,7 @@ export default function Chatbot({
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              analyzedConversation: analyzedConversation,
-            }),
+            body: JSON.stringify({ chatMessages: newChatMessages }),
           }
         );
 
