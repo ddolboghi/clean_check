@@ -15,17 +15,12 @@ import {
   Todo,
 } from "@/utils/types";
 import ChatSection from "./ChatSection";
-import { initialMessageForCreating } from "@/data/chat";
 
 type ChatbotProps = {
-  haveCheckList: boolean;
   initialMessage: string;
 };
 
-export default function Chatbot({
-  haveCheckList,
-  initialMessage,
-}: ChatbotProps) {
+export default function Chatbot({ initialMessage }: ChatbotProps) {
   const [userMessage, setUserMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [messages, setMessages] = useState<ChatGptMessage[]>([
