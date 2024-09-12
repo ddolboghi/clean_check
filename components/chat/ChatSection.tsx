@@ -23,6 +23,11 @@ export default function ChatSection({
   disableChatInput,
 }: ChatSectionProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const assistantResponseLength = messages.filter(
+    (c) => c.role === "assistant"
+  ).length;
+  const numberOfMaxQuestion =
+    Number(process.env.NEXT_PUBLIC_NUMBER_OF_MAX_QUESTION as string) + 2;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -49,7 +54,11 @@ export default function ChatSection({
         setUserMessage={setUserMessage}
         handleSendMessage={handleSendMessage}
         disableChatInput={disableChatInput}
-      />
+      >
+        <span className="font-light text-[14px] text-[#808080] text-right pr-8">
+          남은 질문 횟수: {assistantResponseLength}/{numberOfMaxQuestion}
+        </span>
+      </ChatInput>
     </section>
   );
 }
