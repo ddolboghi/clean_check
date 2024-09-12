@@ -1,8 +1,8 @@
 export default function ChatbotReversedIcon() {
   return (
     <svg
-      width="47"
-      height="47"
+      width="27"
+      height="27"
       viewBox="0 0 47 47"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
