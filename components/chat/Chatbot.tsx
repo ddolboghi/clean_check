@@ -77,10 +77,13 @@ export default function Chatbot({
           disableChatInput: true,
         });
         setPercentage(11);
+        const host =
+          process.env.NEXT_PUBLIC_SITE_URL ||
+          process.env.NEXT_PUBLIC_VERCEL_URL;
 
         //----------------------------------------------------------
         const gptAnalyzedConversationsResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/analyzing-conversations`,
+          `${host}/api/analyzing-conversations`,
           {
             method: "POST",
             headers: {
@@ -120,7 +123,7 @@ export default function Chatbot({
         setPercentage(25);
         //----------------------------------------------------------
         const gptTodoListMessageResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/create-checklist-by-gpt`,
+          `${host}/api/create-checklist-by-gpt`,
           {
             method: "POST",
             headers: {
@@ -160,7 +163,7 @@ export default function Chatbot({
         setPercentage(50);
         //--------------------------------------------------------
         const parseCheckListResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/parse-gpt-checklist`,
+          `${host}/api/parse-gpt-checklist`,
           {
             method: "POST",
             headers: {
