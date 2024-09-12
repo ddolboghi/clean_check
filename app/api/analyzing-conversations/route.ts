@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       throw new Error("No analyzed conversation");
     }
 
-    console.log("[analyzing-conversation] success.");
+    console.log("[analyzing-conversation] success: ", analyzedConversation);
     return NextResponse.json({ analyzedConversation });
   } catch (error) {
     console.error("[analyzing-conversation] Error: ", error);
