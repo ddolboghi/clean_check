@@ -18,10 +18,7 @@ export default async function page() {
 
   return (
     <Suspense fallback={<SimpleSpinner />}>
-      <Chatbot
-        haveCheckList={result.haveCheckList}
-        initialMessage={result.initialMessage}
-      />
+      <Chatbot initialMessage={result.initialMessage} />
     </Suspense>
   );
 }
