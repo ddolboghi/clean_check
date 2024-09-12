@@ -1,5 +1,6 @@
 import { GeneratingCheckListType } from "@/utils/types";
 import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 export default function GeneratingCheckList({
   generateCheckList,
@@ -42,6 +43,7 @@ export default function GeneratingCheckList({
             maxValue={100}
             value={percentage}
             text={`${percentage}%`}
+            className="flex items-center"
             styles={{
               root: {
                 textAlign: "center",
@@ -68,7 +70,6 @@ export default function GeneratingCheckList({
               text: {
                 fill: "#24E6C1",
                 fontSize: "16px",
-                transform: "translateX(-15%) translateY(5%)",
               },
             }}
           />
