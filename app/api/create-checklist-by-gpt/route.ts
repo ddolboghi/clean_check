@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       throw new Error("No checklist");
     }
 
-    console.log("[create-checklist] success.");
+    console.log("[create-checklist] success:", checklistMessage);
     return NextResponse.json({ checklistMessage });
   } catch (error) {
     console.error("[create-checklist] Error: ", error);
