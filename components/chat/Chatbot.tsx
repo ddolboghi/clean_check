@@ -54,7 +54,10 @@ export default function Chatbot({
     if (!userMessage) return;
 
     // Create new message object
-    const newMessage: ChatGptMessage = { role: "user", content: userMessage };
+    const newMessage: ChatGptMessage = {
+      role: "user",
+      content: `Patient: ${userMessage}`,
+    };
 
     // Update the message state
     setMessages((prevMessage) => [...prevMessage, newMessage]);
