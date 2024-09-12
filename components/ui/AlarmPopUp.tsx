@@ -2,16 +2,18 @@
 
 import { saveFCMToken } from "@/actions/userActions";
 import { fetchToken } from "@/firebase";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 type AlarmPopUpProps = {
   memberId: string;
   handleClickBell: () => void;
+  setIsAllowed: Dispatch<SetStateAction<boolean>>;
 };
 
 export default function AlarmPopUp({
   memberId,
   handleClickBell,
+  setIsAllowed,
 }: AlarmPopUpProps) {
   const [notificationPermission, setNotificationPermission] =
     useState<string>();
@@ -48,6 +50,7 @@ export default function AlarmPopUp({
             if (token) return saveFCMToken(memberId, userAgent, token);
           })
           .then(() => {
+            setIsAllowed(true);
             alert("12시, 18시, 22시에 알림을 보내드릴게요.");
           })
           .catch((error) => {
