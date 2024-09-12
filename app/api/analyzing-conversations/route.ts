@@ -1,3 +1,4 @@
+import { ChatGptMessage } from "@/utils/types";
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
@@ -10,15 +11,23 @@ const openAI = new OpenAI({
 
 export async function POST(req: NextRequest) {
   try {
-    const { chatMessages } = await req.json();
+    const { chatMessages }: { chatMessages: ChatGptMessage[] } =
+      await req.json();
     const checkListPrompt = process.env.NEXT_PUBLIC_ANALYZE_PROMPT as string;
-    const chat = [
-      { role: "system", content: checkListPrompt },
-      ...chatMessages,
-    ];
+    const consultation = chatMessages
+      .map((chat) =>
+        chat.role === "user"
+          ? `Patient: ${chat.content}`
+          : `Dermatologist: ${chat.content}`
+      )
+      .join("\n");
+    console.log("상담 내용: ", consultation);
 
     const completion = await openAI.chat.completions.create({
-      messages: chat as OpenAI.ChatCompletionMessageParam[],
+      messages: [
+        { role: "system", content: checkListPrompt },
+        { role: "assistant", content: consultation },
+      ],
       model: "gpt-4o-mini",
     });
 
