@@ -8,12 +8,14 @@ type AlarmPopUpProps = {
   memberId: string;
   handleClickBell: () => void;
   setIsAllowed: Dispatch<SetStateAction<boolean>>;
+  setLoading: Dispatch<SetStateAction<boolean>>;
 };
 
 export default function AlarmPopUp({
   memberId,
   handleClickBell,
   setIsAllowed,
+  setLoading,
 }: AlarmPopUpProps) {
   const [notificationPermission, setNotificationPermission] =
     useState<string>();
@@ -39,6 +41,7 @@ export default function AlarmPopUp({
           .then((permission) => {
             if (permission === "granted") {
               setNotificationPermission("granted");
+              setLoading(true);
               return fetchToken();
             } else {
               setNotificationPermission("denied");
@@ -51,6 +54,7 @@ export default function AlarmPopUp({
           })
           .then(() => {
             setIsAllowed(true);
+            setLoading(false);
             alert("12시, 18시, 22시에 알림을 보내드릴게요.");
           })
           .catch((error) => {
