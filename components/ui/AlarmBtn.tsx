@@ -23,7 +23,7 @@ export default function AlarmBtn({ memberId }: AlarmBtnProps) {
     <div className="flex items-center" onClick={handleClickBell}>
       {isAllowed ? (
         <AllowedBell />
-      ) : !alarmLoading ? (
+      ) : alarmLoading ? (
         <div>
           <LoadingAllowedBell />
           <p className="relative right-8 text-sm text-[#7B7B7B]">
