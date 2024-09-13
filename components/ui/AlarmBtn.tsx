@@ -4,6 +4,7 @@ import { useState } from "react";
 import AlarmPopUp from "./AlarmPopUp";
 import NotAllowedBell from "../icons/NotAllowedBell";
 import AllowedBell from "../icons/AllowedBell";
+import LoadingAllowedBell from "../icons/LoadingAllowedBell";
 
 type AlarmBtnProps = {
   memberId: string;
@@ -12,6 +13,7 @@ type AlarmBtnProps = {
 export default function AlarmBtn({ memberId }: AlarmBtnProps) {
   const [showPopUp, setShowPopUp] = useState<boolean>(false);
   const [isAllowed, setIsAllowed] = useState<boolean>(false);
+  const [alarmLoading, setAlarmLoading] = useState<boolean>(false);
 
   const handleClickBell = () => {
     setShowPopUp(!showPopUp);
@@ -19,12 +21,24 @@ export default function AlarmBtn({ memberId }: AlarmBtnProps) {
 
   return (
     <div className="flex items-center" onClick={handleClickBell}>
-      {isAllowed ? <AllowedBell /> : <NotAllowedBell />}
+      {isAllowed ? (
+        <AllowedBell />
+      ) : alarmLoading ? (
+        <div>
+          <LoadingAllowedBell />
+          <p className="relative right-8 text-sm text-[#7B7B7B]">
+            알림 설정 중이니 앱을 종료하지 마세요.
+          </p>
+        </div>
+      ) : (
+        <NotAllowedBell />
+      )}
       {showPopUp && (
         <AlarmPopUp
           memberId={memberId}
           handleClickBell={handleClickBell}
           setIsAllowed={setIsAllowed}
+          setLoading={setAlarmLoading}
         />
       )}
     </div>
