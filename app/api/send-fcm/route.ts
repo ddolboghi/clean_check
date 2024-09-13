@@ -36,9 +36,6 @@ const sendFCMNotification = async () => {
     data: {
       title: "✅지금 피부 루틴을 체크하세요!",
       body: "지킨 항목들을 체크해주세요.",
-      click_action:
-        `${process.env.NEXT_PUBLIC_SITE_URL!}/checklist` ||
-        `${process.env.NEXT_PUBLIC_VERCEL_URL!}/checklist`,
     },
     tokens: tokens,
   };

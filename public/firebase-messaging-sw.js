@@ -23,9 +23,6 @@ self.addEventListener("push", function (event) {
     const options = {
       body: data.body,
       icon: "/assets/cleanfreeLogoReversed.png",
-      data: {
-        click_action: data.click_action,
-      },
       badge: "/assets/cleanfreeLogoReversed.png",
     };
     event.waitUntil(self.registration.showNotification(data.title, options));
@@ -37,6 +34,7 @@ self.addEventListener("push", function (event) {
 self.addEventListener("notificationclick", function (event) {
   console.log("Notification click received.");
   event.notification.close();
-  const urlToOpen = event.notification.data.click_action;
-  event.waitUntil(clients.openWindow(urlToOpen));
+  const host =
+    process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_VERCEL_URL;
+  event.waitUntil(clients.openWindow(`${host}/checklist`));
 });
