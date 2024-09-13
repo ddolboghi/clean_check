@@ -1,7 +1,11 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { chatCompletionForCreating, saveTodolist } from "@/actions/chat";
+import {
+  chatCompletionForCreating,
+  saveChat,
+  saveTodolist,
+} from "@/actions/chat";
 import { getIsOverQuestion } from "@/lib/chatLib";
 import { useRouter } from "next/navigation";
 import GeneratingCheckList from "./GeneratingCheckList";
@@ -113,7 +117,6 @@ export default function Chatbot({ initialMessage }: ChatbotProps) {
           console.log("Error analyzedConversation: ", analyzedConversation);
           throw new Error("analyzedConversation is empty.");
         }
-        console.log(analyzedConversation);
 
         setGeneratingCheckList({
           ...generatingCheckList,
@@ -216,7 +219,7 @@ export default function Chatbot({ initialMessage }: ChatbotProps) {
         });
         setPercentage(75);
         //-------------------------------------------
-        const isSaved = await saveTodolist(todoList);
+        const saveResult = await saveTodolist(todoList);
         setGeneratingCheckList({
           ...generatingCheckList,
           disableChatInput: true,
@@ -227,7 +230,7 @@ export default function Chatbot({ initialMessage }: ChatbotProps) {
         });
         setPercentage(95);
 
-        if (isSaved) {
+        if (saveResult.isSaved) {
           setGeneratingCheckList({
             ...generatingCheckList,
             disableChatInput: true,
@@ -239,6 +242,11 @@ export default function Chatbot({ initialMessage }: ChatbotProps) {
           });
           setPercentage(100);
           route.push("/checklist");
+          await saveChat(
+            saveResult.memberId,
+            saveResult.checkListId,
+            newChatMessages
+          );
         } else {
           throw new Error("Fail to save todo list.");
         }

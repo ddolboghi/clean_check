@@ -162,7 +162,7 @@ export default function DayCheckList({
         />
         {todoList ? (
           <section>
-            <div className="sticky top-[87px] transition-all duration-300">
+            <div className="sticky top-[31px] transition-all duration-300">
               <div className="relative left-1/2 -translate-x-1/2 top-3 w-[80px] h-[4px] bg-[#DADADA]"></div>
               <WeekNav
                 week={week}

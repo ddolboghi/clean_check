@@ -1,3 +1,4 @@
+import { chatGptMessagesConvertor } from "@/lib/chatLib";
 import { ChatGptMessage } from "@/utils/types";
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
@@ -14,14 +15,7 @@ export async function POST(req: NextRequest) {
     const { chatMessages }: { chatMessages: ChatGptMessage[] } =
       await req.json();
     const checkListPrompt = process.env.NEXT_PUBLIC_ANALYZE_PROMPT as string;
-    const consultation = chatMessages
-      .map((chat) =>
-        chat.role === "user"
-          ? `Patient: ${chat.content}`
-          : `Dermatologist: ${chat.content}`
-      )
-      .join("\n");
-    console.log("상담 내용: ", consultation);
+    const consultation = chatGptMessagesConvertor(chatMessages);
 
     const completion = await openAI.chat.completions.create({
       messages: [
@@ -41,7 +35,7 @@ export async function POST(req: NextRequest) {
       throw new Error("No analyzed conversation");
     }
 
-    console.log("[analyzing-conversation] success: ", analyzedConversation);
+    console.log("[analyzing-conversation] Success");
     return NextResponse.json({ analyzedConversation: analyzedConversation });
   } catch (error) {
     console.error("[analyzing-conversation] Error: ", error);
