@@ -7,7 +7,7 @@ export default async function TodayList() {
     <main className="text-center">
       <h1>test page</h1>
       <hr />
-      <ShareBtn />
+      <ShareBtn shareUrl="share url" />
     </main>
   );
 }
