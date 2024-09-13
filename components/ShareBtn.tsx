@@ -60,7 +60,7 @@ export default function ShareBtn() {
         throw new Error("This browser doesn't support sharing.");
       }
     } catch (error) {
-      console.error("공유 실패:", error);
+      alert(`공유 실패: ${error}`);
     }
   };
   return (
