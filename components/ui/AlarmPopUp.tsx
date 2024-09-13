@@ -65,7 +65,7 @@ export default function AlarmPopUp({
     <div className="fixed inset-0 z-50 bg-black bg-opacity-20 flex justify-center items-center">
       <div className="w-full max-w-[500px] transform transition-transform duration-300 scale-100 opacity-100 items-center">
         <div className="bg-white text-sm font-semibold tracking-tight rounded-3xl scale-80 opacity-0 transition-all duration-300 ease-in-out animate-grow mx-7">
-          {notificationPermission === "granted" && (
+          {notificationPermission === "granted" ? (
             <div
               className="relative flex flex-col justify-center items-center pt-5 rounded-none"
               onClick={handleClickBell}
@@ -77,8 +77,7 @@ export default function AlarmPopUp({
                 알림 해제 기능은 준비 중이에요.
               </p>
             </div>
-          )}
-          {notificationPermission !== "denied" ? (
+          ) : notificationPermission !== "denied" ? (
             <div className="h-[200px] flex flex-col items-center justify-between">
               <div className="pt-12 text-center">
                 <h2 className="text-2xl tracking-tight leading-tight text-[#191919]">
