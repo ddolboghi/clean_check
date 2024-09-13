@@ -2,19 +2,32 @@
 
 import Image from "next/image";
 import cleanFreeLogo2png from "@/public/assets/cleanfreeLogo2.png";
+import { useEffect, useState } from "react";
 
 export default function ShareBtn() {
-  const shareContent = async () => {
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setShareUrl(`${window.location.origin}/assets/cleanfreeLogo2.png`);
+    }
+  }, []);
+
+  const shareData = {
+    title: "인스타그램 스토리 공유",
+    text: "이 이미지를 확인해보세요!",
+    url: shareUrl!,
+  };
+
+  const shareContent = () => {
     try {
       if (
         typeof window !== "undefined" &&
-        typeof window.navigator !== "undefined"
+        typeof window.navigator !== "undefined" &&
+        shareUrl &&
+        navigator.canShare(shareData)
       ) {
-        await navigator.share({
-          title: "인스타그램 스토리 공유",
-          text: "이 이미지를 확인해보세요!",
-          url: `${location.origin}${cleanFreeLogo2png}`,
-        });
+        window.navigator.share(shareData);
       }
     } catch (error) {
       console.error("공유 실패:", error);
