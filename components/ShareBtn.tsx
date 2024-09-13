@@ -25,6 +25,7 @@ export default function ShareBtn() {
   };
   return (
     <div>
+      <p>tjfaudfad</p>
       <Image src={cleanFreeLogo2png} alt="Preview" width={500} height={400} />
       <button onClick={shareContent}>인스타그램 스토리에 공유하기</button>
     </div>
