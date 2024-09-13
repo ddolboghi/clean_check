@@ -4,7 +4,6 @@ import cleanFreeLogo from "@/public/assets/cleanfreeLogo2.png";
 import Image from "next/image";
 import "@/style/loginPageAnimation.css";
 import KakaoLoginButton from "@/components/KakaoLoginButton";
-import Link from "next/link";
 
 export default async function Login() {
   const {
@@ -35,7 +34,6 @@ export default async function Login() {
       <div className="mt-[40%] opacity-0 animate-fadeIn delay-1500 flex flex-col gap-2">
         <KakaoLoginButton />
       </div>
-      <Link href="/add">공유 페이지로</Link>
     </main>
   );
 }
