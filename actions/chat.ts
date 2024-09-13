@@ -83,31 +83,56 @@ export async function saveTodolist(todoList: Todo[]) {
       throw userError;
     }
 
-    const { data, error } = await supabaseClient.from("check_list").insert([
-      {
-        start_date: startDate,
-        end_date: endDate,
-        todo_list: todoList,
-        member_id: user.id,
-      },
-    ]);
+    const { data, error } = await supabaseClient
+      .from("check_list")
+      .insert([
+        {
+          start_date: startDate,
+          end_date: endDate,
+          todo_list: todoList,
+          member_id: user.id,
+        },
+      ])
+      .select("id, member_id");
 
     if (error) throw error;
+    if (!data || data.length === 0) throw new Error("Data not exist");
 
     console.log("[saveChecklist] Data inserted successfully: ", data);
-    return true;
+    return {
+      isSaved: true,
+      memberId: data[0].member_id,
+      checkListId: data[0].id,
+    };
   } catch (error) {
     console.error("[saveChecklist] Error inserting data:", error);
-    return false;
+    return { isSaved: false, memberId: null, checkListId: null };
   }
 }
 
 /**
- * 오늘 상담 기록을 저장한다.
- * @param messages - typeof Message[]. 'assistant'와 'user' role인 message만 추출한다.
+ * 채팅 내용을 저장합니다.
+ * @param memberId: OAuth user.id
+ * @param checkListId: 체크리스트 저장 후 반환 받은 id
+ * @param messages: analyzing-conversations API에 넘겨주는 messages'
  */
-export async function saveChat(messages: ChatGptMessage[]) {
-  //member_id: user.id
-  //chat_history<jsonb>: messages
-  //
+export async function saveChat(
+  memberId: string,
+  checkListId: number,
+  messages: ChatGptMessage[]
+) {
+  try {
+    const { data, error } = await supabaseClient.from("chat_history").insert([
+      {
+        member_id: memberId,
+        check_list_id: checkListId,
+        chat: messages,
+      },
+    ]);
+
+    if (error) throw error;
+    console.log("[saveChat] Success: ", data);
+  } catch (error) {
+    console.error("[saveChat] Error: ", error);
+  }
 }
