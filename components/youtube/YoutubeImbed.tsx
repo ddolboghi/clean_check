@@ -2,11 +2,12 @@
 
 import { formatNumber, formatTimeDifference } from "@/lib/youtube";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import YouTube, { YouTubeProps } from "react-youtube";
-import SpreadArrowDown from "../ui/SpreadArrowDown";
-import SpreadArrowUp from "../ui/SpreadArrowUp";
+import SpreadArrowDown from "../icons/SpreadArrowDown";
+import SpreadArrowUp from "../icons/SpreadArrowUp";
 import { getChannelData, getVideoData } from "@/actions/youtube";
+import SimpleSpinner from "../ui/SimpleSpinner";
 
 type YoutubeImbedProps = {
   videoId: string;
@@ -14,23 +15,38 @@ type YoutubeImbedProps = {
 };
 
 export default function YoutubeImbed({ videoId, children }: YoutubeImbedProps) {
-  const [videoData, setVideoData] = useState(null);
+  const [videoData, setVideoData] = useState<any>(null);
   const [channelData, setChannelData] = useState<any>(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showToggle, setShowToggle] = useState(false);
+  const childrenRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchYoutubeData = async () => {
       const video = await getVideoData(videoId);
 
-      if (!video) console.error("Error fetching video data");
+      if (!video) {
+        console.error("Error fetching video data");
+        return;
+      }
       setVideoData(video);
       const channel = await getChannelData(video.snippet.channelId);
-      if (!channel) console.error("Error fetching channel data");
+      if (!channel) {
+        console.error("Error fetching channel data");
+        return;
+      }
       setChannelData(channel);
     };
 
     fetchYoutubeData();
   }, [videoId]);
+
+  useEffect(() => {
+    if (childrenRef.current) {
+      const childrenHeight = childrenRef.current.scrollHeight;
+      setShowToggle(childrenHeight > 106);
+    }
+  }, [videoData, channelData]);
 
   const opts: YouTubeProps["opts"] = {
     width: "100%",
@@ -44,13 +60,13 @@ export default function YoutubeImbed({ videoId, children }: YoutubeImbedProps) {
     setIsExpanded(!isExpanded);
   };
 
-  if (!videoData || !channelData) return <div>Loading...</div>;
+  if (!videoData || !channelData) return <SimpleSpinner />;
 
   return (
     <div className="mx-auto w-full max-w-4xl px-5">
       <div
-        className={`relative h-[456px] flex flex-col border border-[#DEDEDE] rounded-[15px] ${
-          isExpanded ? "h-auto" : "overflow-hidden"
+        className={`relative border border-[#DEDEDE] rounded-[15px] ${
+          isExpanded ? "h-auto" : "max-h-[456px] overflow-hidden"
         }`}
       >
         <div className="px-3">
@@ -68,7 +84,7 @@ export default function YoutubeImbed({ videoId, children }: YoutubeImbedProps) {
                   {channelData.snippet.title}
                 </span>
                 <span className="text-[#747474] text-[9px]">
-                  구독자 {formatNumber(channelData.statistics.subscriberCount)}
+                  구독자 {formatNumber(channelData.statistics.subscriberCount)}{" "}
                   명
                 </span>
               </div>
@@ -85,20 +101,32 @@ export default function YoutubeImbed({ videoId, children }: YoutubeImbedProps) {
             </div>
           </div>
           <div className="aspect-video">
-            <YouTube videoId={videoId} opts={opts} className="w-full h-full" />
+            <YouTube
+              videoId={videoId}
+              opts={opts}
+              className="w-full h-full"
+              iframeClassName="rounded-[12px]"
+            />
           </div>
-          <h1 className="text-[11px] text-[#5C5C5C] mb-4">
+          <h1 className="text-[11px] text-[#5C5C5C] mt-2 mb-4">
             {videoData["snippet"]["title"]}
           </h1>
-          <div className={`mb-6 ${isExpanded ? "" : "overflow-hidden"}`}>
+          <div
+            ref={childrenRef}
+            className={`mb-4 ${
+              isExpanded ? "" : "max-h-[105.5px] overflow-hidden"
+            }`}
+          >
             {children}
           </div>
-          <button
-            onClick={toggleExpand}
-            className="absolute bg-white w-full flex items-center justify-center bottom-0 py-2 left-0 rounded-b-[15px]"
-          >
-            {isExpanded ? <SpreadArrowUp /> : <SpreadArrowDown />}
-          </button>
+          {showToggle && (
+            <button
+              onClick={toggleExpand}
+              className="absolute bg-white w-full flex items-center justify-center bottom-0 py-2 left-0 rounded-b-[15px]"
+            >
+              {isExpanded ? <SpreadArrowUp /> : <SpreadArrowDown />}
+            </button>
+          )}
         </div>
       </div>
     </div>
