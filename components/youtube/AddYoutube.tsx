@@ -82,6 +82,10 @@ export default function AddYoutube() {
   return (
     <div className="max-w-2xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">YouTube 데이터 추가</h1>
+      <p>
+        video id는 유튜브 링크에서 https://www.youtube.com/watch?v= 뒤에 있는
+        문자입니다.
+      </p>
       <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
         {youtubes.map((youtube, index) => (
           <div key={index} className="p-4 border rounded shadow-md">
