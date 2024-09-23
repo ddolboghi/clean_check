@@ -2,6 +2,7 @@
 
 import { insertYoutubes } from "@/actions/youtube";
 import { useState } from "react";
+import YouTube, { YouTubeProps } from "react-youtube";
 
 export type Youtube = {
   videoId: string;
@@ -70,20 +71,35 @@ export default function AddYoutube() {
     }
   };
 
+  const opts: YouTubeProps["opts"] = {
+    width: "100%",
+    height: "100%",
+    playerVars: {
+      autoplay: 0, //1이면 자동재생
+    },
+  };
+
   return (
     <div className="max-w-2xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">YouTube 영상 추가</h1>
+      <h1 className="text-2xl font-bold mb-4">YouTube 데이터 추가</h1>
       <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
         {youtubes.map((youtube, index) => (
           <div key={index} className="p-4 border rounded shadow-md">
-            <label className="block mb-2">Video ID</label>
+            <label className="block mb-2 font-bold">Video ID</label>
             <input
               className="w-full p-2 border rounded mb-4"
               name="videoId"
               value={youtube.videoId}
               onChange={(e) => handleInputChange(e, index)}
             />
-            <label className="block mb-2">루틴</label>
+            <div className="aspect-video">
+              <YouTube
+                videoId={youtube.videoId}
+                opts={opts}
+                className="w-full h-full"
+              />
+            </div>
+            <label className="block my-2 font-bold">루틴</label>
             {Object.entries(youtube.contents).map(([contentIndex, content]) => (
               <div key={contentIndex} className="flex items-center mb-2">
                 <input
