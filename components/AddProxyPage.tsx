@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import AddCheckList from "./AddCheckList";
+import AddYoutube from "./youtube/AddYoutube";
 
 export default function AddProxyPage() {
   const adminPw = process.env.NEXT_PUBLIC_ADMIN_PASSWORD as string;
@@ -24,7 +24,7 @@ export default function AddProxyPage() {
   return (
     <section>
       {isAuthorized ? (
-        <AddCheckList />
+        <AddYoutube />
       ) : (
         <form onSubmit={handleSubmit}>
           <input
