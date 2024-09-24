@@ -7,7 +7,7 @@ import YouTube, { YouTubeProps } from "react-youtube";
 import SpreadArrowDown from "../icons/SpreadArrowDown";
 import SpreadArrowUp from "../icons/SpreadArrowUp";
 import { getChannelData, getVideoData } from "@/actions/youtube";
-import SimpleSpinner from "../ui/SimpleSpinner";
+import { Skeleton } from "../ui/skeleton";
 
 type YoutubeImbedProps = {
   videoId: string;
@@ -60,7 +60,17 @@ export default function YoutubeImbed({ videoId, children }: YoutubeImbedProps) {
     setIsExpanded(!isExpanded);
   };
 
-  if (!videoData || !channelData) return <SimpleSpinner />;
+  if (!videoData || !channelData)
+    return (
+      <div className="h-[400px] w-full px-5">
+        <div className="flex flex-col items-center justify-center gap-2 px-3 border border-[#DEDEDE] rounded-[15px]">
+          <Skeleton className="w-full h-[33px] mt-3" />
+          <Skeleton className="w-full h-[206.4px]" />
+          <Skeleton className="w-full h-[16.5px]" />
+          <Skeleton className="w-full h-[105.5px] mb-4" />
+        </div>
+      </div>
+    );
 
   return (
     <div className="mx-auto w-full max-w-4xl px-5">
