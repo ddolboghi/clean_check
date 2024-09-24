@@ -7,7 +7,7 @@ import { createClient } from "@/utils/supabase/client";
 import { useState } from "react";
 
 type MainRoutineAddPopUpProps = {
-  handleBtn: (content?: string) => Promise<void>;
+  handleBtn: (content?: string) => void;
 };
 
 export default function MainRoutineAddPopUp({

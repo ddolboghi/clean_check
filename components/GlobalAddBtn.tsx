@@ -4,7 +4,7 @@ import AddIconColor from "./icons/AddIconColor";
 
 type GlobalAddBtnProps = {
   children: React.ReactNode;
-  handleBtn: () => Promise<void>;
+  handleBtn: () => void;
 };
 
 export default function GlobalAddBtn({
