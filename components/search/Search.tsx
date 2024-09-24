@@ -5,17 +5,21 @@ import { useState } from "react";
 import YoutubeImbed from "../youtube/YoutubeImbed";
 import YoutubeRoutines from "../youtube/YoutubeRoutines";
 import SearchIcon from "../icons/SearchIcon";
+import SearchSkeleton from "../ui/SearchSkeleton";
 
 export default function Search() {
   const [searchWord, setSearchWord] = useState<string | null>(null);
   const [searchResult, setSearchResult] = useState<SupabaseYoutube[] | null>();
+  const [loading, setLoading] = useState(false);
 
   const handleSearchBtn = async () => {
     if (searchWord) {
+      setLoading(true);
       const response = await getSearchResult(searchWord);
 
       if (!response) console.error("Error fetching video data");
       setSearchResult(response);
+      setLoading(false);
     }
   };
 
@@ -35,14 +39,19 @@ export default function Search() {
         </button>
       </div>
       <div className="mt-28 flex flex-col gap-[25px] items-center">
-        {searchResult ? (
+        {loading ? (
+          <div className="flex flex-col gap-[25px] w-full">
+            <SearchSkeleton />
+            <SearchSkeleton />
+          </div>
+        ) : searchResult ? (
           searchResult.map((result, resultIdx) => (
             <YoutubeImbed key={resultIdx} videoId={result.video_id}>
               <YoutubeRoutines routines={result.contents} />
             </YoutubeImbed>
           ))
         ) : (
-          <div>검색 결과가 없습니다.</div>
+          <div className="pt-10">검색 결과가 없습니다.</div>
         )}
       </div>
     </div>
