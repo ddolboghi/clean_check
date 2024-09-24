@@ -6,16 +6,12 @@ export async function middleware(request: NextRequest) {
   const response = await updateSession(request);
   const { pathname } = request.nextUrl;
 
-  // if (pathname === "/auth/callback") {
-  //   await createClient().auth.getUser();
-  // }
-
   const {
     data: { user },
   } = await createClient().auth.getUser();
   // console.log("유저 정보 middleware: ", user);
 
-  const protectedRoutes = ["/checklist", "/chat"];
+  const protectedRoutes = ["/main", "/search"];
 
   const isLoggedIn = user !== null;
 
