@@ -11,7 +11,6 @@ import Link from "next/link";
 
 export default function Menu() {
   const pathname = usePathname();
-  console.log(pathname);
 
   return (
     <nav className="fixed z-10 bottom-0 w-full h-[80px] bg-white flex flex-row justify-between items-center px-[60px]">
