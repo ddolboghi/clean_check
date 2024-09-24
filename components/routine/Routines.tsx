@@ -5,6 +5,7 @@ import SlideContent from "./SlideContent";
 import { MainRoutine } from "@/utils/types";
 import GlobalAddBtn from "../GlobalAddBtn";
 import MainRoutineAddPopUp from "../MainRoutineAddPopUp";
+import { deleteMainRoutine } from "@/actions/routine";
 
 type RoutinesProps = {
   routines: MainRoutine[] | null;
@@ -15,7 +16,7 @@ export default function Routines({ routines }: RoutinesProps) {
   const [newRoutines, setNewRoutines] = useState(initialRoutines);
   const [showMainPopUp, setShowMainPopUp] = useState(false);
 
-  const handleGlobalAddBtn = async (content?: string) => {
+  const handleGlobalAddBtn = (content?: string) => {
     setShowMainPopUp(!showMainPopUp);
     if (content) {
       let updatedRoutines = [...newRoutines];
@@ -29,34 +30,14 @@ export default function Routines({ routines }: RoutinesProps) {
     }
   };
 
-  const handleDeleteContent = async (index: number) => {
-    if (newRoutines) {
+  const handleDeleteContent = async (routineIdx: number, routineId: number) => {
+    if (newRoutines.length > 0) {
       const updatedRoutines = [...newRoutines];
-      updatedRoutines.splice(index, 1);
+      updatedRoutines.splice(routineIdx, 1);
       setNewRoutines(updatedRoutines);
-      try {
-        await simulateServerAction();
-        console.log("서버에서 원소 삭제 성공");
-      } catch (error) {
-        console.error("서버에서 원소 삭제 실패:", error);
-        setNewRoutines(newRoutines);
-      }
+      const response = await deleteMainRoutine(routineId);
+      if (!response) throw new Error("Bad request.");
     }
-  };
-
-  // 비동기 시뮬레이션
-  const simulateServerAction = () => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        //서버 응답으로 예외처리
-        const success = true;
-        if (success) {
-          resolve("삭제 완료");
-        } else {
-          reject(new Error("삭제 실패"));
-        }
-      }, 2000);
-    });
   };
 
   return (
@@ -67,9 +48,12 @@ export default function Routines({ routines }: RoutinesProps) {
         newRoutines.map((routine, routineIdx) => (
           <SlideContent
             key={routine.id}
+            routineId={routine.id}
             index={routineIdx}
             content={routine.content}
-            handleDeleteContent={handleDeleteContent}
+            handleDeleteContent={() =>
+              handleDeleteContent(routineIdx, routine.id)
+            }
           />
         ))
       )}
