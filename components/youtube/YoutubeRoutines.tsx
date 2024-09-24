@@ -11,7 +11,7 @@ export default function YoutubeRoutines({ routines }: YoutubeRoutinesProps) {
       {Object.entries(routines).map(([routineId, content]) => (
         <div
           key={routineId}
-          className="flex flex-row items-center justify-between text-[12px] text-[#626262]"
+          className="flex flex-row items-center justify-between text-[12px] text-[#626262] py-1"
         >
           <p>{content}</p>
           <AddBtn />
