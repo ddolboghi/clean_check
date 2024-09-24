@@ -40,3 +40,40 @@ export const getMainRoutines = async (memberId: string) => {
     return null;
   }
 };
+
+export const deleteMainRoutine = async (routineId: number) => {
+  try {
+    const { error } = await supabaseClient
+      .from("routine")
+      .update({ is_deleted: true })
+      .eq("id", routineId)
+      .eq("is_deleted", false);
+
+    if (error) throw error;
+    console.log("[deleteMainRoutine] success.");
+    return true;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+};
+
+export const updateContentOfMainRoutine = async (
+  routineId: number,
+  updatedContent: string
+) => {
+  try {
+    const { error } = await supabaseClient
+      .from("routine")
+      .update({ content: updatedContent })
+      .eq("id", routineId)
+      .eq("is_deleted", false);
+
+    if (error) throw error;
+    console.log("[updateContentOfMainRoutine] success.");
+    return true;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+};
