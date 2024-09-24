@@ -1,4 +1,4 @@
-export default function AddBtn() {
+export default function AddIconColor() {
   return (
     <svg
       width="16"
