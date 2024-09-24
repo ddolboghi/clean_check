@@ -33,8 +33,7 @@ export const getMainRoutines = async (memberId: string) => {
       .returns<MainRoutine[]>();
 
     if (error) throw error;
-
-    console.log(data);
+    console.log("[getMainRoutines] success.");
     return data;
   } catch (e) {
     console.error(e);
