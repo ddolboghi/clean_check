@@ -2,6 +2,7 @@ import "./globals.css";
 import localFont from "next/font/local";
 import { Metadata, Viewport } from "next";
 import InstallPromptWrapper from "@/components/InstallPromptWrapper";
+import Menu from "@/components/Menu";
 
 const pretendard = localFont({
   src: "../public/assets/fonts/PretendardVariable.woff2",
@@ -45,6 +46,7 @@ export default function RootLayout({
       <body className={pretendard.className}>
         {/* <InstallPromptWrapper>{children}</InstallPromptWrapper> */}
         {children}
+        <Menu />
       </body>
     </html>
   );
