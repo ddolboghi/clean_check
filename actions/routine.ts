@@ -30,6 +30,7 @@ export const getMainRoutines = async (memberId: string) => {
       .eq("member_id", memberId)
       .eq("is_main", true)
       .eq("is_deleted", false)
+      .order("created_at", { ascending: true })
       .returns<MainRoutine[]>();
 
     if (error) throw error;

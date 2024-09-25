@@ -40,6 +40,14 @@ export default function Routines({ routines }: RoutinesProps) {
     }
   };
 
+  const handleMoveToStorage = (routineIdx: number) => {
+    if (newRoutines.length > 0) {
+      const updatedRoutines = [...newRoutines];
+      updatedRoutines.splice(routineIdx, 1);
+      setNewRoutines(updatedRoutines);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4 items-center w-full pb-[100px]">
       {!newRoutines || newRoutines.length === 0 ? (
@@ -54,6 +62,7 @@ export default function Routines({ routines }: RoutinesProps) {
             handleDeleteContent={() =>
               handleDeleteContent(routineIdx, routine.id)
             }
+            handleMoveToStorage={handleMoveToStorage}
           />
         ))
       )}

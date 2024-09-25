@@ -1,8 +1,14 @@
-export default function SpreadArrowDown() {
+export default function SpreadArrowDown({
+  width,
+  height,
+}: {
+  width?: string;
+  height?: string;
+}) {
   return (
     <svg
-      width="16"
-      height="6"
+      width={width ? width : "16"}
+      height={height ? height : "6"}
       viewBox="0 0 16 6"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

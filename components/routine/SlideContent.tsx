@@ -14,6 +14,7 @@ type SlideContentProps = {
   index: number;
   content: string;
   handleDeleteContent: (index: number) => void;
+  handleMoveToStorage: (routineIdx: number) => void;
 };
 
 export default function SlideContent({
@@ -21,6 +22,7 @@ export default function SlideContent({
   index,
   content,
   handleDeleteContent,
+  handleMoveToStorage,
 }: SlideContentProps) {
   const [offset, setOffset] = useState(0);
   const [showSavePopUp, setShowSavePopUp] = useState(false);
@@ -64,7 +66,13 @@ export default function SlideContent({
         <AlarmPopUp handleAlarmBtn={handleAlarmBtn} setOffset={setOffset} />
       )}
       {showSavePopUp && (
-        <SavePopUp handleSaveBtn={handleSaveBtn} setOffset={setOffset} />
+        <SavePopUp
+          index={index}
+          routineId={routineId}
+          handleSaveBtn={handleSaveBtn}
+          setOffset={setOffset}
+          handleMoveToStorage={handleMoveToStorage}
+        />
       )}
       {showEditPopUp && (
         <EditPopUp
