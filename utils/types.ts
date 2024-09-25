@@ -8,3 +8,7 @@ export interface Folder {
   name: string;
   numberOfRoutines: number;
 }
+
+export interface FolderWithRoutines extends Folder {
+  routines: MainRoutine[];
+}

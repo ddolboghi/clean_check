@@ -2,7 +2,7 @@
 
 import { supabaseClient } from "@/lib/getSupabaseClient";
 import { createClient } from "@/utils/supabase/server";
-import { Folder } from "@/utils/types";
+import { Folder, FolderWithRoutines, MainRoutine } from "@/utils/types";
 
 type SimpleFolder = {
   id: number;
@@ -119,6 +119,191 @@ export const addRoutineToFolder = async (
     return true;
   } catch (e) {
     console.error("[addRoutineToFolder] Error:", e);
+    return false;
+  }
+};
+
+export const getFolders = async () => {
+  try {
+    const {
+      data: { user },
+    } = await createClient().auth.getUser();
+
+    if (!user) throw new Error("Not allowed access.");
+
+    const { data: storageData, error: selectStorageError } =
+      await supabaseClient
+        .from("storage")
+        .select("*")
+        .eq("member_id", user.id)
+        .eq("is_deleted", false)
+        .order("created_at", { ascending: true })
+        .returns<SimpleFolder[]>();
+
+    if (selectStorageError) throw selectStorageError;
+    if (!storageData) throw new Error("Storage is null");
+
+    let folders: FolderWithRoutines[] = [];
+
+    for (const storage of storageData) {
+      const { data: routineData, error: selectRoutineError } =
+        await supabaseClient
+          .from("routine")
+          .select("*")
+          .in("id", storage.routine_ids)
+          .eq("is_deleted", false)
+          .order("created_at", { ascending: true })
+          .returns<MainRoutine[]>();
+
+      if (selectRoutineError) throw selectRoutineError;
+      if (!routineData)
+        throw new Error(`routin id ${storage.id} is not exist.`);
+
+      folders.push({
+        id: storage.id,
+        name: storage.name,
+        numberOfRoutines: storage.routine_ids.length,
+        routines: routineData,
+      });
+    }
+
+    console.log("[getFolders] success.");
+    return folders;
+  } catch (e) {
+    console.error("[getFolders] Error:", e);
+    return null;
+  }
+};
+
+export const getRoutinesByFolderId = async (folderId: number) => {
+  try {
+    const {
+      data: { user },
+    } = await createClient().auth.getUser();
+
+    if (!user) throw new Error("Not allowed access.");
+
+    const { data: storageData, error: selectStorageError } =
+      await supabaseClient
+        .from("storage")
+        .select("*")
+        .eq("id", folderId)
+        .eq("member_id", user.id)
+        .eq("is_deleted", false)
+        .single<SimpleFolder>();
+
+    if (selectStorageError) throw selectStorageError;
+    if (!storageData) throw new Error("Storage is null.");
+
+    const { data: routineData, error: selectRoutineError } =
+      await supabaseClient
+        .from("routine")
+        .select("*")
+        .in("id", storageData.routine_ids)
+        .eq("member_id", user.id)
+        .eq("is_deleted", false)
+        .returns<MainRoutine[]>();
+
+    if (selectRoutineError) throw selectRoutineError;
+    if (!routineData) throw new Error("Routine is null.");
+
+    console.log("[getRoutinesByFolderId] Success.");
+    return routineData;
+  } catch (e) {
+    console.error("[getRoutinesByFolderId] Error:", e);
+    return null;
+  }
+};
+
+export const moveRoutineToMain = async (
+  folderId: number,
+  routineId: number,
+  updatedRoutines: MainRoutine[]
+) => {
+  const routineIds = updatedRoutines.map((routine) => routine.id);
+  try {
+    const {
+      data: { user },
+    } = await createClient().auth.getUser();
+
+    if (!user) throw new Error("Not allowed access.");
+
+    const { error: updateStorageError } = await supabaseClient
+      .from("storage")
+      .update({
+        routine_ids: routineIds,
+      })
+      .eq("id", folderId)
+      .eq("member_id", user.id)
+      .eq("is_deleted", false);
+
+    if (updateStorageError) throw updateStorageError;
+
+    const { error: updateRoutineError } = await supabaseClient
+      .from("routine")
+      .update({
+        is_main: true,
+      })
+      .eq("id", routineId)
+      .eq("member_id", user.id)
+      .eq("is_deleted", false);
+
+    if (updateRoutineError) throw updateRoutineError;
+    console.log("[moveRoutineToMain] Success.");
+    return true;
+  } catch (e) {
+    console.error("[moveRoutineToMain] Error:", e);
+    return false;
+  }
+};
+
+export const deleteFolder = async (folderId: number) => {
+  try {
+    const {
+      data: { user },
+    } = await createClient().auth.getUser();
+
+    if (!user) throw new Error("Not allowed access.");
+
+    const { error } = await supabaseClient
+      .from("storage")
+      .update({ is_deleted: true })
+      .eq("id", folderId)
+      .eq("member_id", user.id)
+      .eq("is_deleted", false);
+
+    if (error) throw error;
+    console.log("[deleteFolder] Success.");
+    return true;
+  } catch (e) {
+    console.error("[deleteFolder] Error: ", e);
+    return false;
+  }
+};
+
+export const updateFolderName = async (
+  folderId: number,
+  updatedName: string
+) => {
+  const {
+    data: { user },
+  } = await createClient().auth.getUser();
+
+  if (!user) throw new Error("Not allowed access.");
+
+  try {
+    const { error } = await supabaseClient
+      .from("storage")
+      .update({ name: updatedName })
+      .eq("id", folderId)
+      .eq("member_id", user.id)
+      .eq("is_deleted", false);
+
+    if (error) throw error;
+    console.log("[updateFolderName] Success.");
+    return true;
+  } catch (e) {
+    console.error("[updateFolderName] Error: ", e);
     return false;
   }
 };
