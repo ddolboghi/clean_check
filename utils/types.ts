@@ -47,3 +47,8 @@ export type ParsedCheckList =
       dayNum: number;
     }[]
   | null;
+
+export type MainRoutine = {
+  id: number;
+  content: string;
+};
