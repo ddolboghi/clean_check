@@ -4,6 +4,10 @@ import React, { useState } from "react";
 import Swipe from "react-easy-swipe";
 import SavePopUp from "./SavePopUp";
 import EditPopUp from "./EditPopUp";
+import FolderIconWhite from "../icons/FolderIconWhite";
+import EditIconWhite from "../icons/EditIconWhite";
+import TrashcanIconWhite from "../icons/TrashcanIconWhite";
+import AlarmPopUp from "./AlarmPopUp";
 
 type SlideContentProps = {
   routineId: number;
@@ -21,19 +25,26 @@ export default function SlideContent({
   const [offset, setOffset] = useState(0);
   const [showSavePopUp, setShowSavePopUp] = useState(false);
   const [showEditPopUp, setShowEditPopUp] = useState(false);
+  const [showAlarmPopUp, setShowAlarmPopUp] = useState(false);
   const [editedContent, setEditedContent] = useState<string>(content);
 
   const onSwipeMove = (position: { x: number }) => {
-    const newOffset = Math.min(0, Math.max(-120, position.x));
+    const newOffset = Math.min(120, Math.max(-120, position.x));
     setOffset(newOffset);
   };
 
   const onSwipeEnd = () => {
-    if (offset > -60) {
-      setOffset(0); // 메뉴 감춤
+    if (offset > 60) {
+      setOffset(56); // 왼쪽 메뉴
+    } else if (offset < -60) {
+      setOffset(-160); // 오른쪽 메뉴
     } else {
-      setOffset(-200); // 메뉴 보여줌
+      setOffset(0);
     }
+  };
+
+  const handleAlarmBtn = () => {
+    setShowAlarmPopUp(!showAlarmPopUp);
   };
 
   const handleSaveBtn = () => {
@@ -49,6 +60,9 @@ export default function SlideContent({
 
   return (
     <>
+      {showAlarmPopUp && (
+        <AlarmPopUp handleAlarmBtn={handleAlarmBtn} setOffset={setOffset} />
+      )}
       {showSavePopUp && (
         <SavePopUp handleSaveBtn={handleSaveBtn} setOffset={setOffset} />
       )}
@@ -69,22 +83,30 @@ export default function SlideContent({
         <div className="relative flex items-center w-full h-14">
           <div className="absolute right-1 flex h-full w-[205px]">
             <button
-              className="px-4 py-2 text-white bg-[#40B4C8] w-full"
+              className="flex justify-end items-center px-4 py-2 text-white bg-[#40B4C8] w-full"
               onClick={handleSaveBtn}
             >
-              보관
+              <FolderIconWhite />
             </button>
             <button
-              className="px-4 py-2 text-white bg-[#88D6E4] w-full"
+              className="flex justify-center items-center px-4 py-2 text-white bg-[#88D6E4] w-[67px]"
               onClick={() => handleEditBtn()}
             >
-              편집
+              <EditIconWhite />
             </button>
             <button
-              className="px-4 py-2 text-white bg-[#D5E6E9] rounded-r-[10px] w-full"
+              className="flex justify-center items-center px-4 py-2 text-white bg-[#D5E6E9] rounded-r-[10px] w-[67px]"
               onClick={() => handleDeleteContent(index)}
             >
-              삭제
+              <TrashcanIconWhite />
+            </button>
+          </div>
+          <div className="absolute left-1 h-full">
+            <button
+              className="px-4 py-2 bg-blue-300 text-white h-full w-full rounded-l-[10px]"
+              onClick={handleAlarmBtn}
+            >
+              알림
             </button>
           </div>
           <div
