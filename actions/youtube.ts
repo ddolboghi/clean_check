@@ -3,6 +3,7 @@
 import { Youtube } from "@/components/youtube/AddYoutube";
 import { supabaseClient } from "@/lib/getSupabaseClient";
 import OpenAI from "openai";
+import { SupabaseYoutube } from "./search";
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string;
 const openai = new OpenAI({
@@ -91,5 +92,38 @@ export const getChannelData = async (channelId: string) => {
   } catch (error) {
     console.error("Error fetching channel data:", error);
     return null;
+  }
+};
+
+export const getAllYoutubes = async () => {
+  try {
+    const { data, error } = await supabaseClient
+      .from("youtube")
+      .select("*")
+      .returns<SupabaseYoutube[]>();
+
+    if (error) throw error;
+    if (!data) throw new Error("Data is null");
+    console.log("[getAllYoutubes] success.");
+    return data;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};
+
+export const deleteSavedYoutube = async (videoId: string) => {
+  try {
+    const { error } = await supabaseClient
+      .from("youtube")
+      .delete()
+      .eq("video_id", videoId);
+
+    if (error) throw error;
+    console.log("[deleteSavedYoutube] Success.");
+    return true;
+  } catch (e) {
+    console.error("[deleteSavedYoutube] Error: ", e);
+    return false;
   }
 };
