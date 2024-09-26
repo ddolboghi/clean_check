@@ -38,7 +38,7 @@ export default function Search() {
           <SearchIcon />
         </button>
       </div>
-      <div className="mt-28 flex flex-col gap-[25px] items-center">
+      <div className="mt-28 mb-[90px] flex flex-col gap-[25px] items-center">
         {loading ? (
           <div className="flex flex-col gap-[25px] w-full">
             <SearchSkeleton />

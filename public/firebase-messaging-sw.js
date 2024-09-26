@@ -25,16 +25,25 @@ self.addEventListener("push", function (event) {
       icon: "/assets/cleanfreeLogoReversed.png",
       badge: "/assets/cleanfreeLogoReversed.png",
     };
-    event.waitUntil(self.registration.showNotification(data.title, options));
+
+    const notificationData = {
+      title: data.title,
+      options: options,
+      path: data.path,
+    };
+
+    event.waitUntil(
+      self.registration.showNotification(data.title, options, notificationData)
+    );
   } else {
     console.log("This push event has no data.");
   }
 });
 
 self.addEventListener("notificationclick", function (event) {
-  console.log("Notification click received.");
   event.notification.close();
+  const path = event.notification.data.path;
   const host =
     process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_VERCEL_URL;
-  event.waitUntil(clients.openWindow(`${host}/checklist`));
+  event.waitUntil(clients.openWindow(`${host}${path}`));
 });

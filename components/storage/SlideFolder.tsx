@@ -4,13 +4,16 @@ import { useEffect, useState } from "react";
 import Swipe from "react-easy-swipe";
 import EditIconWhite from "../icons/EditIconWhite";
 import TrashcanIconWhite from "../icons/TrashcanIconWhite";
-import AlarmPopUp from "../routine/AlarmPopUp";
 import { MainRoutine } from "@/utils/types";
 import SpreadArrowUp from "../icons/SpreadArrowUp";
 import SpreadArrowDown from "../icons/SpreadArrowDown";
 import RoutineBox from "./RoutineBox";
 import { deleteFolder, getRoutinesByFolderId } from "@/actions/storage";
 import EditPopUp from "./EditPopUp";
+import CustomAlarmPopUp from "../routine/CustomAlarmPopUp";
+import SetBell from "../icons/SetBell";
+import UnSetBell from "../icons/UnSetBell";
+import { getScheduledNotificationByOtherId } from "@/actions/pushNotification";
 
 type SlideFolderProps = {
   folderId: number;
@@ -31,15 +34,24 @@ export default function SlideFolder({
   const [name, setName] = useState<string>(initName);
   const [routines, setRoutines] = useState<MainRoutine[]>(initRoutines);
   const [showRoutines, setShowRoutines] = useState(false);
+  const [isSetAlarm, setIsSetAlarm] = useState(false);
 
   useEffect(() => {
-    const getRoutines = async () => {
+    const getRoutinesAndNotification = async () => {
       const response = await getRoutinesByFolderId(folderId);
       if (response) {
         setRoutines(response);
       }
+
+      const scheduledNotification = await getScheduledNotificationByOtherId(
+        folderId,
+        true
+      );
+      if (scheduledNotification) {
+        setIsSetAlarm(true);
+      }
     };
-    getRoutines();
+    getRoutinesAndNotification();
   }, [showRoutines]);
 
   const onSwipeMove = (position: { x: number }) => {
@@ -49,7 +61,7 @@ export default function SlideFolder({
 
   const onSwipeEnd = () => {
     if (offset > 60) {
-      setOffset(56); // 왼쪽 메뉴
+      setOffset(53); // 왼쪽 메뉴
     } else if (offset < -60) {
       setOffset(-132); // 오른쪽 메뉴
     } else {
@@ -92,7 +104,13 @@ export default function SlideFolder({
   return (
     <>
       {showAlarmPopUp && (
-        <AlarmPopUp handleAlarmBtn={handleAlarmBtn} setOffset={setOffset} />
+        <CustomAlarmPopUp
+          handleAlarmBtn={handleAlarmBtn}
+          setOffset={setOffset}
+          alarmContent={name}
+          setIsSetAlarm={setIsSetAlarm}
+          otherId={folderId}
+        />
       )}
       {showEditPopUp && (
         <EditPopUp
@@ -125,10 +143,10 @@ export default function SlideFolder({
           </div>
           <div className="absolute left-1 h-full">
             <button
-              className="px-4 py-2 bg-blue-300 text-white h-full w-full rounded-l-[10px]"
+              className="px-4 py-2 bg-[#D4D4D4] text-white h-full w-full rounded-l-[10px]"
               onClick={handleAlarmBtn}
             >
-              알림
+              {isSetAlarm ? <SetBell /> : <UnSetBell />}
             </button>
           </div>
           <div
