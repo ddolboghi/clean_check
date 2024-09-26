@@ -1,13 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Swipe from "react-easy-swipe";
 import SavePopUp from "./SavePopUp";
 import EditPopUp from "./EditPopUp";
 import FolderIconWhite from "../icons/FolderIconWhite";
 import EditIconWhite from "../icons/EditIconWhite";
 import TrashcanIconWhite from "../icons/TrashcanIconWhite";
-import AlarmPopUp from "./AlarmPopUp";
+import CustomAlarmPopUp from "./CustomAlarmPopUp";
+import UnSetBell from "../icons/UnSetBell";
+import SetBell from "../icons/SetBell";
+import { getScheduledNotificationByOtherId } from "@/actions/pushNotification";
 
 type SlideContentProps = {
   routineId: number;
@@ -29,6 +32,20 @@ export default function SlideContent({
   const [showEditPopUp, setShowEditPopUp] = useState(false);
   const [showAlarmPopUp, setShowAlarmPopUp] = useState(false);
   const [editedContent, setEditedContent] = useState<string>(content);
+  const [isSetAlarm, setIsSetAlarm] = useState(false);
+
+  useEffect(() => {
+    const getNotification = async () => {
+      const scheduledNotification = await getScheduledNotificationByOtherId(
+        routineId,
+        false
+      );
+      if (scheduledNotification) {
+        setIsSetAlarm(true);
+      }
+    };
+    getNotification();
+  }, [showAlarmPopUp]);
 
   const onSwipeMove = (position: { x: number }) => {
     const newOffset = Math.min(120, Math.max(-120, position.x));
@@ -37,7 +54,7 @@ export default function SlideContent({
 
   const onSwipeEnd = () => {
     if (offset > 60) {
-      setOffset(56); // 왼쪽 메뉴
+      setOffset(53); // 왼쪽 메뉴
     } else if (offset < -60) {
       setOffset(-160); // 오른쪽 메뉴
     } else {
@@ -63,7 +80,13 @@ export default function SlideContent({
   return (
     <>
       {showAlarmPopUp && (
-        <AlarmPopUp handleAlarmBtn={handleAlarmBtn} setOffset={setOffset} />
+        <CustomAlarmPopUp
+          handleAlarmBtn={handleAlarmBtn}
+          setOffset={setOffset}
+          alarmContent={editedContent}
+          setIsSetAlarm={setIsSetAlarm}
+          otherId={routineId}
+        />
       )}
       {showSavePopUp && (
         <SavePopUp
@@ -111,10 +134,10 @@ export default function SlideContent({
           </div>
           <div className="absolute left-1 h-full">
             <button
-              className="px-4 py-2 bg-blue-300 text-white h-full w-full rounded-l-[10px]"
+              className="px-4 py-2 bg-[#D4D4D4] text-white h-full w-full rounded-l-[10px]"
               onClick={handleAlarmBtn}
             >
-              알림
+              {isSetAlarm ? <SetBell /> : <UnSetBell />}
             </button>
           </div>
           <div
