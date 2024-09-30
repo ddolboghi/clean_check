@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
   } = await createClient().auth.getUser();
   // console.log("유저 정보 middleware: ", user);
 
-  const protectedRoutes = ["/main", "/search"];
+  const protectedRoutes = ["/main", "/search", "/storage"];
 
   const isLoggedIn = user !== null;
 
