@@ -6,6 +6,7 @@ import YoutubeImbed from "../youtube/YoutubeImbed";
 import YoutubeRoutines from "../youtube/YoutubeRoutines";
 import SearchIcon from "../icons/SearchIcon";
 import SearchSkeleton from "../ui/SearchSkeleton";
+import { saveSearchHistory } from "@/actions/userActions";
 
 export default function Search() {
   const [searchWord, setSearchWord] = useState<string | null>(null);
@@ -16,6 +17,7 @@ export default function Search() {
     if (searchWord) {
       setLoading(true);
       const response = await getSearchResult(searchWord);
+      await saveSearchHistory(searchWord);
 
       if (!response) console.error("Error fetching video data");
       setSearchResult(response);
@@ -47,7 +49,10 @@ export default function Search() {
         ) : searchResult ? (
           searchResult.map((result, resultIdx) => (
             <YoutubeImbed key={resultIdx} videoId={result.video_id}>
-              <YoutubeRoutines routines={result.contents} />
+              <YoutubeRoutines
+                videoId={result.video_id}
+                routines={result.contents}
+              />
             </YoutubeImbed>
           ))
         ) : (

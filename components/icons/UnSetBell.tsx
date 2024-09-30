@@ -14,8 +14,8 @@ export default function UnSetBell() {
       <path
         d="M24 3L2 21"
         stroke="#E8E4E4"
-        stroke-width="3"
-        stroke-linecap="round"
+        strokeWidth="3"
+        strokeLinecap="round"
       />
     </svg>
   );

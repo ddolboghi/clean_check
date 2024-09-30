@@ -70,8 +70,6 @@ export const saveFCMToken = async (userAgent: string, token: string) => {
     ]);
 
     if (error) throw new Error("Saving token faild.");
-
-    console.log("[saveFCMToken] Saving fcm token success: ", data);
   } catch (error) {
     console.error("[saveFCMToken] Error: ", error);
   }
@@ -129,8 +127,6 @@ export const saveScheduledNotification = async (
 
       if (error) throw error;
     }
-
-    console.log("[saveScheduledNotification] Success");
     return true;
   } catch (e) {
     console.error("[saveScheduledNotification] Error: ", e);
@@ -160,8 +156,6 @@ export const getScheduledNotificationByOtherId = async (
       .single<ScheduledNotification>();
 
     if (error) throw error;
-
-    console.log("[getScheduledNotificationByOtherId] Success: ", data);
     return data;
   } catch (e) {
     console.error("[getScheduledNotificationByOtherId] Error: ", e);
