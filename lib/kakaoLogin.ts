@@ -20,7 +20,7 @@ export const kakaoLogin = async () => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "kakao",
     options: {
-      redirectTo: `${getURL()}/auth/callback?next=/checklist`,
+      redirectTo: `${getURL()}/auth/callback?next=/main`,
     },
   });
 
