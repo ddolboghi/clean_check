@@ -5,12 +5,17 @@ import AddIcon from "../icons/AddIcon";
 import AddIconColor from "../icons/AddIconColor";
 import { createClient } from "@/utils/supabase/client";
 import { addMainRoutine } from "@/actions/routine";
+import { countAddingYoutubeRoutine } from "@/actions/userActions";
 
 type YoutubeRoutinesProps = {
+  videoId: string;
   routines: { [key: number]: string };
 };
 
-export default function YoutubeRoutines({ routines }: YoutubeRoutinesProps) {
+export default function YoutubeRoutines({
+  videoId,
+  routines,
+}: YoutubeRoutinesProps) {
   const initialAddedState = Object.keys(routines).reduce((acc, key) => {
     acc[Number(key)] = false;
     return acc;
@@ -30,6 +35,9 @@ export default function YoutubeRoutines({ routines }: YoutubeRoutinesProps) {
 
     if (!user) throw new Error("Not allowed access.");
     const response = await addMainRoutine(content, user.id);
+    await countAddingYoutubeRoutine(user, videoId, {
+      [Number(routineId)]: content,
+    });
 
     if (!response) throw new Error("Bad request.");
   };
