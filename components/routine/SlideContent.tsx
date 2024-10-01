@@ -11,6 +11,7 @@ import CustomAlarmPopUp from "./CustomAlarmPopUp";
 import UnSetBell from "../icons/UnSetBell";
 import SetBell from "../icons/SetBell";
 import { getScheduledNotificationByOtherId } from "@/actions/pushNotification";
+import { ScheduledNotification } from "@/utils/types";
 
 type SlideContentProps = {
   routineId: number;
@@ -33,15 +34,19 @@ export default function SlideContent({
   const [showAlarmPopUp, setShowAlarmPopUp] = useState(false);
   const [editedContent, setEditedContent] = useState<string>(content);
   const [isSetAlarm, setIsSetAlarm] = useState(false);
+  const [notificationTimes, setNotificationTimes] = useState<
+    ScheduledNotification[]
+  >([]);
 
   useEffect(() => {
     const getNotification = async () => {
-      const scheduledNotification = await getScheduledNotificationByOtherId(
+      const scheduledNotifications = await getScheduledNotificationByOtherId(
         routineId,
-        false
+        "/main"
       );
-      if (scheduledNotification) {
+      if (scheduledNotifications && scheduledNotifications.length !== 0) {
         setIsSetAlarm(true);
+        setNotificationTimes(scheduledNotifications);
       }
     };
     getNotification();
@@ -86,6 +91,7 @@ export default function SlideContent({
           alarmContent={editedContent}
           setIsSetAlarm={setIsSetAlarm}
           otherId={routineId}
+          notificationTimes={notificationTimes}
         />
       )}
       {showSavePopUp && (
@@ -132,7 +138,7 @@ export default function SlideContent({
               <TrashcanIconWhite />
             </button>
           </div>
-          <div className="absolute left-1 h-full">
+          <div className="absolute left-1 h-full w-1/3">
             <button
               className="px-4 py-2 bg-[#D4D4D4] text-white h-full w-full rounded-l-[10px]"
               onClick={handleAlarmBtn}

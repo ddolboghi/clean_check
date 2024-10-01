@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Swipe from "react-easy-swipe";
 import EditIconWhite from "../icons/EditIconWhite";
 import TrashcanIconWhite from "../icons/TrashcanIconWhite";
-import { MainRoutine } from "@/utils/types";
+import { MainRoutine, ScheduledNotification } from "@/utils/types";
 import SpreadArrowUp from "../icons/SpreadArrowUp";
 import SpreadArrowDown from "../icons/SpreadArrowDown";
 import RoutineBox from "./RoutineBox";
@@ -35,6 +35,9 @@ export default function SlideFolder({
   const [routines, setRoutines] = useState<MainRoutine[]>(initRoutines);
   const [showRoutines, setShowRoutines] = useState(false);
   const [isSetAlarm, setIsSetAlarm] = useState(false);
+  const [notificationTimes, setNotificationTimes] = useState<
+    ScheduledNotification[]
+  >([]);
 
   useEffect(() => {
     const getRoutinesAndNotification = async () => {
@@ -43,12 +46,13 @@ export default function SlideFolder({
         setRoutines(response);
       }
 
-      const scheduledNotification = await getScheduledNotificationByOtherId(
+      const scheduledNotifications = await getScheduledNotificationByOtherId(
         folderId,
-        true
+        "/storage"
       );
-      if (scheduledNotification) {
+      if (scheduledNotifications && scheduledNotifications.length !== 0) {
         setIsSetAlarm(true);
+        setNotificationTimes(scheduledNotifications);
       }
     };
     getRoutinesAndNotification();
@@ -110,6 +114,7 @@ export default function SlideFolder({
           alarmContent={name}
           setIsSetAlarm={setIsSetAlarm}
           otherId={folderId}
+          notificationTimes={notificationTimes}
         />
       )}
       {showEditPopUp && (
