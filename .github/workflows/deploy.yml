@@ -29,10 +29,10 @@ jobs:
         id: wait
         run: |
           for i in {1..24}; do
-            deployment_info=$(curl -s -H "Authorization: Bearer ${{ secrets.VERCEL_API_TOKEN }}" "https://api.vercel.com/v13/deployments/skin-check-dev.vercel.app")
-            status=$(echo $deployment_info | jq -r '.status')
-            echo "Current status: $status"
-            if [ "$status" == "READY" ]; then
+            deployment_infos=$(curl -s -H "Authorization: Bearer ${{ secrets.VERCEL_API_TOKEN }}" "https://api.vercel.com/v1/deployments")
+            state=$(echo $deployment_infos | jq -r '.deployments[0].readyState')
+            echo "Current state: $state"
+            if [ "$state" == "READY" ]; then
               echo "Deployment is ready."
               break
             fi
