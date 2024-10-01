@@ -76,10 +76,9 @@ export const saveFCMToken = async (userAgent: string, token: string) => {
 };
 
 export const saveScheduledNotification = async (
-  notificationTime: string,
+  notificationTimes: Date[],
   title: string,
   body: string,
-  repeatOption: string | null,
   pathname: string,
   otherId: number
 ) => {
@@ -91,42 +90,34 @@ export const saveScheduledNotification = async (
     if (!user) throw new Error("Not allowed access.");
 
     const memberId = user.id;
-    const isStorage = pathname === "/storage" ? true : false;
 
-    const scheduledNotification = await getScheduledNotificationByOtherId(
-      otherId,
-      isStorage
-    );
+    const { error: updateError } = await supabaseClient
+      .from("scheduled_notifications")
+      .update({
+        is_deleted: true,
+      })
+      .eq("path", pathname)
+      .eq("other_id", otherId)
+      .eq("member_id", memberId);
 
-    if (scheduledNotification) {
-      const { error } = await supabaseClient
-        .from("scheduled_notifications")
-        .update({
-          notification_time: notificationTime,
-          body: body,
-          is_sent: false,
-        })
-        .eq("id", scheduledNotification.id)
-        .eq("member_id", memberId);
+    if (updateError) throw updateError;
 
-      if (error) throw error;
-    } else {
-      const { error } = await supabaseClient
-        .from("scheduled_notifications")
-        .insert([
-          {
-            member_id: memberId,
-            notification_time: notificationTime,
-            title: title,
-            body: body,
-            repeat_option: repeatOption,
-            path: pathname,
-            other_id: otherId,
-          },
-        ]);
+    const insertData = notificationTimes.map((notificationTime) => {
+      return {
+        member_id: memberId,
+        notification_time: notificationTime,
+        title: title,
+        body: body,
+        path: pathname,
+        other_id: otherId,
+      };
+    });
 
-      if (error) throw error;
-    }
+    const { error: insertError } = await supabaseClient
+      .from("scheduled_notifications")
+      .insert(insertData);
+
+    if (insertError) throw insertError;
     return true;
   } catch (e) {
     console.error("[saveScheduledNotification] Error: ", e);
@@ -136,7 +127,7 @@ export const saveScheduledNotification = async (
 
 export const getScheduledNotificationByOtherId = async (
   otherId: number,
-  isStorage: boolean
+  pathname: string
 ) => {
   try {
     const {
@@ -146,16 +137,16 @@ export const getScheduledNotificationByOtherId = async (
     if (!user) throw new Error("Not allowed access.");
 
     const memberId = user.id;
-    const path = isStorage ? "/storage" : "/main";
     const { data, error } = await supabaseClient
       .from("scheduled_notifications")
-      .select("*")
+      .select("notification_time")
       .eq("member_id", memberId)
       .eq("other_id", otherId)
-      .eq("path", path)
-      .single<ScheduledNotification>();
+      .eq("path", pathname)
+      .eq("is_deleted", false)
+      .returns<ScheduledNotification[]>();
 
-    if (error) throw error;
+    if (error || !data) throw error;
     return data;
   } catch (e) {
     console.error("[getScheduledNotificationByOtherId] Error: ", e);
