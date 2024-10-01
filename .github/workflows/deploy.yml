@@ -24,22 +24,19 @@ jobs:
           -H "Content-Type: application/json" \
           -d '{"name": "deploy"}')
           echo "Response: $response"
-          echo "::set-output name=deployment_url::$(echo $response | jq -r '.url')"
 
       - name: Wait for Deployment to Finish
         id: wait
         run: |
-          deployment_url="${{ steps.deploy_hook.outputs.deployment_url }}"
-          echo "Deployment URL: $deployment_url"
-          for i in {1..10}; do
-            deployment_info=$(curl -s -H "Authorization: Bearer ${{ secrets.VERCEL_API_TOKEN }}" "https://api.vercel.com/v1/deployments?url=${deployment_url}")
-            state=$(echo $deployment_info | jq -r '.deployments[0].state')
-            echo "Current state: $state"
-            if [ "$state" == "READY" ]; then
+          for i in {1..24}; do
+            deployment_info=$(curl -s -H "Authorization: Bearer ${{ secrets.VERCEL_API_TOKEN }}" "https://api.vercel.com/v13/deployments/skin-check-dev.vercel.app")
+            status=$(echo $deployment_info | jq -r '.deployments.status')
+            echo "Current status: $status"
+            if [ "$status" == "READY" ]; then
               echo "Deployment is ready."
               break
             fi
-            sleep 25
+            sleep 10
           done
 
       - name: Call register scheduled push notification API
