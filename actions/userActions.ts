@@ -24,7 +24,7 @@ export const getUserTracking = async (memberId: string) => {
     if (error) throw error;
     return data;
   } catch (e) {
-    console.error(e);
+    console.error("[getUserTracking] Error: ", e);
     return null;
   }
 };

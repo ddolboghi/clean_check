@@ -17,7 +17,7 @@ export const addMainRoutine = async (content: string, memberId: string) => {
     if (error) throw error;
     return true;
   } catch (e) {
-    console.error(e);
+    console.error("[addMainRoutine] Error: ", e);
     return false;
   }
 };
@@ -34,7 +34,6 @@ export const getMainRoutines = async (memberId: string) => {
       .returns<MainRoutine[]>();
 
     if (error) throw error;
-    console.log("[getMainRoutines] success.");
     return data;
   } catch (e) {
     console.error(e);
@@ -51,7 +50,6 @@ export const deleteMainRoutine = async (routineId: number) => {
       .eq("is_deleted", false);
 
     if (error) throw error;
-    console.log("[deleteMainRoutine] success.");
     return true;
   } catch (e) {
     console.error(e);
@@ -71,7 +69,6 @@ export const updateContentOfMainRoutine = async (
       .eq("is_deleted", false);
 
     if (error) throw error;
-    console.log("[updateContentOfMainRoutine] success.");
     return true;
   } catch (e) {
     console.error(e);
