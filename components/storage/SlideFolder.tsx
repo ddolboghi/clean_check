@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Swipe from "react-easy-swipe";
 import EditIconWhite from "../icons/EditIconWhite";
 import TrashcanIconWhite from "../icons/TrashcanIconWhite";

@@ -90,14 +90,14 @@ export default function AddYoutube() {
     }
   };
 
-  const handleDeleteSavedYoutube = async (videoId: string) => {
-    const response = await deleteSavedYoutube(videoId);
+  const handleDeleteSavedYoutube = async (youtubeId: number) => {
+    const response = await deleteSavedYoutube(youtubeId);
     if (!response) {
-      alert(`${videoId}를 삭제하는데 실패했습니다.`);
+      alert(`${youtubeId}를 삭제하는데 실패했습니다.`);
       return;
     }
     setSavedYoutubes((prevYoutubes) =>
-      prevYoutubes.filter((youtube) => youtube.video_id !== videoId)
+      prevYoutubes.filter((youtube) => youtube.id !== youtubeId)
     );
   };
 
@@ -138,7 +138,7 @@ export default function AddYoutube() {
                   <button
                     type="button"
                     className="text-red-500 hover:text-red-700"
-                    onClick={() => handleDeleteSavedYoutube(youtube.video_id)}
+                    onClick={() => handleDeleteSavedYoutube(youtube.id)}
                   >
                     삭제
                   </button>

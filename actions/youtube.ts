@@ -52,7 +52,6 @@ export const insertYoutubes = async (youtubes: Youtube[]) => {
 
       if (error) throw error;
     }
-    console.log("Youtube data inserted successfully.");
     return true;
   } catch (error) {
     console.error("Error inserting youtube data:", error);
@@ -112,12 +111,12 @@ export const getAllYoutubes = async () => {
   }
 };
 
-export const deleteSavedYoutube = async (videoId: string) => {
+export const deleteSavedYoutube = async (youtubeId: number) => {
   try {
     const { error } = await supabaseClient
       .from("youtube")
       .delete()
-      .eq("video_id", videoId);
+      .eq("id", youtubeId);
 
     if (error) throw error;
     console.log("[deleteSavedYoutube] Success.");
