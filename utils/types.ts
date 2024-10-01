@@ -19,10 +19,9 @@ export type ScheduledNotification = {
   notification_time: string;
   title: string;
   body: string;
-  is_sent: boolean;
-  repeat_option: string;
   path: string;
   other_id: number;
+  is_deleted: boolean;
 };
 
 export type FCMToken = {
@@ -30,5 +29,3 @@ export type FCMToken = {
   token: string;
   user_agent: string;
 };
-
-export type RepeatOption = "daily" | "weekly" | null;
