@@ -56,31 +56,14 @@ const sendNotification = async (notification: ScheduledNotification) => {
     try {
       await firebaseAdmin.messaging().send(message);
       const notificationTime = new Date(notification.notification_time);
-      if (!notification.repeat_option) {
-        await supabase
-          .from("scheduled_notifications")
-          .update({ is_sent: true })
-          .eq("id", notification.id);
-        return { success: true, notificationId: notification.id };
-      } else if (notification.repeat_option === "daily") {
-        const afterOneDay = new Date(
-          notificationTime.getTime() + 24 * 60 * 60 * 1000
-        );
-        await supabase
-          .from("scheduled_notifications")
-          .update({ notification_time: afterOneDay.toISOString() })
-          .eq("id", notification.id);
-        return { success: true, notificationId: notification.id };
-      } else if (notification.repeat_option === "weekly") {
-        const afterOneWeek = new Date(
-          notificationTime.getTime() + 7 * 24 * 60 * 60 * 1000
-        );
-        await supabase
-          .from("scheduled_notifications")
-          .update({ notification_time: afterOneWeek.toISOString() })
-          .eq("id", notification.id);
-        return { success: true, notificationId: notification.id };
-      }
+      const afterOneWeek = new Date(
+        notificationTime.getTime() + 7 * 24 * 60 * 60 * 1000
+      );
+      await supabase
+        .from("scheduled_notifications")
+        .update({ notification_time: afterOneWeek.toISOString() })
+        .eq("id", notification.id);
+      return { success: true, notificationId: notification.id };
     } catch (error) {
       console.error(`Failed to send notification ${notification.id}:`, error);
       return { success: false, notificationId: notification.id };
@@ -98,7 +81,7 @@ const scheduleNotifications = async () => {
   const { data: notifications, error } = await supabase
     .from("scheduled_notifications")
     .select("*")
-    .eq("is_sent", false)
+    .eq("is_deleted", false)
     .gte("notification_time", fiveMinutesAgo.toISOString())
     .lte("notification_time", oneHourLater.toISOString());
 
