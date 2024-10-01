@@ -37,7 +37,6 @@ export const getSimpleFolders = async () => {
       };
     });
 
-    console.log("[getSimpleFolders] success.");
     return folders;
   } catch (e) {
     console.error("[getSimpleFolders] Error:", e);
@@ -63,7 +62,6 @@ export const insertFolder = async (name: string) => {
 
     if (error) throw error;
 
-    console.log("[insertFolder] Success.");
     return true;
   } catch (e) {
     console.error("[insertFolder] Error:", e);
@@ -115,7 +113,6 @@ export const addRoutineToFolder = async (
 
     if (storageUpdateError) throw storageUpdateError;
 
-    console.log("[addRoutineToFolder] Success.");
     return true;
   } catch (e) {
     console.error("[addRoutineToFolder] Error:", e);
@@ -167,7 +164,6 @@ export const getFolders = async () => {
       });
     }
 
-    console.log("[getFolders] success.");
     return folders;
   } catch (e) {
     console.error("[getFolders] Error:", e);
@@ -207,7 +203,6 @@ export const getRoutinesByFolderId = async (folderId: number) => {
     if (selectRoutineError) throw selectRoutineError;
     if (!routineData) throw new Error("Routine is null.");
 
-    console.log("[getRoutinesByFolderId] Success.");
     return routineData;
   } catch (e) {
     console.error("[getRoutinesByFolderId] Error:", e);
@@ -249,7 +244,6 @@ export const moveRoutineToMain = async (
       .eq("is_deleted", false);
 
     if (updateRoutineError) throw updateRoutineError;
-    console.log("[moveRoutineToMain] Success.");
     return true;
   } catch (e) {
     console.error("[moveRoutineToMain] Error:", e);
@@ -273,7 +267,6 @@ export const deleteFolder = async (folderId: number) => {
       .eq("is_deleted", false);
 
     if (error) throw error;
-    console.log("[deleteFolder] Success.");
     return true;
   } catch (e) {
     console.error("[deleteFolder] Error: ", e);
@@ -300,7 +293,6 @@ export const updateFolderName = async (
       .eq("is_deleted", false);
 
     if (error) throw error;
-    console.log("[updateFolderName] Success.");
     return true;
   } catch (e) {
     console.error("[updateFolderName] Error: ", e);
