@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "스킨체크",
-    short_name: "스킨체크",
-    description: "스킨체크 웹앱입니다.",
+    name: "beauing",
+    short_name: "beauing",
+    description: "beauing 웹앱입니다.",
     start_url: "/login",
     display: "standalone",
     theme_color: "#ffffff",

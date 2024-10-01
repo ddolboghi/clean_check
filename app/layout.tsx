@@ -16,7 +16,7 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "스킨체크",
+  title: "beauing",
   description: "작은 습관으로 지키는 나의 피부",
   appleWebApp: {
     capable: true,
@@ -43,7 +43,7 @@ export default function RootLayout({
         />
       </head>
       <body className={pretendard.className}>
-        {/* <InstallPromptWrapper>{children}</InstallPromptWrapper> */}
+        <InstallPromptWrapper>{children}</InstallPromptWrapper>
         {children}
       </body>
     </html>
