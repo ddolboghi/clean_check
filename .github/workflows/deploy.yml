@@ -30,7 +30,7 @@ jobs:
         run: |
           for i in {1..24}; do
             deployment_info=$(curl -s -H "Authorization: Bearer ${{ secrets.VERCEL_API_TOKEN }}" "https://api.vercel.com/v13/deployments/skin-check-dev.vercel.app")
-            status=$(echo $deployment_info | jq -r '.deployments.status')
+            status=$(echo $deployment_info | jq -r '.status')
             echo "Current status: $status"
             if [ "$status" == "READY" ]; then
               echo "Deployment is ready."
