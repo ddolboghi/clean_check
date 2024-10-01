@@ -18,6 +18,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
   title: "beauing",
   description: "작은 습관으로 지키는 나의 피부",
+  manifest: "/manifest.ts",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
