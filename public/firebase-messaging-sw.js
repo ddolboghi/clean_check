@@ -22,8 +22,8 @@ self.addEventListener("push", function (event) {
     const data = event.data.json().data;
     const options = {
       body: data.body,
-      icon: "/assets/cleanfreeLogoReversed.png",
-      badge: "/assets/cleanfreeLogoReversed.png",
+      icon: "/assets/beauing-32x32.png",
+      badge: "/assets/beauing-32x32.png",
     };
 
     const notificationData = {

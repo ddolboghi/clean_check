@@ -1,6 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import cleanFreeLogo from "@/public/assets/cleanfreeLogo2.png";
+import logo from "@/public/assets/beauing-512x512.png";
 import Image from "next/image";
 import "@/style/loginPageAnimation.css";
 import KakaoLoginButton from "@/components/KakaoLoginButton";
@@ -24,12 +24,7 @@ export default async function Login() {
         <br /> 피부를 지켜보세요.
       </p>
       <div className="mb-[-20%] opacity-0 animate-fadeIn delay-1500">
-        <Image
-          src={cleanFreeLogo}
-          width={195}
-          height={195}
-          alt="클린프리 로고"
-        />
+        <Image src={logo} width={195} height={195} alt="앱 로고" />
       </div>
       <div className="mt-[40%] opacity-0 animate-fadeIn delay-1500 flex flex-col gap-2">
         <KakaoLoginButton />

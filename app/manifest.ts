@@ -12,19 +12,14 @@ export default function manifest(): MetadataRoute.Manifest {
     orientation: "portrait",
     icons: [
       {
-        src: "/assets/cleanfreeLogoReversed.png",
+        src: "/assets/beauing-192x192.png",
         sizes: "192x192",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/assets/cleanfreeLogoReversed.png",
+        src: "/assets/beauing-512x512.png",
         sizes: "512x512",
-        type: "image/png",
-      },
-      {
-        src: "/assets/cleanfreeLogoReversed.png",
-        sizes: "615x615",
         type: "image/png",
       },
     ],
