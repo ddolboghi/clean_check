@@ -3,6 +3,7 @@
 import {
   saveFCMToken,
   saveScheduledNotification,
+  scheduleNotifications,
 } from "@/actions/pushNotification";
 import { fetchToken } from "@/firebase";
 import { useEffect, useState } from "react";
@@ -140,21 +141,7 @@ export default function CustomAlarmPopUp({
     if (!saveResponse) {
       alert("알람 설정에 문제가 발생했어요. 다시 시도해주세요.");
     } else {
-      const host =
-        process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_VERCEL_URL;
-      const registerFcmResponse = await fetch(
-        `${host}/api/send-scheduled-fcm`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_CRON_SECRET}`,
-          },
-        }
-      );
-      if (!registerFcmResponse.ok) {
-        throw new Error(`Error: ${registerFcmResponse.status}`);
-      }
+      await scheduleNotifications();
     }
     setIsSetAlarm(true);
     handleCancleBtn();
