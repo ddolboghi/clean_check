@@ -224,7 +224,6 @@ const jobs: { [key: string]: schedule.Job } = {};
 
 export const scheduleNotifications = async () => {
   const now = new Date();
-  const before = new Date(now.getTime() - 20 * 1000);
   const after = new Date(now.getTime() + 20 * 1000);
 
   try {
@@ -232,7 +231,7 @@ export const scheduleNotifications = async () => {
       .from("scheduled_notifications")
       .select("*")
       .eq("is_deleted", false)
-      .gte("notification_time", before.toISOString())
+      .gte("notification_time", new Date().toISOString())
       .lte("notification_time", after.toISOString())
       .returns<ScheduledNotification[]>();
 
