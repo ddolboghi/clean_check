@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.ts",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "default",
   },
 };
 
