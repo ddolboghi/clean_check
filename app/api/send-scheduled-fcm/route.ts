@@ -61,7 +61,7 @@ const sendNotification = async (notification: ScheduledNotification) => {
       );
       await supabase
         .from("scheduled_notifications")
-        .update({ notification_time: afterOneWeek.toISOString() })
+        .update({ notification_time: afterOneWeek })
         .eq("id", notification.id);
       return { success: true, notificationId: notification.id };
     } catch (error) {
