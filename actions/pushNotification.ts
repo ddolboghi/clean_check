@@ -224,15 +224,16 @@ const jobs: { [key: string]: schedule.Job } = {};
 
 export const scheduleNotifications = async () => {
   const now = new Date();
-  const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
-  const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+  const before = new Date(now.getTime() - 20 * 1000);
+  const after = new Date(now.getTime() + 20 * 1000);
+
   try {
     const { data: notifications, error } = await supabaseClient
       .from("scheduled_notifications")
       .select("*")
       .eq("is_deleted", false)
-      .gte("notification_time", fiveMinutesAgo.toISOString())
-      .lte("notification_time", oneHourLater.toISOString())
+      .gte("notification_time", before.toISOString())
+      .lte("notification_time", after.toISOString())
       .returns<ScheduledNotification[]>();
 
     if (error || !notifications) {
@@ -244,19 +245,29 @@ export const scheduleNotifications = async () => {
       | undefined
     )[] = [];
 
+    const jobPromises: Promise<void>[] = [];
+
     for (const notification of notifications) {
       if (jobs[notification.id]) {
         continue;
       }
 
       const notificationTime = new Date(notification.notification_time);
-      const job = schedule.scheduleJob(notificationTime, async () => {
-        const response = await sendNotification(notification);
-        responses.push(response);
+      const jobPromise = new Promise<void>((resolve) => {
+        const job = schedule.scheduleJob(notificationTime, async () => {
+          const response = await sendNotification(notification);
+          responses.push(response);
+          resolve();
+        });
+
+        jobs[notification.id] = job;
       });
 
-      jobs[notification.id] = job;
+      jobPromises.push(jobPromise);
     }
+
+    await Promise.all(jobPromises);
+
     return { registeredJobs: Object.keys(jobs).length, responses: responses };
   } catch (e) {
     return { registeredJobs: Object.keys(jobs).length, responses: null };
