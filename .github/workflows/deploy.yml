@@ -1,0 +1,54 @@
+name: Deploy and Check Vercel Deployment
+
+on:
+  push:
+    branches: ["main", "dev2"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      - name: Call Vercel Deploy Hook
+        id: deploy_hook
+        run: |
+          response=$(curl -X POST ${{ secrets.VERCEL_DEPLOY_HOOK_URL }} \
+          -H "Content-Type: application/json" \
+          -d '{"name": "deploy"}')
+          echo "Response: $response"
+
+      - name: Wait for Deployment to Finish
+        id: wait
+        run: |
+          for i in {1..24}; do
+            deployment_infos=$(curl -s -H "Authorization: Bearer ${{ secrets.VERCEL_API_TOKEN }}" "https://api.vercel.com/v1/deployments")
+            state_via_hook=$(echo $deployment_infos | jq -r '.deployments[0].readyState')
+            state_via_push=$(echo $deployment_infos | jq -r '.deployments[1].readyState') # 직접 push할때 발생
+            echo "State via hook: $state_via_hook"
+            echo "State via push: $state_via_push"
+
+            if [ "$state_via_push" == "READY" ]; then
+              curl -X POST https://skin-check-dev.vercel.app/api/send-scheduled-fcm \
+              -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+              echo "deployment via push is completed."
+            fi
+
+            if [ "$state_via_hook" == "READY" ]; then
+              echo "Deployment is ready."
+              break
+            fi
+            sleep 10
+          done
+
+      - name: Call register scheduled push notification API
+        run: |
+          curl -X POST https://skin-check-dev.vercel.app/api/send-scheduled-fcm \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"

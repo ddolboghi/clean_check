@@ -17,7 +17,7 @@ body {
   height: 100px;
   border: 7px solid transparent;
   border-radius: 50%;
-  border-right-color: #24e6c1;
+  border-right-color: #6ac7d7;
   animation: spinner-anim 0.8s linear infinite;
 }
 

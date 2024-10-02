@@ -1,181 +1,170 @@
 "use server";
 
 import { supabaseClient } from "@/lib/getSupabaseClient";
-import { SupabaseCheckList } from "./todoList";
-import { getIsBeforeToday } from "@/lib/dateTranslator";
-import { SupabaseProfile } from "./profile";
-import {
-  initialMessageForCreating,
-  initialMessageForUpdating,
-} from "@/data/chat";
+import { createClient } from "@/utils/supabase/server";
+import { User } from "@supabase/supabase-js";
 
-export async function getHaveCheckList(memberId: string) {
-  try {
-    const { data: recentCheckListData, error: recentCheckListError } =
-      await supabaseClient
-        .from("check_list")
-        .select("*")
-        .eq("member_id", memberId)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .single<SupabaseCheckList>();
-
-    if (recentCheckListError) throw recentCheckListError;
-
-    //체크리스트가 없으면 새로 생성
-    if (!recentCheckListData) {
-      console.log("[getHaveCheckList] Not found check_list data.");
-      return {
-        haveCheckList: false,
-        initialMessage: initialMessageForCreating,
-      };
-    }
-
-    //마지막 날이 지났으면 새로 생성
-    const isBeforeToday = getIsBeforeToday(recentCheckListData.end_date);
-    if (isBeforeToday) {
-      console.log("[getHaveCheckList] The week has passed.");
-      return {
-        haveCheckList: false,
-        initialMessage: initialMessageForCreating,
-      };
-    }
-
-    console.log("[getHaveCheckList] The week has not yet passed.");
-    return { haveCheckList: true, initialMessage: initialMessageForUpdating };
-  } catch (error) {
-    console.error("[getHaveCheckList] Error: ", error);
-    return { haveCheckList: false, initialMessage: initialMessageForCreating };
-  }
-}
-
-interface SupabaseUserAction {
+type UserTracking = {
   id: number;
-  created_at: string;
   member_id: string;
-  recent_done_times: Date[];
-}
-
-export async function updateTodayDone(memberId: string) {
-  try {
-    const { data: profilesData, error: profilesError } = await supabaseClient
-      .from("profiles")
-      .select("*")
-      .eq("id", memberId)
-      .single<SupabaseProfile>();
-
-    if (profilesError || !profilesData) throw profilesError;
-
-    const { data: userActionData, error: userActionError } =
-      await supabaseClient
-        .from("user_action")
-        .select("*")
-        .eq("member_id", memberId)
-        .single<SupabaseUserAction>();
-
-    const utcDate = new Date();
-    const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
-
-    if (!userActionData || userActionError) {
-      const { data: insertData, error: insertError } = await supabaseClient
-        .from("user_action")
-        .insert([
-          {
-            member_id: memberId,
-            recent_done_times: [kstDate],
-            member_name: profilesData.full_name,
-          },
-        ]);
-
-      if (insertError) throw insertError;
-    }
-
-    if (userActionData) {
-      const { data: updateData, error: updateError } = await supabaseClient
-        .from("user_action")
-        .update({
-          recent_done_times: [...userActionData.recent_done_times, kstDate],
-        })
-        .eq("member_id", memberId);
-      if (updateError) throw updateError;
-    }
-
-    console.log("[updateTodayDone] Update user_action success");
-    return userActionData;
-  } catch (error) {
-    console.error("[updateTodayDone] Error update user_action:", error);
-    return null;
-  }
-}
-
-export async function deleteFCMToken(memberId: string, userAgent: string) {
-  try {
-    console.log(userAgent);
-    const { data, error } = await supabaseClient
-      .from("fcm_tokens")
-      .delete()
-      .match({
-        member_id: memberId,
-        user_agent: userAgent,
-      });
-
-    if (error) throw error;
-    console.log("[deleteFCMToken] Success");
-    return true;
-  } catch (error) {
-    console.error("[deleteFCMToken] Error:", error);
-    return false;
-  }
-}
-
-type FCMToken = {
-  member_Id: string;
-  token: string;
-  user_agent: string;
+  member_name: string;
+  main_page_access_count: number;
+  search_history: string[];
+  youtube_routine_add_count: { [key: string]: { [key: number]: string } };
 };
 
-export async function getAllowedFCMDevice(memberId: string, userAgent: string) {
+export const getUserTracking = async (memberId: string) => {
   try {
     const { data, error } = await supabaseClient
-      .from("fcm_tokens")
+      .from("user_tracking")
       .select("*")
       .eq("member_id", memberId)
-      .eq("user_agent", userAgent)
-      .returns<FCMToken[]>();
+      .single<UserTracking>();
 
     if (error) throw error;
-
-    console.log("[getAllowedFCMDevice] Success");
-    let devices: string[] = [];
-    if (data.length > 0) {
-      devices = data.map((fcmToken) => fcmToken.user_agent);
-    }
-    return devices;
-  } catch (error) {
-    console.error("[getAllowedFCMDevice] Error: ", error);
-    return [];
+    return data;
+  } catch (e) {
+    console.error("[getUserTracking] Error: ", e);
+    return null;
   }
-}
+};
 
-export async function saveFCMToken(
-  memberId: string,
-  userAgent: string,
-  token: string
-) {
+export const countAeccessMainPage = async (user: User) => {
   try {
-    await deleteFCMToken(memberId, userAgent);
-    const { data, error } = await supabaseClient.from("fcm_tokens").insert([
-      {
-        member_id: memberId,
-        token: token,
-        user_agent: userAgent,
-      },
-    ]);
+    const memberName =
+      user.user_metadata["full_name"] ||
+      user.user_metadata["name"] ||
+      user.user_metadata["preferred_username"] ||
+      user.user_metadata["user_name"];
 
-    if (error) throw new Error("Saving token faild.");
+    const userTracking = await getUserTracking(user.id);
 
-    console.log("[saveFCMToken] Saving fcm token success: ", data);
-  } catch (error) {
-    console.error("[saveFCMToken] Error: ", error);
+    if (!userTracking) {
+      const { error } = await supabaseClient.from("user_tracking").insert([
+        {
+          member_id: user.id,
+          member_name: memberName,
+          main_page_access_count: 1,
+        },
+      ]);
+
+      if (error) throw error;
+      return true;
+    }
+
+    const { error } = await supabaseClient
+      .from("user_tracking")
+      .update({
+        main_page_access_count: userTracking.main_page_access_count + 1,
+      })
+      .eq("member_id", user.id);
+
+    if (error) throw error;
+    return true;
+  } catch (e) {
+    console.error("[countAeccessMainPage] Error: ", e);
+    return false;
   }
-}
+};
+
+export const saveSearchHistory = async (searchWord: string) => {
+  try {
+    const {
+      data: { user },
+    } = await createClient().auth.getUser();
+
+    if (!user) throw new Error("User not exist.");
+
+    const memberName =
+      user.user_metadata["full_name"] ||
+      user.user_metadata["name"] ||
+      user.user_metadata["preferred_username"] ||
+      user.user_metadata["user_name"];
+
+    const userTracking = await getUserTracking(user.id);
+
+    if (!userTracking) {
+      const { error } = await supabaseClient.from("user_tracking").insert([
+        {
+          member_id: user.id,
+          member_name: memberName,
+          search_history: [searchWord],
+        },
+      ]);
+
+      if (error) throw error;
+      return true;
+    }
+
+    const updatedSearchHistory = userTracking.search_history
+      ? [...userTracking.search_history, searchWord]
+      : [searchWord];
+    const { error } = await supabaseClient
+      .from("user_tracking")
+      .update({
+        search_history: updatedSearchHistory,
+      })
+      .eq("member_id", user.id);
+
+    if (error) throw error;
+    return true;
+  } catch (e) {
+    console.error("[saveSearchHistory] Error: ", e);
+    return false;
+  }
+};
+
+export const countAddingYoutubeRoutine = async (
+  user: User,
+  videoId: string,
+  routines: { [key: number]: string }
+) => {
+  try {
+    const memberName =
+      user.user_metadata["full_name"] ||
+      user.user_metadata["name"] ||
+      user.user_metadata["preferred_username"] ||
+      user.user_metadata["user_name"];
+
+    const userTracking = await getUserTracking(user.id);
+
+    if (!userTracking) {
+      const { error } = await supabaseClient.from("user_tracking").insert([
+        {
+          member_id: user.id,
+          member_name: memberName,
+          youtube_routine_add_count: { [videoId]: routines },
+        },
+      ]);
+
+      if (error) throw error;
+      return true;
+    }
+
+    const updatedYoutubeRoutineAddCount = {
+      ...userTracking.youtube_routine_add_count,
+    };
+
+    if (videoId in updatedYoutubeRoutineAddCount) {
+      updatedYoutubeRoutineAddCount[videoId] = {
+        ...updatedYoutubeRoutineAddCount[videoId],
+        ...routines,
+      };
+    } else {
+      updatedYoutubeRoutineAddCount[videoId] = routines;
+    }
+
+    const { error } = await supabaseClient
+      .from("user_tracking")
+      .update({
+        youtube_routine_add_count: updatedYoutubeRoutineAddCount,
+      })
+      .eq("member_id", user.id);
+
+    if (error) throw error;
+    return true;
+  } catch (e) {
+    console.error("[countAddingYoutubeRoutine] Error: ", e);
+    return false;
+  }
+};

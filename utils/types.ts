@@ -1,49 +1,31 @@
-export type Todo = {
-  topic: string;
-  todoId: number;
-  todo: string;
-  days: { [key: string]: boolean };
-};
-
-export type PushSubscriptionType = {
-  endpoint: string;
-  keys: {
-    p256dh: string;
-    auth: string;
-  };
-  expirationTime: null;
-};
-
-export type PushNofiticationType = {
+export type MainRoutine = {
   id: number;
-  push_subscription: PushSubscriptionType;
-  member_id: string;
-}[];
-
-export type RequestDataType = {
-  memberId: string;
-  pushSubscription: PushSubscriptionType;
-};
-
-export type ChatGptMessage = {
   content: string;
-  role: "user" | "assistant" | "system" | "final";
 };
 
-export type GeneratingCheckListType = {
-  disableChatInput: boolean;
-  generateAnalyzeConversations: boolean;
-  generateTodoListMessage: boolean;
-  generateParsedTodoList: boolean;
-  saveCheckList: boolean;
-  savedCheckListSuccess: boolean;
+export interface Folder {
+  id: number;
+  name: string;
+  numberOfRoutines: number;
+}
+
+export interface FolderWithRoutines extends Folder {
+  routines: MainRoutine[];
+}
+
+export type ScheduledNotification = {
+  id: string;
+  member_id: string;
+  notification_time: string;
+  title: string;
+  body: string;
+  path: string;
+  other_id: number;
+  is_deleted: boolean;
 };
 
-export type ParsedCheckList =
-  | {
-      todoId: number;
-      topic: string;
-      todo: string;
-      dayNum: number;
-    }[]
-  | null;
+export type FCMToken = {
+  member_Id: string;
+  token: string;
+  user_agent: string;
+};
