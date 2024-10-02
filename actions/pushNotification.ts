@@ -177,9 +177,8 @@ const initializeFirebaseAdmin = () => {
 
 const sendNotification = async (notification: ScheduledNotification) => {
   const firebaseAdmin = initializeFirebaseAdmin();
-  const supabase = createClient();
 
-  const { data: fcmData, error: fcmError } = await supabase
+  const { data: fcmData, error: fcmError } = await supabaseClient
     .from("fcm_tokens")
     .select("token")
     .eq("member_id", notification.member_id)
@@ -209,7 +208,7 @@ const sendNotification = async (notification: ScheduledNotification) => {
       const afterOneWeek = new Date(
         notificationTime.getTime() + 7 * 24 * 60 * 60 * 1000
       );
-      await supabase
+      await supabaseClient
         .from("scheduled_notifications")
         .update({ notification_time: afterOneWeek })
         .eq("id", notification.id);
@@ -224,35 +223,42 @@ const sendNotification = async (notification: ScheduledNotification) => {
 const jobs: { [key: string]: schedule.Job } = {};
 
 export const scheduleNotifications = async () => {
-  const supabase = createClient();
-
   const now = new Date();
   const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
   const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+  try {
+    const { data: notifications, error } = await supabaseClient
+      .from("scheduled_notifications")
+      .select("*")
+      .eq("is_deleted", false)
+      .gte("notification_time", fiveMinutesAgo.toISOString())
+      .lte("notification_time", oneHourLater.toISOString())
+      .returns<ScheduledNotification[]>();
 
-  const { data: notifications, error } = await supabase
-    .from("scheduled_notifications")
-    .select("*")
-    .eq("is_deleted", false)
-    .gte("notification_time", fiveMinutesAgo.toISOString())
-    .lte("notification_time", oneHourLater.toISOString())
-    .returns<ScheduledNotification[]>();
-
-  if (error || !notifications) {
-    throw error || new Error("No notifications found");
-  }
-
-  for (const notification of notifications) {
-    if (jobs[notification.id]) {
-      continue;
+    if (error || !notifications) {
+      throw error || new Error("No notifications found");
     }
 
-    const notificationTime = new Date(notification.notification_time);
-    const job = schedule.scheduleJob(notificationTime, async () => {
-      await sendNotification(notification);
-    });
+    let responses: (
+      | { success: boolean; notificationId: string }
+      | undefined
+    )[] = [];
 
-    jobs[notification.id] = job;
+    for (const notification of notifications) {
+      if (jobs[notification.id]) {
+        continue;
+      }
+
+      const notificationTime = new Date(notification.notification_time);
+      const job = schedule.scheduleJob(notificationTime, async () => {
+        const response = await sendNotification(notification);
+        responses.push(response);
+      });
+
+      jobs[notification.id] = job;
+    }
+    return { registeredJobs: Object.keys(jobs).length, responses: responses };
+  } catch (e) {
+    return { registeredJobs: Object.keys(jobs).length, responses: null };
   }
-  return Object.keys(jobs).length;
 };
