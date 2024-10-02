@@ -98,7 +98,8 @@ const scheduleNotifications = async () => {
     }
 
     const notificationTime = new Date(notification.notification_time);
-    console.log(notificationTime);
+    const now = new Date();
+    console.log(now, notificationTime);
     const job = schedule.scheduleJob(notificationTime, async () => {
       console.log("before sendNotification");
       await sendNotification(notification);
