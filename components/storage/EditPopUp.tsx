@@ -48,7 +48,7 @@ export default function EditPopUp({
             maxLength={ROUTINE_MAX_LENGTH}
           />
           <span className="text-[#D7D7D7] text-[12px]">
-            {name.length}/{ROUTINE_MAX_LENGTH}
+            {editedName.length}/{ROUTINE_MAX_LENGTH}
           </span>
         </div>
         <div className="flex justify-end w-full">
