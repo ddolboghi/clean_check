@@ -165,7 +165,10 @@ export default function SlideFolder({
               <span className="text-[#C1C1C1] text-[20px]">
                 {routines.length}
               </span>
-              <button onClick={handleShowRoutines}>
+              <button
+                onClick={handleShowRoutines}
+                className="w-[35px] h-[35px] flex justify-center items-center"
+              >
                 {showRoutines ? (
                   <SpreadArrowUp width="10" height="4" />
                 ) : (
