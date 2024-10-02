@@ -15,7 +15,7 @@ export default function GlobalAddBtn({
     <>
       {children}
       <button
-        className="absolute bottom-[80px] right-6"
+        className="fixed z-10 bottom-[86px] right-6"
         onClick={() => handleBtn()}
       >
         <AddIconColor width="30" height="30" />
