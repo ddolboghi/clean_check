@@ -12,12 +12,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const scheduledCount = await scheduleNotifications();
+    const scheduledJobs = await scheduleNotifications();
 
     return NextResponse.json(
       {
         message: "Notifications scheduled successfully",
-        scheduledCount,
+        scheduledJobs,
       },
       { status: 200 }
     );
