@@ -3,7 +3,6 @@
 import {
   saveFCMToken,
   saveScheduledNotification,
-  scheduleNotifications,
 } from "@/actions/pushNotification";
 import { fetchToken } from "@/firebase";
 import { useEffect, useState } from "react";
@@ -98,6 +97,7 @@ export default function CustomAlarmPopUp({
             console.error(error);
             setLoading(false);
           });
+        setLoading(false);
       }
     } else {
       console.log("window is undefined");
@@ -140,8 +140,6 @@ export default function CustomAlarmPopUp({
     );
     if (!saveResponse) {
       alert("알람 설정에 문제가 발생했어요. 다시 시도해주세요.");
-    } else {
-      await scheduleNotifications();
     }
     setIsSetAlarm(true);
     handleCancleBtn();
