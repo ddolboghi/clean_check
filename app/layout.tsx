@@ -16,7 +16,7 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "beauing",
+  title: "뷰잉",
   description: "작은 습관으로 지키는 나의 피부",
   manifest: "/manifest.ts",
   appleWebApp: {
@@ -36,13 +36,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko" className={`${pretendard.variable}`}>
-      <head>
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta
-          name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent"
-        />
-      </head>
       <body className={pretendard.className}>
         <InstallPromptWrapper>{children}</InstallPromptWrapper>
       </body>

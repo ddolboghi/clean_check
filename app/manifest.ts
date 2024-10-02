@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "beauing",
-    short_name: "beauing",
-    description: "beauing 웹앱입니다.",
+    name: "뷰잉",
+    short_name: "뷰잉",
+    description: "뷰잉 웹앱입니다.",
     start_url: "/login",
     display: "standalone",
     theme_color: "#ffffff",

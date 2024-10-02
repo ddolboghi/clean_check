@@ -15,12 +15,12 @@ export default async function Login() {
   }
 
   return (
-    <main className="flex flex-col justify-center gap-10 items-center text-center h-screen overflow-hidden">
+    <main className="flex flex-col justify-center gap-10 items-center text-center h-screen overflow-hidden bg-[#6AC7D7]">
       <h1 className="font-semibold text-[40px] opacity-0 animate-fadeInUp">
         환영합니다!
       </h1>
-      <p className="mt-[-20px] pb-10 text-[#808080] text-[20px] opacity-0 animate-fadeIn delay-1500">
-        스킨체크와 함께
+      <p className="mt-[-20px] pb-10 text-[20px] opacity-0 animate-fadeIn delay-1500">
+        뷰잉과 함께
         <br /> 피부를 지켜보세요.
       </p>
       <div className="mb-[-20%] opacity-0 animate-fadeIn delay-1500">
