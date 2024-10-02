@@ -7,6 +7,8 @@ import schedule from "node-schedule";
 
 export const maxDuration = 30;
 
+const jobs: { [key: string]: schedule.Job } = {};
+
 const initializeFirebaseAdmin = () => {
   if (!admin.apps.length) {
     const serviceAccount: ServiceAccount = {
@@ -83,20 +85,26 @@ const scheduleNotifications = async () => {
     .select("*")
     .eq("is_deleted", false)
     .gte("notification_time", fiveMinutesAgo.toISOString())
-    .lte("notification_time", oneHourLater.toISOString());
+    .lte("notification_time", oneHourLater.toISOString())
+    .returns<ScheduledNotification[]>();
 
   if (error || !notifications) {
     throw error || new Error("No notifications found");
   }
 
-  notifications.forEach((notification) => {
+  for (const notification of notifications) {
+    if (jobs[notification.id]) {
+      continue;
+    }
+
     const notificationTime = new Date(notification.notification_time);
-    schedule.scheduleJob(notificationTime, async () => {
+    const job = schedule.scheduleJob(notificationTime, async () => {
       await sendNotification(notification);
     });
-  });
 
-  return notifications.length;
+    jobs[notification.id] = job;
+  }
+  return Object.keys(jobs).length;
 };
 
 export async function POST(req: NextRequest) {
