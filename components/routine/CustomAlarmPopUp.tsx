@@ -67,7 +67,7 @@ export default function CustomAlarmPopUp({
       setSelectedDays(initialSelectedDays);
     }
   }, []);
-  console.log(selectedHour, selectedMinute);
+
   const handleNotificationPermission = () => {
     if (
       typeof window !== "undefined" &&
@@ -75,11 +75,11 @@ export default function CustomAlarmPopUp({
       typeof Notification !== "undefined"
     ) {
       if (notificationPermission !== "granted") {
+        setLoading(true);
         Notification.requestPermission()
           .then((permission) => {
             if (permission === "granted") {
               setNotificationPermission("granted");
-              setLoading(true);
               return fetchToken();
             } else {
               setNotificationPermission("denied");
@@ -95,6 +95,7 @@ export default function CustomAlarmPopUp({
           })
           .catch((error) => {
             console.error(error);
+            setLoading(false);
           });
       }
     } else {
