@@ -27,7 +27,7 @@ export const getNextDayDates = (
     );
     nextDayDate.setHours(hour);
     nextDayDate.setMinutes(minute);
-    nextDayDate.setSeconds(0);
+    nextDayDate.setSeconds(50);
     nextDayDate.setMilliseconds(0);
     nextDayDates.push(nextDayDate);
   });
