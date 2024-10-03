@@ -11,6 +11,7 @@ import { usePathname } from "next/navigation";
 import { daysOfWeek, week } from "@/data/date";
 import { getNextDayDates } from "@/lib/dateTranslator";
 import { ScheduledNotification } from "@/utils/types";
+import CloseIcon from "../icons/CloseIcon";
 
 type CustomAlarmPopUpProps = {
   otherId: number;
@@ -148,6 +149,12 @@ export default function CustomAlarmPopUp({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="m-5 flex flex-col justify-between p-[30px] bg-white min-w-[200px] w-[364px] rounded-[23px] h-auto">
+        <button
+          className="flex flex-row justify-end items-center"
+          onClick={handleCancleBtn}
+        >
+          <CloseIcon />
+        </button>
         <p className="text-center">알림 기능은 아직 준비중이에요.</p>
       </div>
       {/* {loading ? (
