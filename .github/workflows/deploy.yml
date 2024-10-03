@@ -46,7 +46,7 @@ jobs:
               break
             fi
 
-            if [ "$state_via_push" == "ERROR" ] && [ "$state_via_hook" == "ERROR" ]; then
+            if [ "$state_via_push" == "ERROR" ] || [ "$state_via_hook" == "ERROR" ]; then
               echo "Deployment error."
               break
             fi
