@@ -4,7 +4,7 @@ import { useState } from "react";
 import SlideContent from "./SlideContent";
 import { MainRoutine } from "@/utils/types";
 import GlobalAddBtn from "../GlobalAddBtn";
-import MainRoutineAddPopUp from "../MainRoutineAddPopUp";
+import MainRoutineAddPopUp from "./MainRoutineAddPopUp";
 import { deleteMainRoutine } from "@/actions/routine";
 
 type RoutinesProps = {
