@@ -84,7 +84,8 @@ export default function RootLayout({
   return (
     <html lang="ko" className={`${pretendard.variable}`}>
       <body className={pretendard.className}>
-        <InstallPromptWrapper>{children}</InstallPromptWrapper>
+        {/* <InstallPromptWrapper>{children}</InstallPromptWrapper> */}
+        {children}
       </body>
     </html>
   );
