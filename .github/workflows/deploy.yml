@@ -45,6 +45,11 @@ jobs:
               echo "Deployment is ready."
               break
             fi
+
+            if [ "$state_via_push" == "ERROR" ] && [ "$state_via_hook" == "ERROR" ]; then
+              echo "Deployment error."
+              break
+            fi
             sleep 10
           done
 
