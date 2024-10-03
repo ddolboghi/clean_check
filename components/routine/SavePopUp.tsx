@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import CloseIcon from "../icons/CloseIcon";
 import { Folder } from "@/utils/types";
-import StorageAddPopUp from "../StorageAddPopUp";
+import StorageAddPopUp from "../storage/StorageAddPopUp";
 import { addRoutineToFolder, getSimpleFolders } from "@/actions/storage";
 import { Skeleton } from "../ui/skeleton";
 

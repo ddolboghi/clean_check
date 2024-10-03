@@ -3,7 +3,7 @@
 import { FolderWithRoutines } from "@/utils/types";
 import { useEffect, useState } from "react";
 import SlideFolder from "./SlideFolder";
-import StorageAddPopUp from "../StorageAddPopUp";
+import StorageAddPopUp from "./StorageAddPopUp";
 import GlobalAddBtn from "../GlobalAddBtn";
 import { getFolders } from "@/actions/storage";
 

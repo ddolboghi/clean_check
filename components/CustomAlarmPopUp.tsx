@@ -6,12 +6,12 @@ import {
 } from "@/actions/pushNotification";
 import { fetchToken } from "@/firebase";
 import { useEffect, useState } from "react";
-import SimpleSpinner from "../ui/SimpleSpinner";
+import SimpleSpinner from "./ui/SimpleSpinner";
 import { usePathname } from "next/navigation";
 import { daysOfWeek, week } from "@/data/date";
 import { getNextDayDates } from "@/lib/dateTranslator";
 import { ScheduledNotification } from "@/utils/types";
-import CloseIcon from "../icons/CloseIcon";
+import CloseIcon from "./icons/CloseIcon";
 
 type CustomAlarmPopUpProps = {
   otherId: number;

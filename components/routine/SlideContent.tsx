@@ -7,7 +7,7 @@ import EditPopUp from "./EditPopUp";
 import FolderIconWhite from "../icons/FolderIconWhite";
 import EditIconWhite from "../icons/EditIconWhite";
 import TrashcanIconWhite from "../icons/TrashcanIconWhite";
-import CustomAlarmPopUp from "./CustomAlarmPopUp";
+import CustomAlarmPopUp from "../CustomAlarmPopUp";
 import UnSetBell from "../icons/UnSetBell";
 import SetBell from "../icons/SetBell";
 import { getScheduledNotificationByOtherId } from "@/actions/pushNotification";

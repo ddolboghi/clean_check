@@ -10,7 +10,7 @@ import SpreadArrowDown from "../icons/SpreadArrowDown";
 import RoutineBox from "./RoutineBox";
 import { deleteFolder, getRoutinesByFolderId } from "@/actions/storage";
 import EditPopUp from "./EditPopUp";
-import CustomAlarmPopUp from "../routine/CustomAlarmPopUp";
+import CustomAlarmPopUp from "../CustomAlarmPopUp";
 import SetBell from "../icons/SetBell";
 import UnSetBell from "../icons/UnSetBell";
 import { getScheduledNotificationByOtherId } from "@/actions/pushNotification";
