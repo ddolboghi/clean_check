@@ -148,7 +148,7 @@ export default function CustomAlarmPopUp({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="m-5 flex flex-col justify-between p-[30px] bg-white min-w-[200px] w-[364px] rounded-[23px] h-auto">
+      {/* <div className="m-5 flex flex-col justify-between p-[30px] bg-white min-w-[200px] w-[364px] rounded-[23px] h-auto">
         <button
           className="flex flex-row justify-end items-center"
           onClick={handleCancleBtn}
@@ -156,8 +156,8 @@ export default function CustomAlarmPopUp({
           <CloseIcon />
         </button>
         <p className="text-center">알림 기능은 아직 준비중이에요.</p>
-      </div>
-      {/* {loading ? (
+      </div> */}
+      {loading ? (
         <div className="text-center">
           <p className="text-white">
             알림 설정 중이에요. 앱을 종료하지 말아주세요.
@@ -230,7 +230,7 @@ export default function CustomAlarmPopUp({
             </button>
           </div>
         </div>
-      )} */}
+      )}
     </div>
   );
 }
