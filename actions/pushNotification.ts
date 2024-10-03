@@ -224,7 +224,7 @@ const jobs: { [key: string]: schedule.Job } = {};
 
 export const scheduleNotifications = async () => {
   const now = new Date();
-  const after = new Date(now.getTime() + 20 * 1000);
+  const after = new Date(now.getTime() + 30 * 60 * 1000);
 
   try {
     const { data: notifications, error } = await supabaseClient
