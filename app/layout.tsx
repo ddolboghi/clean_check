@@ -43,7 +43,8 @@ export default function RootLayout({
         />
       </head>
       <body className={pretendard.className}>
-        <InstallPromptWrapper>{children}</InstallPromptWrapper>
+        {/* <InstallPromptWrapper>{children}</InstallPromptWrapper> */}
+        {children}
       </body>
     </html>
   );
